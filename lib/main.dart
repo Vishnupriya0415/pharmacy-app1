@@ -1,14 +1,15 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/repository/auth.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +71,7 @@ class MyApp extends StatelessWidget {
                   if (userType != null) {
                     if (userType == 'medicalshop') {
                       return Home();
-                    } 
+                    }
                     // else if (userType == 'manager') {
                     //   // return const AutoLoginBoardScreen();
                     // } else if (userType == 'deliveryperson') {

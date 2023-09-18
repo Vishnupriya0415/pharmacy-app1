@@ -1,11 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class MedicalStoreListScreen extends StatefulWidget {
-  const MedicalStoreListScreen({super.key});
+  const MedicalStoreListScreen({Key? key}) : super(key: key);
 
   @override
   State<MedicalStoreListScreen> createState() => _MedicalStoreListScreenState();
@@ -13,16 +16,41 @@ class MedicalStoreListScreen extends StatefulWidget {
 
 class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
   List<Map<String, dynamic>> pharmacyData = [];
+  Position? currentPosition;
 
   @override
   void initState() {
     super.initState();
-    fetchMedicalStores();
+    // _getCurrentLocation();
+    fetchInitialValueFromFirestore();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  Future<void> fetchInitialValueFromFirestore() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser;
+    final uid = user!.uid;
+    DocumentReference<Map<String, dynamic>> snapshot =
+        firestore.collection('users').doc(uid);
+    DocumentSnapshot<Map<String, dynamic>> data = await snapshot.get();
+    double initialValue1 = data['latitude']?.toDouble() ?? 0.0;
+    double initialValue2 = data['longitude']?.toDouble() ?? 0.0;
+
+    // Set the initial position
+    setState(() {
+      currentPosition = Position(
+        latitude: initialValue1,
+        longitude: initialValue2,
+        timestamp: DateTime.now(),
+        accuracy: 0.0,
+        altitude: 0.0,
+        heading: 0.0,
+        speed: 0.0,
+        speedAccuracy: 0.0,
+      );
+    });
+
+    // Fetch medical stores
+    fetchMedicalStores();
   }
 
   @override
@@ -32,12 +60,6 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // ElevatedButton(
-            //   onPressed: () {
-            //     fetchMedicalStores();
-            //   },
-            //   child: const Text('Search Medical Stores'),
-            // ),
             const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
@@ -71,8 +93,16 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
   }
 
   Future<void> fetchMedicalStores() async {
-    const url =
-        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=10000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
+    if (currentPosition == null) {
+      print('Error: Current position is not available.');
+      return;
+    }
+
+    final latitude = currentPosition!.latitude;
+    final longitude = currentPosition!.longitude;
+
+    final url =
+        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=$latitude%2C$longitude&radius=10000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
 
     final headers = {
       "accept": "application/json",
@@ -97,6 +127,8 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
         setState(() {
           pharmacyData = validMedicalStores;
         });
+      } else {
+        print("Error: ${response.statusCode}");
       }
     } catch (e) {
       print("Error: $e");

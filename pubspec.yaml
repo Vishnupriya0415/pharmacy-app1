@@ -54,6 +54,12 @@ dependencies:
   http: any
   firebase_storage: ^11.2.5
   uuid: ^3.0.7
+  location: ^5.0.3
+  url_launcher: ^6.1.14
+  share_plus: ^7.1.0
+  whatsapp_share: ^2.0.2
+  screenshot: ^2.1.0
+  path_provider: ^2.1.1
 
 dev_dependencies:
   flutter_test:

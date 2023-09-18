@@ -1,11 +1,66 @@
+// Import necessary packages at the top of your file
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
-  static const routeName = "/profileScreen";
-
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _firebaseAuth = FirebaseAuth.instance;
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _address = TextEditingController();
+  final FocusNode _nameFocus = FocusNode();
+  final FocusNode _emailFocus = FocusNode();
+  final FocusNode _phoneFocus = FocusNode();
+  final FocusNode _addressFocus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchInitialValueFromFirestore();
+  }
+
+  Future<void> fetchInitialValueFromFirestore() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser;
+    final uid = user!.uid;
+    DocumentReference<Map<String, dynamic>> snapshot =
+        firestore.collection('users').doc(uid);
+    DocumentSnapshot<Map<String, dynamic>> data = await snapshot.get();
+    String initialValue = data['Name']?.toString() ?? '';
+    String initialValue1 = data['email']?.toString() ?? '';
+    String initialValue2 = data['phone']?.toString() ?? '';
+    String initialValue3 = data['address']?.toString() ?? '';
+    print(
+        'initialValue: $initialValue, $initialValue1, $initialValue2, $initialValue3,');
+    setState(() {
+      _name.text = initialValue;
+      _email.text = initialValue1;
+      _phone.text = initialValue2;
+      _address.text = initialValue3;
+    });
+  }
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _email.dispose();
+    _phone.dispose();
+    _address.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +147,7 @@ class ProfileScreen extends StatelessWidget {
                         height: 10,
                       ),
                       Text(
-                        'Hi there Roopa',
+                        'Hi there ${_name.text}',
                         style: GoogleFonts.lato(
                           fontSize: 28,
                           color: Colors.blue,
@@ -101,30 +156,34 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(
                         height: 40,
                       ),
-                      const CustomFormInput(
+                      CustomFormInput(
                         label: "Name",
-                        value: "Roopa",
+                        controller: _name,
+                        focus: _nameFocus,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      const CustomFormInput(
+                      CustomFormInput(
                         label: "Email",
-                        value: "roopa@email.com",
+                        controller: _email,
+                        focus: _emailFocus,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      const CustomFormInput(
+                      CustomFormInput(
                         label: "Mobile No",
-                        value: "9320245928",
+                        controller: _phone,
+                        focus: _phoneFocus,
                       ),
                       const SizedBox(
                         height: 20,
                       ),
-                      const CustomFormInput(
+                      CustomFormInput(
                         label: "Address",
-                        value: "2-28, Mannila, Anantapur, Andra Pradesh",
+                        controller: _address,
+                        focus: _addressFocus,
                       ),
                       const SizedBox(
                         height: 60,
@@ -182,19 +241,161 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _showSignOutAlertDialog(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Sign Out'),
+          content: const Text('Are you sure you want to sign out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(
+                    context, false); // Close the dialog and return false
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Close the dialog and return true after sign-out
+                Navigator.pop(context, true);
+                // await _performSignOut(context);
+              },
+              child: const Text('Sign Out'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result) {
+      _performSignOut(context);
+    }
+  }
+
+  Future<void> _performSignOut(BuildContext context) async {
+    try {
+      await _firebaseAuth.signOut();
+      final sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.clear();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const OnboardingScreen(),
+        ),
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+      // Handle the error, e.g., show a snackbar or an error dialog
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error signing out: $e'),
+        ),
+      );
+    }
+  }
 }
+
+// class CustomFormInput extends StatelessWidget {
+//   const CustomFormInput({
+//     Key? key,
+//     required String label,
+//     required TextEditingController controller,
+//   })  : _label = label,
+//         _controller = controller,
+//         super(key: key);
+
+//   final String _label;
+//   final TextEditingController _controller;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: double.infinity,
+//       height: 50,
+//       padding: const EdgeInsets.only(left: 40),
+//       decoration: ShapeDecoration(
+//         shape: const StadiumBorder(),
+//         color: Colors.grey[300],
+//       ),
+//       child: TextFormField(
+//         decoration: InputDecoration(
+//           border: InputBorder.none,
+//           labelText: _label,
+//           contentPadding: const EdgeInsets.only(
+//             top: 10,
+//             bottom: 10,
+//           ),
+//         ),
+//         controller: _controller, // Use the provided controller
+//         style: const TextStyle(
+//           fontSize: 14,
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+// class CustomFormInput extends StatelessWidget {
+//   const CustomFormInput({
+//     Key? key,
+//     required String label,
+//     required TextEditingController controller,
+//     required FocusNode focus,
+//   })  : _label = label,
+//         _controller = controller,
+//         _focus = focus,
+//         super(key: key);
+
+//   final String _label;
+//   final TextEditingController _controller;
+//   final FocusNode _focus;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: double.infinity,
+//       height: 50,
+//       padding: const EdgeInsets.only(left: 40),
+//       decoration: ShapeDecoration(
+//         shape: const StadiumBorder(),
+//         color: Colors.grey[300],
+//       ),
+//       child: TextFormField(
+//         decoration: InputDecoration(
+//           border: InputBorder.none,
+//           labelText: _label,
+//           contentPadding: const EdgeInsets.only(
+//             top: 10,
+//             bottom: 10,
+//           ),
+//         ),
+//         focusNode: _focus,
+//         controller: _controller,
+//         style: const TextStyle(
+//           fontSize: 14,
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class CustomFormInput extends StatelessWidget {
   const CustomFormInput({
     Key? key,
     required String label,
-    required String value,
+    required TextEditingController controller,
+    required FocusNode focus,
   })  : _label = label,
-        _value = value,
+        _controller = controller,
+        _focus = focus,
         super(key: key);
 
   final String _label;
-  final String _value;
+  final TextEditingController _controller;
+  final FocusNode _focus;
 
   @override
   Widget build(BuildContext context) {
@@ -206,55 +407,29 @@ class CustomFormInput extends StatelessWidget {
         shape: const StadiumBorder(),
         color: Colors.grey[300],
       ),
-      child: TextFormField(
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          labelText: _label,
-          contentPadding: const EdgeInsets.only(
-            top: 10,
-            bottom: 10,
-          ),
-        ),
-        initialValue: _value,
-        style: const TextStyle(
-          fontSize: 14,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+            horizontal: 5), // Adjust padding as needed
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2, // Adjust flex as needed
+              child: TextFormField(
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: _label,
+                  contentPadding: EdgeInsets.zero, // Remove extra padding
+                ),
+                focusNode: _focus,
+                controller: _controller,
+                style: const TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
-}
-
-void _showSignOutAlertDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close the dialog
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              _performSignOut(context);
-            },
-            child: const Text('Sign Out'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _performSignOut(BuildContext context) {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => const OnboardingScreen(),
-    ),
-  );
 }

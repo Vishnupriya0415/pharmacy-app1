@@ -16,6 +16,9 @@ import 'package:gangaaramtech/utils/widgets/curved_alert_dialog_box.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:whatsapp_share/whatsapp_share.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -190,7 +193,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future<void> pickProfileImage(BuildContext context) async {
+  Future<void> pickDescriptionImage(BuildContext context) async {
     String? imagePath = await showDialog(
       context: context,
       builder: (BuildContext dialogContext) => CurvedAlertDialog(
@@ -325,6 +328,223 @@ class _HomeState extends State<Home> {
     //     ),
     //   ),
     // );
+  }
+
+  // Future<void> pickDescriptionImageWhatsapp(BuildContext context) async {
+  //   String? imagePath = await showDialog(
+  //     context: context,
+  //     builder: (BuildContext dialogContext) => CurvedAlertDialog(
+  //       title: 'Choose image from',
+  //       onImageSelected: (String imagePath) {
+  //         setState(() {
+  //           imageFile = File(imagePath);
+  //           uploadProgress = 0.0; // Reset progress when a new image is selected
+  //         });
+  //         _uploadImage1(imageFile!);
+  //         // widget.onImageSelected(imagePath);
+  //       },
+  //       onClosePressed: () {
+  //         Navigator.pop(context);
+  //       },
+  //     ),
+  //   );
+
+  //   if (imagePath != null) {
+  //     // widget.onImageSelected(imagePath);
+  //   }
+  // }
+
+  // double uploadProgress1 = 0.0;
+  // bool showImageAfterUpload1 =
+  //     false; // Flag to control image visibility after upload
+
+  // Future<void> _uploadImage1(File imageFile) async {
+  //   // Simulate the image upload progress
+  //   const totalDuration = Duration(seconds: 5);
+  //   const intervalDuration = Duration(milliseconds: 500);
+  //   int intervals =
+  //       totalDuration.inMilliseconds ~/ intervalDuration.inMilliseconds;
+  //   double stepProgress = 100 / intervals;
+
+  //   for (int i = 1; i <= intervals; i++) {
+  //     await Future.delayed(intervalDuration);
+  //     setState(() {
+  //       uploadProgress = stepProgress * i;
+  //     });
+  //   }
+
+  //   // Reset progress after the upload is complete
+  //   setState(() {
+  //     uploadProgress = 0;
+  //     showImageAfterUpload =
+  //         true; // Set the flag to true after the upload is complete
+  //   });
+
+  //   // Show the AlertDialog when upload is complete
+  //   if (showImageAfterUpload) {
+  //     await showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) => AlertDialog(
+  //         content: SizedBox(
+  //           width: 330, // Set the desired width
+  //           height: 200, // Set the desired height
+  //           child: Column(
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               const Image(
+  //                 image: AssetImage('assets/images/file-text.png'),
+  //                 height: 70,
+  //                 width: 70,
+  //               ),
+  //               const SizedBox(height: 16),
+  //               Text(
+  //                 'Uploaded Successfully',
+  //                 style: GoogleFonts.poppins(
+  //                   fontSize: 15,
+  //                   color: Colors.black,
+  //                   fontWeight: FontWeight.w500,
+  //                 ),
+  //               ),
+  //               const SizedBox(height: 16),
+  //               SizedBox(
+  //                 width: 130,
+  //                 height: 50,
+  //                 child: ElevatedButton(
+  //                   onPressed: () {
+  //                     Navigator.pop(context);
+  //                   },
+  //                   style: ElevatedButton.styleFrom(
+  //                     minimumSize: const Size(130, 50),
+  //                     // backgroundColor: kYellow,
+  //                     backgroundColor: Colors.blue,
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(30),
+  //                     ),
+  //                   ),
+  //                   child: Row(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       Text(
+  //                         "Done ",
+  //                         style: GoogleFonts.poppins(
+  //                           fontSize: 16,
+  //                           color: Colors.black,
+  //                           fontWeight: FontWeight.w500,
+  //                         ),
+  //                       ),
+  //                       const SizedBox(width: 5),
+  //                       const Image(
+  //                         image: AssetImage('assets/images/ok_vector.png'),
+  //                         width: 24,
+  //                         height: 24,
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(40.0),
+  //         ),
+  //       ),
+  //     );
+  //   }
+
+  //   // After the upload is complete, perform image-to-text translation
+  //   // String extractedText = await performImageToTextTranslation(imageFile);
+
+  //   // Navigate to the ImageTranslationPage and pass the extracted text and imageFile as arguments
+  //   // Navigator.push(
+  //   //   context,
+  //   //   MaterialPageRoute(
+  //   //     builder: (context) => ImageTranslationPage(
+  //   //       extractedText: extractedText,
+  //   //       imageFile: imageFile,
+  //   //     ),
+  //   //   ),
+  //   // );
+  // }
+
+  File? _image;
+
+  Future<void> isInstalled() async {
+    final val = await WhatsappShare.isInstalled(package: Package.whatsapp);
+    if (val == true) {
+      debugPrint('Whatsapp is installed: $val');
+      shareFile1();
+    } else {
+      debugPrint('Whatsapp is not installed: $val');
+      _showWhatsappNotInstalledDialog();
+    }
+    // debugPrint('Whatsapp is installed: $val');
+  }
+
+  void _showWhatsappNotInstalledDialog() {
+    showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Whatsapp Not Installed'),
+        content: const Text(
+            'Whatsapp is not installed on your device. Please install it from the Play Store/App Store.'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> shareFile1() async {
+    await getImage();
+    await WhatsappShare.shareFile(
+      phone: "919391135696",
+      filePath: [(_image!.path)],
+    );
+  }
+
+  ///Pick Image From gallery using image_picker plugin
+  Future getImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      XFile? pickedFile = (await picker.pickImage(source: ImageSource.gallery));
+
+      if (pickedFile != null) {
+        // getting a directory path for saving
+        final directory = await getExternalStorageDirectory();
+
+        // copy the file to a new path
+        await pickedFile.saveTo('${directory!.path}/image1.png');
+        _image = File('${directory.path}/image1.png');
+      }
+    } catch (er) {
+      // print(er);
+      // show error message to the user.
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Gallery'),
+          content: const Text(
+              'There was an error while picking the image. Please try again.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        ),
+      );
+      debugPrint('Error picking image: $er');
+    }
   }
 
   @override
@@ -473,13 +693,23 @@ class _HomeState extends State<Home> {
                           iconSize: 30,
                           icon: const Icon(Icons.camera_alt),
                           onPressed: () {
-                            pickProfileImage(context);
+                            pickDescriptionImage(context);
                             // Navigator.push(
                             //   context,
                             //   MaterialPageRoute(
                             //     builder: (context) => const ImageUploadScreen(),
                             //   ),
                             // );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: IconButton(
+                          iconSize: 30,
+                          icon: const Icon(Icons.share),
+                          onPressed: () {
+                            isInstalled();
                           },
                         ),
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
+import 'package:gangaaramtech/pages/profile/edit_profile.dart';
 import 'package:gangaaramtech/pages/settings/edit_settings.dart';
 import 'package:gangaaramtech/repository/auth.dart';
 
@@ -59,50 +60,81 @@ class SettingsPage extends StatelessWidget {
             ),
 
             // Edit Profile Option
+            // Card(
+            //   // Add Card to wrap the Container
+            //   elevation: 0, // Remove the shadow
+            //   child: Container(
+            //     padding: const EdgeInsets.all(8), // Add padding
+            //     child: Column(
+            //       mainAxisAlignment: MainAxisAlignment
+            //           .center, // Center the Column content vertically
+            //       crossAxisAlignment: CrossAxisAlignment
+            //           .center, // Center the content horizontally
+            //       children: [
+            //         ListTile(
+            //           title: const Column(
+            //             // Use a Column to display the title text below the icon
+            //             mainAxisAlignment: MainAxisAlignment
+            //                 .center, // Center the text vertically
+            //             children: [
+            //               Center(
+            //                 // Center the icon
+            //                 child: Icon(Icons.person),
+            //               ),
+            //               SizedBox(
+            //                 height: 10,
+            //               ),
+            //               Text(
+            //                 'Edit Profile',
+            //                 style: TextStyle(fontSize: 16),
+            //                 textAlign: TextAlign.center,
+            //               ),
+            //               // SizedBox(
+            //               //   height: 5,
+            //               // ),
+            //               // Text(
+            //               //   ' Profile',
+            //               //   style: TextStyle(fontSize: 16),
+            //               //   textAlign: TextAlign.center,
+            //               // )
+            //             ],
+            //           ),
+            //           onTap: () {
+            //             Navigator.push(
+            //               context,
+            //               MaterialPageRoute(
+            //                 builder: (context) => const ProfileScreen(),
+            //               ),
+            //             );
+            //             // Add your edit profile functionality here
+            //           },
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // Edit Profile Option
             Card(
               // Add Card to wrap the Container
               elevation: 0, // Remove the shadow
               child: Container(
-                padding: const EdgeInsets.all(8), // Add padding
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment
-                      .center, // Center the Column content vertically
-                  crossAxisAlignment: CrossAxisAlignment
-                      .center, // Center the content horizontally
-                  children: [
-                    ListTile(
-                      title: const Column(
-                        // Use a Column to display the title text below the icon
-                        mainAxisAlignment: MainAxisAlignment
-                            .center, // Center the text vertically
-                        children: [
-                          Center(
-                            // Center the icon
-                            child: Icon(Icons.person),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Edit',
-                            style: TextStyle(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(
-                            height: 5,
-                          ),
-                          Text(
-                            ' Profile',
-                            style: TextStyle(fontSize: 16),
-                            textAlign: TextAlign.center,
-                          )
-                        ],
+                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
+                child: ListTile(
+                  leading: const Icon(Icons.person),
+                  title: const Text('Edit Profile'),
+                  trailing: const Text(
+                    // Display greater than symbol as trailing widget
+                    '>',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ProfileScreen(),
                       ),
-                      onTap: () {
-                        // Add your edit profile functionality here
-                      },
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ),
