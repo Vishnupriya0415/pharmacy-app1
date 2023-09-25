@@ -1,12 +1,15 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
-import 'package:gangaaramtech/pages/order_details/order_details.dart';
-// import 'package:gangaaramtech/pages/search/search_page.dart';
+//import 'package:gangaaramtech/pages/OrderDetails/orderdetails.dart';
+import 'package:http/http.dart' as http;
+//import 'package:gangaaramtech/pages/search/search_page.dart';
 import 'package:gangaaramtech/pages/search/search_page1.dart';
 import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'package:gangaaramtech/pages/settings/settings.dart';
@@ -23,9 +26,10 @@ import 'package:whatsapp_share/whatsapp_share.dart';
 class Home extends StatefulWidget {
   Home({super.key});
   final List<String> imagePaths = [
-    'assets/images/tablets/delvery medicine3.jpg',
-    'assets/images/tablets/delivery medicine2.jpg',
-    'assets/images/tablets/delivery medicine1.png',
+    'assets/images/medicine_Delivery1.png',
+    'assets/images/tablets/delivery_medicine2.jpg',
+    'assets/images/tablets/scan1.jpeg',
+    'assets/images/deliveryMedicine2.jpg'
     // Add more image paths as needed
   ];
 
@@ -34,6 +38,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController searchController = TextEditingController();
+  List<Map<String, dynamic>> pharmacyData = [];
   File? imageFile; // Define the imageFile variable here
   Position? currentPosition;
   // final PageController _pageController = PageController();
@@ -45,12 +51,66 @@ class _HomeState extends State<Home> {
   Timer? locationUpdateTimer;
 
   bool _disposed = false;
+  final List<String> imageDescriptions = [
+    'Medicine Delivery . We offer medicine delivery services for your convenience ',
+    'Safe Delivery Service. We make sure medicines are brought to you safely and on time ',
+    'Scan your Prescription.Easily upload your prescription for quick ordering . We\'ll  ensure safe delivery and prompt delivery for your doorstep.',
+    'Order Medicines: Browse and select your medicines with ease. Pay online or choose Cash on Delivery, and get your order delivered to your doorstep'
+  ];
+  void _showImageDescription(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              const Spacer(),
+              const CircleAvatar(
+                radius: 25.0,
+                backgroundImage: AssetImage('assets/images/tablets/logo1.png'),
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.black,
+                  size: 35,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                imageDescriptions[index],
+                style: const TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+          // actions: [],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          elevation: 5,
+          backgroundColor: Colors.white, // Set the background color
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
     _startLocationUpdateTimer();
+    fetchMedicalStores();
   }
 
   @override
@@ -504,6 +564,7 @@ class _HomeState extends State<Home> {
   Future<void> shareFile1() async {
     await getImage();
     await WhatsappShare.shareFile(
+      text: "hello ",
       phone: "919391135696",
       filePath: [(_image!.path)],
     );
@@ -595,7 +656,9 @@ class _HomeState extends State<Home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MyOrdersPage(),
+                    builder: (context) {
+                      return MyOrdersPage();
+                    },
                   ),
                 );
               } else if (index == 3) {
@@ -643,405 +706,483 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        body: Container(
-          color: Colors.white,
-          child: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Form(
-                              child: TextFormField(
-                                decoration: const InputDecoration(
-                                  hintText: 'Search...',
-                                  border: InputBorder.none,
-                                  icon: Padding(
-                                    padding: EdgeInsets.only(left: 10),
-                                    child: Icon(Icons.search),
-                                  ),
-                                ),
-                                onFieldSubmitted: (value) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const MedicalStoreListScreen(),
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 10),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Form(
+                                child: TextFormField(
+                                  decoration: const InputDecoration(
+                                    hintText: 'Search...',
+                                    border: InputBorder.none,
+                                    icon: Padding(
+                                      padding: EdgeInsets.only(left: 10),
+                                      child: Icon(Icons.search),
                                     ),
-                                  );
-                                },
+                                  ),
+                                  onFieldSubmitted: (value) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            MedicalStoreListScreen(
+                                                searchQuery: value),
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: IconButton(
-                          iconSize: 30,
-                          icon: const Icon(Icons.camera_alt),
-                          onPressed: () {
-                            pickDescriptionImage(context);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => const ImageUploadScreen(),
-                            //   ),
-                            // );
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: IconButton(
+                            iconSize: 30,
+                            icon: const Icon(Icons.camera_alt),
+                            onPressed: () {
+                              //sendWhatsAppMessage();
+                              pickDescriptionImage(context);
+                            },
+                          ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4),
-                        child: IconButton(
-                          iconSize: 30,
-                          icon: const Icon(Icons.share),
-                          onPressed: () {
-                            isInstalled();
-                          },
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: IconButton(
+                            iconSize: 30,
+                            icon: const Icon(Icons.share),
+                            onPressed: () {
+                              isInstalled();
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  height: screenWidth * (9 / 16),
-                  width: screenWidth,
-                  child: Stack(
-                    children: [
-                      PageView.builder(
-                        controller: _pageController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: widget.imagePaths.length,
-                        itemBuilder: (context, index) {
-                          return SizedBox(
-                            width: screenWidth,
-                            child: AspectRatio(
-                              aspectRatio: 16 / 9,
-                              child: Image.asset(
-                                widget.imagePaths[index],
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            _pageController.previousPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            );
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    height: screenWidth * (9 / 16),
+                    width: screenWidth,
+                    child: Stack(
+                      children: [
+                        PageView.builder(
+                          controller: _pageController,
+                          itemCount: widget.imagePaths.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                                onTap: () {
+                                  _showImageDescription(context, index);
+                                },
+                                // ignore: sized_box_for_whitespace
+                                child: Container(
+                                  width: screenWidth,
+                                  child: AspectRatio(
+                                    aspectRatio: 16 / 9,
+                                    child: Image.asset(
+                                      widget.imagePaths[index],
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ));
                           },
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          icon: const Icon(Icons.arrow_forward_ios),
-                          onPressed: () {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 500),
-                              curve: Curves.easeInOut,
-                            );
-                          },
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_back_ios),
+                            onPressed: () {
+                              _pageController.previousPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: IconButton(
+                            icon: const Icon(Icons.arrow_forward_ios),
+                            onPressed: () {
+                              _pageController.nextPage(
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text(
-                    "Recommended for you",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  const SizedBox(height: 10),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Recommended for you",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-                // Use GridView.count for the row of cells
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GridView.count(
-                    crossAxisCount: 3, // Number of cells in a row
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    shrinkWrap: true,
+                  // Use GridView.count for the row of cells
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.count(
+                      crossAxisCount: 3, // Number of cells in a row
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      shrinkWrap: true,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Paracetamol',
+                                    dosage: '650mg',
+                                    tablets: 'Strip of 15 tablets',
+                                    description:
+                                        'Dolo 650 tablet contains an active ingredient called paracetamol, which works by blocking the '
+                                        'formation of certain chemicals that cause pain and fever in the body. This medicine can'
+                                        ' be used to treat various conditions such as headache, backache, migraine, toothache, body pain, '
+                                        'and even fever associated with diseases like typhoid or the common cold.',
+                                    shippingMethod: 'Standard Shipping',
+                                    cost: '29/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/paracetemol1.png',
+                                      'assets/images/tablets/paracetemol2.webp'
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 90, // Set the desired height here
+                                height: 85, // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/paracetemol1.png",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Paracetamol"),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Cetirizine',
+                                    dosage: 'As directed by Physician',
+                                    tablets: ' syrup of 60ml',
+                                    description:
+                                        'Syrup which is used o reduce to common cold, Allergy, Urticaria Pigmentosa ',
+                                    shippingMethod: 'Standard shipping',
+                                    cost: '85/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/Cetirizine1.png',
+                                      'assets/images/tablets/Cetirizine2.png',
+                                      'assets/images/tablets/Cetirizine3.png',
+                                      // Add more image paths if needed
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 90, // Set the desired height here
+                                height:
+                                    85, // Set the desired height here // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/cetrizine.webp",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Cetirizine"),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Saridon',
+                                    dosage:
+                                        'single dose can be taken at a time ',
+                                    tablets: 'Strip of 10 tablets ',
+                                    description:
+                                        'Saridon Tablet, a prescription drug, is manufactured in various forms such as Tablet.'
+                                        ' Fever, Headache, Pain are some of its major therapeutic uses.'
+                                        ' Other than this, Saridon Tablet has some other therapeutic uses,',
+                                    shippingMethod: 'Standard shipping',
+                                    cost: '40/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/saridon.webp',
+                                      'assets/images/tablets/saridon1.jpg',
+                                      // Add more image paths if needed
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 90, // Set the desired height here
+                                height:
+                                    85, // Set the desired height here // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/saridon.webp",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Saridon"),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: GridView.count(
+                      crossAxisCount: 3, // Number of cells in a row
+                      mainAxisSpacing: 8,
+                      crossAxisSpacing: 8,
+                      shrinkWrap: true,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Spirulina',
+                                    dosage: '650mg',
+                                    tablets: '120 tablets of 500mg',
+                                    description:
+                                        'Rich in Iron to improve your Haemoglobin levels, Protein for better heart health, Vitamin K for bone health'
+                                        '.',
+                                    shippingMethod: 'Standard Shipping',
+                                    cost: '315/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/spirulina.jpg',
+                                      'assets/images/tablets/spirulina1.jpg'
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 90, // Set the desired height here
+                                height:
+                                    85, // Set the desired height here // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/spirulina.jpg",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Spirulina"),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Vitamin C tablets',
+                                    dosage: '75 mg per day for adults',
+                                    tablets: ' 1400mg ',
+                                    description:
+                                        'PURE NUTRITION CALCIUM consists of calcium citrate malate with added essential vitamins, minerals, and natural '
+                                        'extracts each having unique ways to support bone and muscle health ',
+                                    shippingMethod: 'Standard shipping',
+                                    cost: '400/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/vitamin c.webp',
+                                      'assets/images/tablets/vitamin c2.jfif'
+                                      // Add more image paths if needed
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 70, // Set the desired height here
+                                height: 65, // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/vitamin c.webp",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Vitamin C\n tablets"),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MedicineDetailsPage(
+                                  medicineDetails: MedicineDetails(
+                                    medicineName: 'Solvin Cough Tablets',
+                                    dosage:
+                                        'single dose can be taken at a time ',
+                                    tablets: 'Strip of 10 tablets ',
+                                    description:
+                                        'This medicine is used as medication for cold and cough preparations',
+                                    shippingMethod: 'Standard shipping',
+                                    cost: '63/-',
+                                    imagePaths: [
+                                      'assets/images/tablets/cough1.webp',
+                                      'assets/images/tablets/solvin1.webp',
+                                      // Add more image paths if needed
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                // height: 90, // Set the desired height here
+                                height:
+                                    85, // Set the desired height here // Set the desired height here
+                                child: Image.asset(
+                                  "assets/images/tablets/solvin1.webp",
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const Text("Solvin tablet"),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      "Pharmacies Recommended for you",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Column(
                     children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Paracetamol',
-                                  dosage: '650mg',
-                                  tablets: 'Strip of 15 tablets',
-                                  description:
-                                      'Dolo 650 tablet contains an active ingredient called paracetamol, which works by blocking the '
-                                      'formation of certain chemicals that cause pain and fever in the body. This medicine can'
-                                      ' be used to treat various conditions such as headache, backache, migraine, toothache, body pain, '
-                                      'and even fever associated with diseases like typhoid or the common cold.',
-                                  shippingMethod: 'Standard Shipping',
-                                  cost: '29/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/paracetemol1.png',
-                                    'assets/images/tablets/paracetemol2.webp'
-                                  ],
-                                ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: pharmacyData.length,
+                        itemBuilder: (context, index) {
+                          final data = pharmacyData[index];
+                          final name = data["name"] ?? "N/A";
+                          final tel = data["tel"] ?? "N/A";
+                          final formattedAddress =
+                              data["location"]["formatted_address"] ?? "N/A";
+
+                          return Card(
+                            child: ListTile(
+                              title: Text(name),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Phone Number: $tel"),
+                                  Text("Address: $formattedAddress"),
+                                ],
                               ),
                             ),
                           );
                         },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 90, // Set the desired height here
-                              height: 85, // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/paracetemol1.png",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Paracetamol"),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Cetirizine',
-                                  dosage: 'As directed by Physician',
-                                  tablets: ' syrup of 60ml',
-                                  description:
-                                      'Syrup which is used o reduce to common cold, Allergy, Urticaria Pigmentosa ',
-                                  shippingMethod: 'Standard shipping',
-                                  cost: '85/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/Cetirizine1.png',
-                                    'assets/images/tablets/Cetirizine2.png',
-                                    'assets/images/tablets/Cetirizine3.png',
-                                    // Add more image paths if needed
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 90, // Set the desired height here
-                              height:
-                                  85, // Set the desired height here // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/cetrizine.webp",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Cetirizine"),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Saridon',
-                                  dosage: 'single dose can be taken at a time ',
-                                  tablets: 'Strip of 10 tablets ',
-                                  description:
-                                      'Saridon Tablet, a prescription drug, is manufactured in various forms such as Tablet.'
-                                      ' Fever, Headache, Pain are some of its major therapeutic uses.'
-                                      ' Other than this, Saridon Tablet has some other therapeutic uses,',
-                                  shippingMethod: 'Standard shipping',
-                                  cost: '40/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/saridon.webp',
-                                    'assets/images/tablets/saridon1.jpg',
-                                    // Add more image paths if needed
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 90, // Set the desired height here
-                              height:
-                                  85, // Set the desired height here // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/saridon.webp",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Saridon"),
-                          ],
-                        ),
                       ),
                     ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: GridView.count(
-                    crossAxisCount: 3, // Number of cells in a row
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    shrinkWrap: true,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Spirulina',
-                                  dosage: '650mg',
-                                  tablets: '120 tablets of 500mg',
-                                  description:
-                                      'Rich in Iron to improve your Haemoglobin levels, Protein for better heart health, Vitamin K for bone health'
-                                      '.',
-                                  shippingMethod: 'Standard Shipping',
-                                  cost: '315/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/spirulina.jpg',
-                                    'assets/images/tablets/spirulina1.jpg'
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 90, // Set the desired height here
-                              height:
-                                  85, // Set the desired height here // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/spirulina.jpg",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Spirulina"),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Vitamin C tablets',
-                                  dosage: '75 mg per day for adults',
-                                  tablets: ' 1400mg ',
-                                  description:
-                                      'PURE NUTRITION CALCIUM consists of calcium citrate malate with added essential vitamins, minerals, and natural '
-                                      'extracts each having unique ways to support bone and muscle health ',
-                                  shippingMethod: 'Standard shipping',
-                                  cost: '400/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/vitamin c.webp',
-                                    'assets/images/tablets/vitamin c2.jfif'
-                                    // Add more image paths if needed
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 70, // Set the desired height here
-                              height: 65, // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/vitamin c.webp",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Vitamin C\n tablets"),
-                          ],
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MedicineDetailsPage(
-                                medicineDetails: MedicineDetails(
-                                  medicineName: 'Solvin Cough Tablets',
-                                  dosage: 'single dose can be taken at a time ',
-                                  tablets: 'Strip of 10 tablets ',
-                                  description:
-                                      'This medicine is used as medication for cold and cough preparations',
-                                  shippingMethod: 'Standard shipping',
-                                  cost: '63/-',
-                                  imagePaths: [
-                                    'assets/images/tablets/cough1.webp',
-                                    'assets/images/tablets/solvin1.webp',
-                                    // Add more image paths if needed
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              // height: 90, // Set the desired height here
-                              height:
-                                  85, // Set the desired height here // Set the desired height here
-                              child: Image.asset(
-                                "assets/images/tablets/solvin1.webp",
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            const Text("Solvin tablet"),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> fetchMedicalStores() async {
+    const url =
+        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
+
+    final headers = {
+      "accept": "application/json",
+      "Authorization": "fsq3LPvbSdx96rSXZgsqmzDM3f/3KxqosKh/xuQZ2WT3MU8="
+    };
+
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final results = responseData["results"];
+
+        final validMedicalStores = List<Map<String, dynamic>>.from(results)
+            .where((store) =>
+                store["tel"] != null &&
+                store["tel"] != "N/A" &&
+                store["location"]["formatted_address"] != null &&
+                store["location"]["formatted_address"] != "N/A")
+            .toList();
+
+        setState(() {
+          pharmacyData = validMedicalStores;
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 }

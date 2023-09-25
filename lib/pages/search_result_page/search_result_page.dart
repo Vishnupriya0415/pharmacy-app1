@@ -1,85 +1,122 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: library_private_types_in_public_api
 
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Items_in_cart.dart';
 import 'package:http/http.dart' as http;
+class SelectedData {
+  final String medicineName;
+  final Map<String, dynamic> pharmacyData;
+SelectedData({required this.medicineName, required this.pharmacyData});
+  //final selectedDataProvider = Provider.of<SelectedDataProvider>(context, listen: false);
+    //selectedDataProvider.setSelectedData(medicineName, pharmacyData);
+
+}
+
 
 class MedicalStoreListScreen extends StatefulWidget {
-  const MedicalStoreListScreen({Key? key}) : super(key: key);
+  final String searchQuery;
+
+  const MedicalStoreListScreen({Key? key, required this.searchQuery})
+      : super(key: key);
 
   @override
-  State<MedicalStoreListScreen> createState() => _MedicalStoreListScreenState();
+  _MedicalStoreListScreenState createState() => _MedicalStoreListScreenState();
 }
 
 class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
   List<Map<String, dynamic>> pharmacyData = [];
-  Position? currentPosition;
 
   @override
   void initState() {
     super.initState();
-    // _getCurrentLocation();
-    fetchInitialValueFromFirestore();
-  }
-
-  Future<void> fetchInitialValueFromFirestore() async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    final user = FirebaseAuth.instance.currentUser;
-    final uid = user!.uid;
-    DocumentReference<Map<String, dynamic>> snapshot =
-        firestore.collection('users').doc(uid);
-    DocumentSnapshot<Map<String, dynamic>> data = await snapshot.get();
-    double initialValue1 = data['latitude']?.toDouble() ?? 0.0;
-    double initialValue2 = data['longitude']?.toDouble() ?? 0.0;
-
-    // Set the initial position
-    setState(() {
-      currentPosition = Position(
-        latitude: initialValue1,
-        longitude: initialValue2,
-        timestamp: DateTime.now(),
-        accuracy: 0.0,
-        altitude: 0.0,
-        heading: 0.0,
-        speed: 0.0,
-        speedAccuracy: 0.0,
-      );
-    });
-
-    // Fetch medical stores
     fetchMedicalStores();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text(
+            'Search results for prescription',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 16),
+            const SizedBox(height: 16.0),
+            Text(
+              'Number of pharmacies: ${pharmacyData.length}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16.0),
             Expanded(
               child: ListView.builder(
                 itemCount: pharmacyData.length,
                 itemBuilder: (context, index) {
                   final data = pharmacyData[index];
                   final name = data["name"] ?? "N/A";
-                  final tel = data["tel"] ?? "N/A";
-                  final formattedAddress =
-                      data["location"]["formatted_address"] ?? "N/A";
+                  final address = data["address"] ?? "N/A";
 
-                  return Card(
-                    child: ListTile(
-                      title: Text(name),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Phone Number: $tel"),
-                          Text("Address: $formattedAddress"),
-                        ],
+                  return GestureDetector(
+                    onTap: () {
+                      final selectedData = SelectedData(
+                        medicineName: widget.searchQuery,
+                        pharmacyData: data,
+                      );
+                     Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CartPage(selectedData: selectedData, medicines: const [],),
+      ),
+    );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey[300]!.withOpacity(0.3),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(
+                              name,
+                              style: const TextStyle(
+                                fontSize: 20,
+                              ),
+                            ),
+                            subtitle: Column(
+                              children: [
+                                const SizedBox(height: 10.0),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(' ${widget.searchQuery}')),
+                                Text(
+                                  'Address: $address',
+                                  style: const TextStyle(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   );
@@ -93,16 +130,8 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
   }
 
   Future<void> fetchMedicalStores() async {
-    if (currentPosition == null) {
-      print('Error: Current position is not available.');
-      return;
-    }
-
-    final latitude = currentPosition!.latitude;
-    final longitude = currentPosition!.longitude;
-
-    final url =
-        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=$latitude%2C$longitude&radius=10000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
+    const url =
+        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
 
     final headers = {
       "accept": "application/json",
@@ -115,22 +144,32 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
         final responseData = json.decode(response.body);
         final results = responseData["results"];
 
-        // Filter out entries without valid phone numbers and addresses
         final validMedicalStores = List<Map<String, dynamic>>.from(results)
             .where((store) =>
                 store["tel"] != null &&
                 store["tel"] != "N/A" &&
                 store["location"]["formatted_address"] != null &&
                 store["location"]["formatted_address"] != "N/A")
-            .toList();
+            .map((store) {
+          final medicines = [
+            {"name": "Paracetamol", "dosage": "1 tablet"},
+            {"name": "Ibuprofen", "dosage": "1 tablet"},
+            // Add more medicines and dosages
+          ];
+
+          return {
+            "name": store["name"],
+            "address": store["location"]["formatted_address"],
+            "medicines": medicines,
+          };
+        }).toList();
 
         setState(() {
           pharmacyData = validMedicalStores;
         });
-      } else {
-        print("Error: ${response.statusCode}");
       }
     } catch (e) {
+      // ignore: avoid_print
       print("Error: $e");
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gangaaramtech/pages/settings/FAQ.dart';
 
 class EditSettingsPage extends StatefulWidget {
   const EditSettingsPage({super.key});
@@ -44,6 +45,12 @@ class _EditSettingsPageState extends State<EditSettingsPage> {
             leading:const  Icon(Icons.question_answer),
             title:const  Text('FAQ'),
             onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FAQPAge(),
+                ),
+              );
               // Add functionality to navigate to the FAQ section
             },
           ),

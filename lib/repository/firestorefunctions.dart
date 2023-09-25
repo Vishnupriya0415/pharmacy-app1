@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -5,6 +7,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 class FireStoreFunctions {
   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Future<Map<String, dynamic>> getUserData() async {
+    try {
+      User currentUser = auth.currentUser!;
+      DocumentSnapshot userSnapshot =
+          await firestore.collection('users').doc(currentUser.uid).get();
+      return userSnapshot.data() as Map<String, dynamic>;
+    } catch (e) {
+// Handle any errors here
+      print('Error fetching user data:  $e');
+      return {}; // Return an empty map or handle the error as needed
+    }
+  }
 
   Future<String> updatePhoneNumber({
     required String phoneNumber,

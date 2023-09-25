@@ -1,26 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-
-// class MedicineDetails {
-//   final String medicineName;
-//   final String dosage;
-//   final String tablets;
-//   final String description;
-//   final String shippingMethod;
-//   final String cost; // Add the Cost parameter here
-//   final List<String> imagePaths;
-
-//   MedicineDetails({
-//     required this.medicineName,
-//     required this.dosage,
-//     required this.tablets,
-//     required this.description,
-//     required this.shippingMethod,
-//     required this.cost, // Make sure to include the Cost parameter here
-//     required this.imagePaths,
-//   });
-// }
+import 'package:http/http.dart' as http;
 
 class MedicineDetails {
   final String medicineName;
@@ -53,9 +36,27 @@ class MedicineDetailsPage extends StatefulWidget {
 
 class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
   final PageController _pageController = PageController();
+  String? selectedPharmacy;
+  List<Map<String, dynamic>> pharmacyData = [];
+  @override
+  void initState() {
+    super.initState();
+    fetchMedicalStores();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    void updateSelectedPharmacy(String pharmacyName) {
+      setState(() {
+        selectedPharmacy = pharmacyName;
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -181,6 +182,46 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
                 ),
               ),
               const SizedBox(height: 10),
+              const Text(
+                "Select a pharmacy to place your order:",
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 10),
+              Tooltip(
+                  message:
+                      'The provided pharmacies are there to help you with your health needs and conviniently located near you',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200], // Set the background color
+                      borderRadius:
+                          BorderRadius.circular(20), // Add rounded corners
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButton<String>(
+                      value: selectedPharmacy,
+                      items: pharmacyData.map((store) {
+                        final storeName = store["name"] as String;
+                        final storeLocation =
+                            store["location"]["formatted_address"] as String;
+                        final storeValue = '$storeName ($storeLocation)';
+                        return DropdownMenuItem<String>(
+                          value: storeValue,
+                          child: Text(storeName),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        updateSelectedPharmacy(newValue!);
+                      },
+                      icon: const Icon(
+                          Icons.arrow_drop_down), // Add a dropdown icon
+                      isExpanded:
+                          true, // Ensure the dropdown button expands to fit content
+                    ),
+                  )),
+              const SizedBox(
+                height: 20,
+              ),
+
               ElevatedButton(
                 onPressed: () {
                   print("added to cart");
@@ -238,5 +279,38 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
         ),
       ),
     );
+  }
+
+  Future<void> fetchMedicalStores() async {
+    const url =
+        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=10000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
+
+    final headers = {
+      "accept": "application/json",
+      "Authorization": "fsq3LPvbSdx96rSXZgsqmzDM3f/3KxqosKh/xuQZ2WT3MU8="
+    };
+
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final results = responseData["results"];
+
+        // Filter out entries without valid phone numbers and addresses
+        final validMedicalStores = List<Map<String, dynamic>>.from(results)
+            .where((store) =>
+                store["tel"] != null &&
+                store["tel"] != "N/A" &&
+                store["location"]["formatted_address"] != null &&
+                store["location"]["formatted_address"] != "N/A")
+            .toList();
+
+        setState(() {
+          pharmacyData = validMedicalStores;
+        });
+      }
+    } catch (e) {
+      //  print("Error: $e");
+    }
   }
 }

@@ -4,9 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+//import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/selected_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/repository/auth.dart';
@@ -22,6 +22,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => Auth()),
+      //  ChangeNotifierProvider(create: (_) => SelectedDataProvider()),
         // Add other providers here
       ],
       child: const MyApp(),
