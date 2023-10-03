@@ -17,6 +17,14 @@ class FontConstants {
     fontStyle: FontStyle.normal,
     fontWeight: FontWeight.w300,
   );
+  
+ static TextStyle lightVioletMixedWhite = TextStyle(
+    color: ColorConstants.lightVioletMixedWhite,
+    fontSize: 16,
+    fontFamily: 'Poppins',
+    fontStyle: FontStyle.normal,
+    fontWeight: FontWeight.w300,
+  );
 
   static TextStyle lightVioletMixedGreyNormal14 = TextStyle(
     color: ColorConstants.lightViolet,

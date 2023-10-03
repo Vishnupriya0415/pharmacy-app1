@@ -1,4 +1,5 @@
-import 'package:gangaaramtech/pages/authentication/siginin/signin.dart';
+import 'package:gangaaramtech/SignUpScreen/SIgnUPScreen.dart';
+//import 'package:gangaaramtech/pages/authentication/siginin/signin.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/utils/constants/font_constants.dart';
@@ -166,7 +167,7 @@ class CustomSmoothIndicator extends StatelessWidget {
 loginPageNav(BuildContext context) {
   Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => const SignIn(),
+      builder: (context) => const SignUpScreen(),
     ),
   );
 }

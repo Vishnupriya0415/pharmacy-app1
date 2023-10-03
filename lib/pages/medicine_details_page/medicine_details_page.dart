@@ -1,9 +1,14 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gangaaramtech/Vendor/OrderManagement.dart';
+import 'package:gangaaramtech/Vendor/Order_provider.dart';
+import 'package:gangaaramtech/repository/firestorefunctions.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 class MedicineDetails {
   final String medicineName;
@@ -38,10 +43,21 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
   final PageController _pageController = PageController();
   String? selectedPharmacy;
   List<Map<String, dynamic>> pharmacyData = [];
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Map<String, dynamic> userData = {};
+  
   @override
   void initState() {
     super.initState();
     fetchMedicalStores();
+    fetchUserData();
+  }
+ Future<void> fetchUserData() async {
+    Map<String, dynamic> data = await FireStoreFunctions().getUserData();
+    setState(() {
+      userData = data;
+    });
   }
 
   @override
@@ -249,9 +265,30 @@ class _MedicineDetailsPageState extends State<MedicineDetailsPage> {
               ),
               const SizedBox(height: 10),
               ElevatedButton(
-                onPressed: () {
-                  print("added to cart");
-                },
+                 onPressed: () {
+                   final orderProvider = Provider.of<OrderProvider>(context, listen: false); // Obtain the instance
+
+                   final newOrder = MyOrder(
+      id: UniqueKey().toString(), 
+      // Generate a unique order ID
+    medicineNames:[widget.medicineDetails.medicineName],
+      customerName: '${userData['Name']}', 
+      totalAmount: widget.medicineDetails.cost, 
+      isAccepted: false, 
+   // pharmacyName: selectedPharmacy,
+    );
+
+    // Add the new order to the OrderProvider
+    orderProvider.addOrder(newOrder);
+
+    // Display a SnackBar to confirm the order placement
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Order placed successfully'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+    },
                 style: ButtonStyle(
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(

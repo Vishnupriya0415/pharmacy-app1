@@ -1,41 +1,33 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print, use_build_context_synchronously, unnecessary_null_comparison, prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: unnecessary_null_comparison
 
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-//import 'package:firebase_storage/firebase_storage.dart';
 
-class ProfileScreen extends StatefulWidget {
-  static const routeName = "/profileScreen";
-
-  final Map<String, dynamic> userData;
-
-  const ProfileScreen({
-    Key? key,
-    required this.userData,
-  }) : super(key: key);
+class VEditProgilePage extends StatefulWidget {
+  final Map<String,dynamic> vendorData;
+  const VEditProgilePage({super.key, required this.vendorData});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<VEditProgilePage> createState() => _EditProgilePageState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _EditProgilePageState extends State<VEditProgilePage> {
   FirebaseAuth auth = FirebaseAuth.instance;
+  Map<String, dynamic> vendorData = {};
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   File? _imageFile;
 
   late ValueNotifier<String> nameNotifier;
   late ValueNotifier<String> addressNotifier;
-  
-  
+
   Future<void> _pickImageFromSource(ImageSource source) async {
     String uid = auth.currentUser!.uid;
 
@@ -53,13 +45,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Get the download URL of the newly uploaded image
       final newImageUrl = await FirebaseStorage.instance
           .ref()
-          .child('user_images')
+          .child('vendor_images')
           .child(uid)
           .getDownloadURL();
 
       // Update the user's profile image URL in Firestore
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('vendors')
           .doc(uid)
           .update({'profileImageUrl': newImageUrl});
 
@@ -69,6 +61,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
           duration: Duration(seconds: 2),
         ),
       );
+    }
+  }
+
+  Future<void> fetchVendorData() async {
+    try {
+      final User? currentUser = auth.currentUser;
+
+      if (currentUser != null) {
+        final String uid = currentUser.uid;
+        final DocumentSnapshot<Map<String, dynamic>> snapshot =
+            await firestore.collection('vendors').doc(uid).get();
+
+        if (snapshot.exists) {
+          setState(() {
+            vendorData = snapshot.data() ?? {};
+          });
+        }
+      }
+    } catch (e) {
+      // Handle errors
+      print('Error fetching user data: $e');
     }
   }
 
@@ -114,17 +127,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _removeProfilePhoto() async {
     try {
-      final String userId = widget.userData['uid'];
-      final String profileImageUrl = widget.userData['profileImageUrl'];
+      final String userId = vendorData['uid'];
+      final String profileImageUrl = vendorData['profileImageUrl'];
 
       // Check if profileImageUrl is not null before proceeding
       if (profileImageUrl != null) {
-        final storageRef = FirebaseStorage.instance.refFromURL(profileImageUrl);
+        final storageRef =
+            FirebaseStorage.instance.refFromURL(profileImageUrl);
         await storageRef.delete();
 
         // Update the user's profile data in Firestore by setting profileImageUrl to null
         await FirebaseFirestore.instance
-            .collection('users')
+            .collection('vendors')
             .doc(userId)
             .update({
           'profileImageUrl': null,
@@ -153,15 +167,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void updateUserProfile() async {
     try {
-      final String userId = widget.userData['uid'];
+      final String userId = vendorData['uid'];
       final updatedName = nameNotifier.value;
 
       // Update the data in Firestore using Firebase
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance.collection('vendors').doc(userId).update({
         'Name': updatedName,
       });
 
-      print(' Name Data updated successfully');
+      print('Name Data updated successfully');
     } catch (e) {
       // Handle errors
       print('Error updating data: $e');
@@ -171,7 +185,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> uploadImageToFirebaseStorage(
       File imageFile, String userId) async {
     final storageReference =
-        FirebaseStorage.instance.ref().child('user_images').child(userId);
+        FirebaseStorage.instance.ref().child('vendor_images').child(userId);
 
     try {
       // Upload the file to Firebase Storage
@@ -182,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       // Save the URL reference to Firestore
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('vendors')
           .doc(userId)
           .update({'profileImageUrl': imageUrl});
     } catch (e) {
@@ -228,17 +242,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    nameNotifier = ValueNotifier<String>(widget.userData['Name']);
+    fetchVendorData();
+    nameNotifier = ValueNotifier<String>(vendorData['Name'] ?? '');
   }
-
-  // Rest of your code...
 
   void updateName(String newName) async {
     try {
-      final String userId = widget.userData['uid'];
+      final String userId = vendorData['uid'];
 
       // Update the data in Firestore using Firebase
-      await FirebaseFirestore.instance.collection('users').doc(userId).update({
+      await FirebaseFirestore.instance.collection('vendors').doc(userId).update({
         'Name': newName,
       });
 
@@ -251,14 +264,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  
   @override
   Widget build(BuildContext context) {
-    final String name = nameNotifier.value; // Use nameNotifier.value
-    final String email = widget.userData['email'] ?? '';
-    final String mobileNo = widget.userData['phone'] ?? '';
-    final String address = widget.userData['address'] ?? '';
-
-    return Scaffold(
+     final String name = nameNotifier.value;
+     final String email = widget.vendorData['email']??'';
+    final String mobileNo = widget.vendorData['phone'] ?? '';
+    final String pharmacyName = widget.vendorData['pharmacyName'] ?? '';
+    final String street = widget.vendorData['address']['street']??'';
+    final String dNo= widget.vendorData['address']['doorNo']??'';
+     final String state= widget.vendorData['address']['state']??'';
+      final String pinCode= widget.vendorData['address']['postalCode']??'';
+       final String city= widget.vendorData['address']['city']??'';
+final String addressText = '$dNo, $street,$city, $state, $pinCode';
+        return SafeArea(child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -269,24 +288,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.shopping_cart,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MyOrdersPage(),
-                ),
-              );
-            },
-          ),
-        ],
+        actions: [],
       ),
-      body: SingleChildScrollView(
+ body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -302,9 +306,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 100,
                       child: (_imageFile != null)
                           ? Image.file(_imageFile!, fit: BoxFit.cover)
-                          : (widget.userData['profileImageUrl'] != null)
+                          : (vendorData['profileImageUrl'] != null)
                               ? Image.network(
-                                  widget.userData['profileImageUrl'],
+                                  vendorData['profileImageUrl'],
                                   fit: BoxFit.cover,
                                 )
                               : Image.asset(
@@ -379,12 +383,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.grey[200],
                   child: ListTile(
                     title: const Text('Email'),
-                    subtitle: Text(email),
+                    subtitle: Text(email), // Replace with the actual email
                   ),
                 ),
               ),
               const SizedBox(
-                height: 40,
+                height: 10,
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
@@ -392,7 +396,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.grey[200],
                   child: ListTile(
                     title: const Text('Address'),
-                    subtitle: Text(address),
+                    subtitle: Text(addressText),
+                  ),
+                ),
+              ),
+               const SizedBox(
+                height: 10,
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: Container(
+                  color: Colors.grey[200],
+                  child: ListTile(
+                    title: const Text('Pharmacy name'),
+                    subtitle: Text(pharmacyName),
                   ),
                 ),
               ),
@@ -446,10 +463,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ),
-    );
+
+    ));
   }
 }
-
 class EditableNameField extends StatefulWidget {
   final String initialValue;
   final Function(String) onUpdate;

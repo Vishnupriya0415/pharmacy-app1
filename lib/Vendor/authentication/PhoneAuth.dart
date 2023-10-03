@@ -2,19 +2,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:gangaaramtech/pages/home/home.dart';
-import 'package:gangaaramtech/repository/firestorefunctions.dart';
+import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
-import 'package:gangaaramtech/utils/constants/font_constants.dart';
 
-class PhoneNumberInput extends StatefulWidget {
-  const PhoneNumberInput({super.key});
+class VPhoneAuth extends StatefulWidget {
+  const VPhoneAuth({super.key});
 
   @override
-  State<PhoneNumberInput> createState() => _PhoneNumberInputState();
+  State<VPhoneAuth> createState() => _PhoneAuthState();
 }
 
-class _PhoneNumberInputState extends State<PhoneNumberInput> {
+class _PhoneAuthState extends State<VPhoneAuth> {
   TextEditingController phoneController = TextEditingController();
 
   Country selectedCountry = Country(
@@ -30,70 +28,10 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
     e164Key: "",
   );
 
-  void updatePhoneNumber() async {
+  void sendPhoneNumber() {
     String phoneNumber = phoneController.text.trim();
-
-     if (phoneNumber.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              'Phone Number is required',
-              textAlign: TextAlign.center,
-              style: FontConstants.lightVioletMixedGreyNormal14,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  'OK',
-                  style: FontConstants.lightVioletMixedGreyNormal14,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },
-      );
-      return; // Return early if the phone number is empty
-    }
-    String res = await FireStoreFunctions().updatePhoneNumber(
-      phoneNumber: "+${selectedCountry.phoneCode}$phoneNumber",
-    );
-    if (res == 'success') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => Home(),
-        ),
-      );
-    } else {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(
-              res,
-              textAlign: TextAlign.center,
-              style: FontConstants.lightVioletMixedGreyNormal14,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  'OK',
-                  style: FontConstants.lightVioletMixedGreyNormal14,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
+    VAuth().phoneVerification(
+        context, "+${selectedCountry.phoneCode}$phoneNumber");
   }
 
   @override
@@ -105,7 +43,6 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
     );
     return SafeArea(
       child: Scaffold(
-        extendBodyBehindAppBar: true,
         body: Container(
           margin: const EdgeInsets.only(left: 25, right: 25),
           alignment: Alignment.center,
@@ -122,7 +59,7 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
                   height: 25,
                 ),
                 const Text(
-                  "Phone Number Registeration",
+                  "Phone Number Verification",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
@@ -221,9 +158,9 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
                       ),
                     ),
                     onPressed: () {
-                      updatePhoneNumber();
+                      sendPhoneNumber();
                     },
-                    child: Text("Sign Up".toUpperCase()),
+                    child: Text("Next".toUpperCase()),
                   ),
                 )
               ],

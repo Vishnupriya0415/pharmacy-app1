@@ -2,19 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:gangaaramtech/pages/home/home.dart';
+import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
+//import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:gangaaramtech/utils/constants/font_constants.dart';
 
-class PhoneNumberInput extends StatefulWidget {
-  const PhoneNumberInput({super.key});
+class VPhoneNumberInput extends StatefulWidget {
+  const VPhoneNumberInput({super.key});
 
   @override
-  State<PhoneNumberInput> createState() => _PhoneNumberInputState();
+  State<VPhoneNumberInput> createState() => _PhoneNumberInputState();
 }
 
-class _PhoneNumberInputState extends State<PhoneNumberInput> {
+class _PhoneNumberInputState extends State<VPhoneNumberInput> {
   TextEditingController phoneController = TextEditingController();
 
   Country selectedCountry = Country(
@@ -59,14 +60,14 @@ class _PhoneNumberInputState extends State<PhoneNumberInput> {
       );
       return; // Return early if the phone number is empty
     }
-    String res = await FireStoreFunctions().updatePhoneNumber(
+    String res = await FireStoreFunctions().VupdatePhoneNumber(
       phoneNumber: "+${selectedCountry.phoneCode}$phoneNumber",
     );
     if (res == 'success') {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Home(),
+          builder: (context) => const VendorHome(),
         ),
       );
     } else {

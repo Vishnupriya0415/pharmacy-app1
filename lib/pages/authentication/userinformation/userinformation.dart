@@ -11,9 +11,6 @@ import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
 
 class UserInfromationScreen extends StatefulWidget {
   final String phone;
-  // const OtpVerify(
-  //     {super.key, required this.verificationId, required this.phone});
-
   const UserInfromationScreen({super.key, required this.phone});
 
   @override
@@ -23,8 +20,6 @@ class UserInfromationScreen extends StatefulWidget {
 class _UserInfromationScreenState extends State<UserInfromationScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _dOBController = TextEditingController();
-
   final FocusNode _focusNode1 = FocusNode();
   final FocusNode _focusNode2 = FocusNode();
   final FocusNode _focusNode3 = FocusNode();
@@ -36,7 +31,6 @@ class _UserInfromationScreenState extends State<UserInfromationScreen> {
     _focusNode3.dispose();
     _nameController.dispose();
     _emailController.dispose();
-    _dOBController.dispose();
     super.dispose();
   }
 
@@ -51,8 +45,6 @@ class _UserInfromationScreenState extends State<UserInfromationScreen> {
     String res = await FireStoreFunctions().updateUserData(
       name: _nameController.text,
       email: _emailController.text,
-      // phone: firebaseAuth.currentUser!.phoneNumber!,
-      // phone: '+917904480400',
       phone: widget.phone,
     );
     if (res == 'success') {

@@ -21,6 +21,7 @@ class ColorConstants {
   static Color lightViolet = fromHex('#090F47');
 
   static Color lightVioletMixedGrey = fromHex('#090F47');
+  static Color lightVioletMixedWhite = Colors.white;
 
   static Color darkblue = fromHex('#090F47');
 

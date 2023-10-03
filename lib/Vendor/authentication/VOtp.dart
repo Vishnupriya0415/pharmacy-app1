@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
-import 'package:gangaaramtech/pages/authentication/userinformation/userinformation.dart';
-//import 'package:gangaaramtech/pages/home/home.dart';
-import 'package:gangaaramtech/repository/auth.dart';
+import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
+import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
+//import 'package:gangaaramtech/repository/auth.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 
-class OtpVerify extends StatefulWidget {
+class VOtpVerify extends StatefulWidget {
   final String phone;
   final String verificationId;
-  const OtpVerify(
+  const VOtpVerify(
       {super.key, required this.verificationId, required this.phone});
 
   @override
-  State<OtpVerify> createState() => _OtpVerifyState();
+  State<VOtpVerify> createState() => _OtpVerifyState();
 }
 
-class _OtpVerifyState extends State<OtpVerify> {
+class _OtpVerifyState extends State<VOtpVerify> {
   String? otpCode;
 
   @override
@@ -149,45 +149,13 @@ class _OtpVerifyState extends State<OtpVerify> {
     );
   }
 
-  // verify otp
-  // void verifyOtp(BuildContext context, String userOtp) {
-  //   final ap = Provider.of<Auth>(context, listen: false);
-  //   ap.verifyOtp(
-  //     context: context,
-  //     verificationId: widget.verificationId,
-  //     userOtp: userOtp,
-  //     onSuccess: () {
-  //       // checking whether user exists in the db
-  //       ap.checkExistingUser().then(
-  //         (value) async {
-  //           if (value == true) {
-  //             Navigator.pushAndRemoveUntil(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => Home(),
-  //               ),
-  //               (route) => false,
-  //             );
-  //           } else {
-  //             // new user
-  //             Navigator.pushAndRemoveUntil(
-  //                 context,
-  //                 MaterialPageRoute(
-  //                     builder: (context) => const UserInfromationScreen()),
-  //                 (route) => false);
-  //           }
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
-
+  
   void verifyOtp(BuildContext context, String userOtp) {
-    final ap = Provider.of<Auth>(context, listen: false);
+    final ap = Provider.of<VAuth>(context, listen: false);
     ap.verifyOtp(
       context: context,
       verificationId: widget.verificationId,
-      userOtp: userOtp,
+      vendorOtp: userOtp,
       onSuccess: () {
         // checking whether user exists in the db
         ap.checkExistingUser().then(
@@ -201,12 +169,11 @@ class _OtpVerifyState extends State<OtpVerify> {
                 ),
               );
             } else {
+              //new user
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UserInfromationScreen(
-                    phone: widget.phone,
-                  ),
+                  builder: (context) => VendorInformation(phone: widget.phone,)
                 ),
                 (route) => false,
               );

@@ -1,46 +1,82 @@
 // ignore_for_file: sized_box_for_whitespace
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-//import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
+import 'package:gangaaramtech/Vendor/common/VEditProfile.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
-import 'package:gangaaramtech/pages/profile/edit_profile.dart';
 import 'package:gangaaramtech/pages/settings/AboutPage.dart';
 import 'package:gangaaramtech/pages/settings/edit_settings.dart';
 import 'package:gangaaramtech/repository/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
 
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+class VSettingsPage extends StatefulWidget {
+  const VSettingsPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _SettingsPageState createState() => _SettingsPageState();
+  State<VSettingsPage> createState() => _VSettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
-  FirebaseAuth auth = FirebaseAuth.instance;
+class _VSettingsPageState extends State<VSettingsPage> {
+   FirebaseAuth auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  Map<String, dynamic> userData = {};
+  Map<String, dynamic> VendorData = {};
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    fetchVendorData();
   }
 
-  Future<void> fetchUserData() async {
-    Map<String, dynamic> data = await FireStoreFunctions().getUserData();
+  Future<void> fetchVendorData() async {
+    Map<String, dynamic> data = await FireStoreFunctions().getVendorData();
     setState(() {
-      userData = data;
+      VendorData = data;
     });
   }
 
+void _showSignOutAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Sign Out'),
+          content: const Text('Are you sure you want to sign out?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform the sign-out action here...
+                // For example, you can call a sign-out function from your authentication service.
+                // After successful sign-out, navigate to the main page.
+                // Here, we are using pushReplacement to replace the current route with the main page.
+                _performSignOut(context);
+              },
+              child: const Text('Sign Out'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _performSignOut(BuildContext context) {
+    Auth().signOut();
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const OnboardingScreen(),
+      ),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
@@ -59,7 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ],
       ),
       body: Container(
-        color: Colors.white,
+         color: Colors.white,
         // Add height to the Container to ensure it's visible
         height: MediaQuery.of(context).size.height,
         child: ListView(
@@ -67,8 +103,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(
               height: 70,
             ),
-            // Profile Icon Section
-            Padding(
+             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
@@ -76,9 +111,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      child: userData['profileImageUrl'] != null
+                      child: VendorData['profileImageUrl'] != null
                           ? Image.network(
-                              userData['profileImageUrl'],
+                              VendorData['profileImageUrl'],
                               fit: BoxFit.cover,
                             )
                           : Image.asset(
@@ -90,8 +125,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  Text(" ${userData['Name']}"),
-                  Text("${userData['phone']}"),
+                  Text(" ${VendorData['Name']}"),
+                  Text("${VendorData['phone']}"),
                   const SizedBox(
                     height: 20,
                   )
@@ -140,49 +175,20 @@ class _SettingsPageState extends State<SettingsPage> {
                         ],
                       ),
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                    userData: userData,
-                                  )),
-                        );
-                        // Add your edit profile functionality here
-                      },
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => VEditProgilePage(vendorData: VendorData,),
+    ),
+  );
+},
+
                     ),
                   ],
                 ),
               ),
             ),
-
-            // My Orders Option
-            Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
-                child: ListTile(
-                  leading: const Icon(Icons.shopping_cart),
-                  title: const Text('My Orders'),
-                  trailing: const Text(
-                    // Display greater than symbol as trailing widget
-                    '>',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                     Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyOrdersPage(), // Replace with your MyOrdersPage widget
-          ),
-        );
-                  },
-                ),
-              ),
-            ),
-
-            // Payment Methods Option
-            Card(
+             Card(
               // Add Card to wrap the Container
               elevation: 0, // Remove the shadow
               child: Container(
@@ -191,18 +197,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: const Icon(Icons.payment),
                   title: const Text('Payment'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {
-                    // Add your functionality here
+                   
+
                   },
                 ),
               ),
             ),
-
-            // Settings Option
             Card(
               // Add Card to wrap the Container
               elevation: 0, // Remove the shadow
@@ -227,15 +231,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
+              elevation: 0, 
               child: Container(
-                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2), // Add padding
+                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2), 
                 child: ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: const Text('About'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -248,8 +250,6 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ),
-
-            // Sign Out Option
             Card(
               // Add Card to wrap the Container
               elevation: 0, // Remove the shadow
@@ -266,69 +266,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ),
-
-             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
-                child: ListTile(
-                  leading: const Icon(Icons.shopping_cart),
-                  title: const Text('Vendor'),
-                  trailing: const Text(
-                    // Display greater than symbol as trailing widget
-                    '>',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                     
-                  },
-                ),
-              ),
-            ),
           ],
         ),
       ),
-    );
-  }
-
-  void _showSignOutAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Sign Out'),
-          content: const Text('Are you sure you want to sign out?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                // Perform the sign-out action here...
-                // For example, you can call a sign-out function from your authentication service.
-                // After successful sign-out, navigate to the main page.
-                // Here, we are using pushReplacement to replace the current route with the main page.
-                _performSignOut(context);
-              },
-              child: const Text('Sign Out'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _performSignOut(BuildContext context) {
-    Auth().signOut();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const OnboardingScreen(),
-      ),
-    );
-  }
+    );      
+}
 }
