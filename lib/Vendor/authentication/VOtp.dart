@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';

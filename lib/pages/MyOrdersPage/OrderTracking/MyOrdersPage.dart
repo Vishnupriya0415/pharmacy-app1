@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CurrentOrders.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
-//import '../search_result_page/search_result_page.dart';
 import 'RecentOrders.dart';
 import 'Items_in_cart.dart';
 class MyOrdersPage extends StatelessWidget {
-   
+
   MyOrdersPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     List<MyListOfOrders> recentOrders = [
@@ -72,13 +72,12 @@ class MyOrdersPage extends StatelessWidget {
           taxes: 10.0,
           OrderId: 'ord1923'),
     ];
-     SelectedData selectedData = SelectedData(
-       medicineName: 'cetrizine', 
-        pharmacyData: {
-          'name': 'medplus', 
-       },
-      );
-
+    //SelectedData selectedData = SelectedData(
+    //medicineName: 'cetrizine', 
+    //pharmacyData: {
+    //'name': 'medplus', 
+    //},
+    //);
     return Scaffold(
       body: DefaultTabController(
         length: 3, // Number of tabs
@@ -137,7 +136,7 @@ class MyOrdersPage extends StatelessWidget {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
-                  child: CartPage(selectedData: selectedData, medicines: const [],
+                  child: const CartPage(
 
                   ),
                 ),

@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace
+// ignore_for_file: sized_box_for_whitespace, file_names
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/authentication/SignIn.dart';

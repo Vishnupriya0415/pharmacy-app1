@@ -1,7 +1,7 @@
+// ignore_for_file: unused_import
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/pages/authentication/userinformation/userinformation.dart';
-//import 'package:gangaaramtech/pages/home/home.dart';
+import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/repository/auth.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:pinput/pinput.dart';
@@ -197,7 +197,7 @@ class _OtpVerifyState extends State<OtpVerify> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const VendorHome(),
+                  builder: (context) => Home(),
                 ),
               );
             } else {

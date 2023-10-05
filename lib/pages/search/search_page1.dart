@@ -1,15 +1,33 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 
+import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart'; // Import the relevant page
+
 class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+  final void Function(dynamic selectedMedicine) onMedicineSelected; // Define the callback function
+
+  const SearchPage({Key? key, required this.onMedicineSelected}) : super(key: key);
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
+
+  void _navigateToMedicalStoreList(String searchQuery) {
+    if (searchQuery.isNotEmpty) {
+      // Navigate to the medical store list only if the search query is not empty
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MedicalStoreListScreen(searchQuery: searchQuery, onMedicineSelected: widget.onMedicineSelected), // Pass the callback function to the next screen
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -55,9 +73,12 @@ class _SearchPageState extends State<SearchPage> {
               child: Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
+                    child: TextField(
                       controller: _searchController,
-                      onChanged: (value) {},
+                      onSubmitted: (value) {
+                        // Trigger navigation when the user submits the search
+                        _navigateToMedicalStoreList(value);
+                      },
                       decoration: const InputDecoration(
                         labelText: 'Search',
                         prefixIcon: Icon(Icons.search),
@@ -66,7 +87,10 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.camera_alt_outlined, size: 40),
-                    onPressed: () {},
+                    onPressed: () {
+                      // Implement camera functionality here
+                      // This button can be used to take a picture or open the gallery.
+                    },
                   ),
                 ],
               ),

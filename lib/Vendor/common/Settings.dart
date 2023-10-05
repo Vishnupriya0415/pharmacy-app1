@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace
+// ignore_for_file: file_names, sized_box_for_whitespace, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';

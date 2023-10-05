@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, avoid_print, use_build_context_synchronously, file_names, duplicate_ignore
 
 import 'dart:io';
 
@@ -260,6 +260,7 @@ class _EditProgilePageState extends State<VEditProgilePage> {
       print('Name updated successfully');
     } catch (e) {
       // Handle errors
+      // ignore: avoid_print
       print('Error updating name: $e');
     }
   }
@@ -288,7 +289,7 @@ final String addressText = '$dNo, $street,$city, $state, $pinCode';
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [],
+        actions: const [],
       ),
  body: SingleChildScrollView(
         child: Padding(

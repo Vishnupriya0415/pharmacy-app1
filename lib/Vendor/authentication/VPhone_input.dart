@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, file_names
 
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
@@ -60,7 +60,7 @@ class _PhoneNumberInputState extends State<VPhoneNumberInput> {
       );
       return; // Return early if the phone number is empty
     }
-    String res = await FireStoreFunctions().VupdatePhoneNumber(
+    String res = await FireStoreFunctions().updateVPhoneNumber(
       phoneNumber: "+${selectedCountry.phoneCode}$phoneNumber",
     );
     if (res == 'success') {

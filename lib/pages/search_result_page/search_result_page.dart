@@ -1,23 +1,24 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_web_libraries_in_flutter, annotate_overrides, override_on_non_overriding_member, prefer_const_constructors
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Items_in_cart.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+
 class SelectedData {
   final String medicineName;
   final Map<String, dynamic> pharmacyData;
-SelectedData({required this.medicineName, required this.pharmacyData});
+  SelectedData({required this.medicineName, required this.pharmacyData});
   //final selectedDataProvider = Provider.of<SelectedDataProvider>(context, listen: false);
-    //selectedDataProvider.setSelectedData(medicineName, pharmacyData);
-
+  //selectedDataProvider.setSelectedData(medicineName, pharmacyData);
 }
-
 
 class MedicalStoreListScreen extends StatefulWidget {
   final String searchQuery;
 
-  const MedicalStoreListScreen({Key? key, required this.searchQuery})
+  const MedicalStoreListScreen({Key? key, required this.searchQuery, required void Function(dynamic selectedMedicine) onMedicineSelected})
       : super(key: key);
 
   @override
@@ -58,70 +59,82 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
             ),
             const SizedBox(height: 16.0),
             Expanded(
-              child: ListView.builder(
-                itemCount: pharmacyData.length,
-                itemBuilder: (context, index) {
-                  final data = pharmacyData[index];
-                  final name = data["name"] ?? "N/A";
-                  final address = data["address"] ?? "N/A";
+              child: Consumer<SelectedDataProvider>(
+                  builder: (context, selectedDataProvider, child) {
+                return ListView.builder(
+                  itemCount: pharmacyData.length,
+                  itemBuilder: (context, index) {
+                    final data = pharmacyData[index];
+                    final name = data["name"] ?? "N/A";
+                    final address = data["address"] ?? "N/A";
 
-                  return GestureDetector(
-                    onTap: () {
-                      final selectedData = SelectedData(
-                        medicineName: widget.searchQuery,
-                        pharmacyData: data,
-                      );
-                     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CartPage(selectedData: selectedData, medicines: const [],),
-      ),
-    );
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey[300]!.withOpacity(0.3),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Card(
-                          child: ListTile(
-                            title: Text(
-                              name,
-                              style: const TextStyle(
-                                fontSize: 20,
+                    return GestureDetector(
+                      onTap: () {
+                         final selectedMedicalShop = MedicalShop(
+                            name: name,
+                            medicines: [
+                              Medicine(
+                                name: widget.searchQuery,
+                                price: 0.0, // Set the initial price to 0
+                                quantity: 0,
+                                pharmacyName: '' // Set the initial quantity to 0
                               ),
+                            ],
+                          );
+                          selectedDataProvider.addMedicalShop(selectedMedicalShop);
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CartPage(),
                             ),
-                            subtitle: Column(
-                              children: [
-                                const SizedBox(height: 10.0),
-                                Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(' ${widget.searchQuery}')),
-                                Text(
-                                  'Address: $address',
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                  ),
+                          );
+                        },
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey[300]!.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                name,
+                                style: const TextStyle(
+                                  fontSize: 20,
                                 ),
-                              ],
+                              ),
+                              subtitle: Column(
+                                children: [
+                                  const SizedBox(height: 10.0),
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(' ${widget.searchQuery}')),
+                                  Text(
+                                    'Address: $address',
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
-              ),
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),

@@ -7,6 +7,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gangaaramtech/Vendor/Order_provider.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/Order_placement.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/order_data.dart';
 //import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/selected_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +30,13 @@ void main() async {
         ChangeNotifierProvider(create: (_) => Auth()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_)=> VAuth()),
-      //  ChangeNotifierProvider(create: (_) => SelectedDataProvider()),
+        ChangeNotifierProvider(create: (_) => OrderPlacementProvider()),
+        ChangeNotifierProvider(create: (_) => OrderDataProvider()),
+        ChangeNotifierProvider(
+      create: (context) => SelectedDataProvider(),
+
+     
+    ),
         // Add other providers here
       ],
       child: const MyApp(),

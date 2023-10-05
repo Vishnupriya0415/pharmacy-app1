@@ -1,9 +1,10 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use
+// ignore_for_file: avoid_print, use_build_context_synchronously, deprecated_member_use, no_leading_underscores_for_local_identifiers
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
@@ -111,6 +112,7 @@ class _HomeState extends State<Home> {
     _getCurrentLocation();
     _startLocationUpdateTimer();
     fetchMedicalStores();
+    requestNotificationPermission();
   }
 
   @override
@@ -526,6 +528,35 @@ class _HomeState extends State<Home> {
   //   //   ),
   //   // );
   // }
+  Future<void> requestNotificationPermission() async {
+    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+// Request notification permissions
+    NotificationSettings settings = await _firebaseMessaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+// Permission is granted
+      print('Notification permissions granted.');
+    } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
+// Permission is denied
+      print('Notification permissions denied.');
+    }
+
+// Configure Firebase Messaging
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+// Handle incoming notifications when the app is in the foreground
+      print('Received notification: ${message.notification?.title}');
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+// Handle notifications when the app is opened from a terminated state
+      print('Opened app from notification: ${message.notification?.title}');
+    });
+  }
 
   File? _image;
 
@@ -649,7 +680,7 @@ class _HomeState extends State<Home> {
                   context,
                   MaterialPageRoute(
                     // builder: (context) => const MedicineSearchPage(),
-                    builder: (context) => const SearchPage(),
+                    builder: (context) =>  SearchPage(onMedicineSelected: (selectedMedicine) {  },),
                   ),
                 );
               } else if (index == 2) {
@@ -743,7 +774,7 @@ class _HomeState extends State<Home> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             MedicalStoreListScreen(
-                                                searchQuery: value),
+                                                searchQuery: value, onMedicineSelected: (selectedMedicine) {  },),
                                       ),
                                     );
                                   },

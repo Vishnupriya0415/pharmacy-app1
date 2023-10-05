@@ -74,7 +74,7 @@ void updateVendorsData() async {
   String email = widget.email ?? ""; // Assign an empty string if email is null
 
     // final firebaseAuth = FirebaseAuth.instance;
-    String res = await FireStoreFunctions().updateUsersData(
+    String res = await FireStoreFunctions().updateVendorsData(
 
       email: email,
       name: _nameController.text,

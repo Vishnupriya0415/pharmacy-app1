@@ -1,4 +1,5 @@
-//import 'package:application1/Vendor/order_management/OrderManagament.dart';
+// ignore_for_file: file_names
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/OrderManagement.dart';

@@ -1,49 +1,42 @@
 {
   "project_info": {
-    "project_number": "252269227780",
-    "project_id": "gangaaramtech-22e4d",
-    "storage_bucket": "gangaaramtech-22e4d.appspot.com"
+    "project_number": "245599375827",
+    "project_id": "gangaaramtech-2aaeb",
+    "storage_bucket": "gangaaramtech-2aaeb.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:252269227780:android:9a82252ed10caba9462a51",
+        "mobilesdk_app_id": "1:245599375827:android:7cde5779f6f230c1e8df26",
         "android_client_info": {
           "package_name": "com.example.gangaaramtech"
         }
       },
       "oauth_client": [
         {
-          "client_id": "252269227780-i9gpha6e95va2qgaobgcjvn6tor3mm2f.apps.googleusercontent.com",
+          "client_id": "245599375827-am6m3b138gkuc65uv2vjlou2k5dq359e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.gangaaramtech",
-            "certificate_hash": "fd551b7934a7658d9e2f4e0c5b6740516536d862"
+            "certificate_hash": "22d4cea3f66093c0708d6abe4587a1f88d02ca39"
           }
         },
         {
-          "client_id": "252269227780-umng1qhm4kdt6lub2rm564gqmjqa1hrq.apps.googleusercontent.com",
+          "client_id": "245599375827-cq9nca0s0922nnc87uh7p6p4id76lcrc.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBPdCc_aGN6WQYR3srnFcxedjO-6ELYlto"
+          "current_key": "AIzaSyCgwWVOMw0rR6fhA-RBIBdsgWvh4TvZtcY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "252269227780-umng1qhm4kdt6lub2rm564gqmjqa1hrq.apps.googleusercontent.com",
+              "client_id": "245599375827-cq9nca0s0922nnc87uh7p6p4id76lcrc.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "252269227780-ob53ma49j0sethdjgdoa26tbdb42vj9i.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.gangaaramtech"
-              }
             }
           ]
         }

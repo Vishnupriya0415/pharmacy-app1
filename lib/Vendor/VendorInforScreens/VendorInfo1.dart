@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, file_names
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
@@ -103,9 +103,9 @@ class _VendorInformationState extends State<VendorInformation> {
     _focusNode9.unfocus();
   }
 
-void updateUsersData() async {
+void updateVendorsData() async {
     // final firebaseAuth = FirebaseAuth.instance;
-    String res = await FireStoreFunctions().updateUsersData(
+    String res = await FireStoreFunctions().updateVendorsData(
       name: _nameController.text,
       email: _emailController.text,
       phone: widget.phone,
@@ -267,7 +267,7 @@ void updateUsersData() async {
                 ),
                 CustomElevatedButton(
                   onTap: () {
-                    updateUsersData(); 
+                    updateVendorsData(); 
                   },
                   text: "Create account".toUpperCase(),
                   margin: const EdgeInsets.only(
