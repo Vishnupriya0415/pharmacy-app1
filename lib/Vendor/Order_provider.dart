@@ -2,10 +2,30 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/Vendor/OrderManagement.dart';
 //import 'package:provider/provider.dart';
+class MyOrder {
+  final String id;
+  final List<String> medicineNames;
+  final String customerName;
+  final String totalAmount;
+  // final String? pharmacyName;
+  bool isAccepted; // Flag to track acceptance status
+
+  MyOrder({
+    required this.id,
+    //  required this.pharmacyName,
+    required this.medicineNames,
+    required this.customerName,
+    required this.totalAmount,
+    required this.isAccepted,
+  });
+}
+
 
 class OrderProvider extends ChangeNotifier {
+
+
+  
   final List<MyOrder> _orders = [];
   
 final StreamController<List<MyOrder>> _orderController = StreamController<List<MyOrder>>();

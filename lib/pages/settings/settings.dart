@@ -267,25 +267,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
 
-             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
-                child: ListTile(
-                  leading: const Icon(Icons.shopping_cart),
-                  title: const Text('Vendor'),
-                  trailing: const Text(
-                    // Display greater than symbol as trailing widget
-                    '>',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                     
-                  },
-                ),
-              ),
-            ),
+             
           ],
         ),
       ),

@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
+import 'package:gangaaramtech/pages/search/Vendors_information.dart';
+//import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 
-import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart'; // Import the relevant page
+//import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart'; // Import the relevant page
 
 class SearchPage extends StatefulWidget {
   final void Function(dynamic selectedMedicine) onMedicineSelected; // Define the callback function
@@ -19,13 +21,26 @@ class _SearchPageState extends State<SearchPage> {
 
   void _navigateToMedicalStoreList(String searchQuery) {
     if (searchQuery.isNotEmpty) {
-      // Navigate to the medical store list only if the search query is not empty
       Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VendorListScreen(searchQuery: searchQuery)),
+      );
+
+
+      
+      // Navigate to the medical store list only if the search query is not empty
+      /*  Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MedicalStoreListScreen(searchQuery: searchQuery, onMedicineSelected: widget.onMedicineSelected), // Pass the callback function to the next screen
         ),
       );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => VendorListScreen(searchQuery: searchQuery)),
+      );*/
     }
   }
 

@@ -102,38 +102,75 @@ class _VendorHomeState extends State<VendorHome> {
               width: double.infinity,
               height: 50,
               decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 133, 143, 232),
+                color: Color.fromARGB(255, 236, 194, 131),
               ),
             ),
 
             const SizedBox(height: 20,),
            
-Container(
-   width:double.infinity,
-   height: 50,
-   decoration: const BoxDecoration(
-    color: Color.fromARGB(255, 133, 143, 232), // Set the background color here
-  ),
-  child:   GestureDetector(
-      onTap:(){
-  Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OrderManagementPage(),
-            ),
-          );
-      },
-      child:  Column(
-      children: [
-  Center(child: Text(" View incoming orders", 
-   overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.left,
-            style: FontConstants.lightVioletMixedWhite,))
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const VendorOrdersScreen(),
+                  ),
+                );
+              },
   
-      ],
-      ),
-    ),
-)
+              child: Container(
+                width: double.infinity,
+                height: 50,
+                decoration: const BoxDecoration(
+                  color: Color.fromARGB(
+                      255, 133, 143, 232), // Set the background color here
+                ),
+                child: Column(
+                  children: [
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          " View incoming orders",
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.left,
+                          style: FontConstants.lightVioletMixedWhite,
+                        ))
+                  ],
+                ),
+  
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  /*Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PendingOrdersScreen(),
+                    ),
+                  );*/
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: const BoxDecoration(
+                    color: Color.fromARGB(
+                        255, 133, 143, 232), // Set the background color here
+                  ),
+                  child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(" Update order status",
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              fontSize: 20))),
+                ),
+              ),
+            )
+
           ],
         ),
       ),

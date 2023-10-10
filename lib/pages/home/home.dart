@@ -8,11 +8,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
+import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 //import 'package:gangaaramtech/pages/OrderDetails/orderdetails.dart';
 import 'package:http/http.dart' as http;
 //import 'package:gangaaramtech/pages/search/search_page.dart';
 import 'package:gangaaramtech/pages/search/search_page1.dart';
-import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
+//import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'package:gangaaramtech/pages/settings/settings.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:gangaaramtech/utils/constants/image_constants.dart';
@@ -122,11 +123,6 @@ class _HomeState extends State<Home> {
     _disposed = true;
   }
 
-  // void _startLocationUpdateTimer() {
-  //   locationUpdateTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
-  //     _getCurrentLocation();
-  //   });
-  // }
 
   void _startLocationUpdateTimer() {
     locationUpdateTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
@@ -377,157 +373,7 @@ class _HomeState extends State<Home> {
       );
     }
 
-    // After the upload is complete, perform image-to-text translation
-    // String extractedText = await performImageToTextTranslation(imageFile);
-
-    // Navigate to the ImageTranslationPage and pass the extracted text and imageFile as arguments
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ImageTranslationPage(
-    //       extractedText: extractedText,
-    //       imageFile: imageFile,
-    //     ),
-    //   ),
-    // );
   }
-
-  // Future<void> pickDescriptionImageWhatsapp(BuildContext context) async {
-  //   String? imagePath = await showDialog(
-  //     context: context,
-  //     builder: (BuildContext dialogContext) => CurvedAlertDialog(
-  //       title: 'Choose image from',
-  //       onImageSelected: (String imagePath) {
-  //         setState(() {
-  //           imageFile = File(imagePath);
-  //           uploadProgress = 0.0; // Reset progress when a new image is selected
-  //         });
-  //         _uploadImage1(imageFile!);
-  //         // widget.onImageSelected(imagePath);
-  //       },
-  //       onClosePressed: () {
-  //         Navigator.pop(context);
-  //       },
-  //     ),
-  //   );
-
-  //   if (imagePath != null) {
-  //     // widget.onImageSelected(imagePath);
-  //   }
-  // }
-
-  // double uploadProgress1 = 0.0;
-  // bool showImageAfterUpload1 =
-  //     false; // Flag to control image visibility after upload
-
-  // Future<void> _uploadImage1(File imageFile) async {
-  //   // Simulate the image upload progress
-  //   const totalDuration = Duration(seconds: 5);
-  //   const intervalDuration = Duration(milliseconds: 500);
-  //   int intervals =
-  //       totalDuration.inMilliseconds ~/ intervalDuration.inMilliseconds;
-  //   double stepProgress = 100 / intervals;
-
-  //   for (int i = 1; i <= intervals; i++) {
-  //     await Future.delayed(intervalDuration);
-  //     setState(() {
-  //       uploadProgress = stepProgress * i;
-  //     });
-  //   }
-
-  //   // Reset progress after the upload is complete
-  //   setState(() {
-  //     uploadProgress = 0;
-  //     showImageAfterUpload =
-  //         true; // Set the flag to true after the upload is complete
-  //   });
-
-  //   // Show the AlertDialog when upload is complete
-  //   if (showImageAfterUpload) {
-  //     await showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) => AlertDialog(
-  //         content: SizedBox(
-  //           width: 330, // Set the desired width
-  //           height: 200, // Set the desired height
-  //           child: Column(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: [
-  //               const Image(
-  //                 image: AssetImage('assets/images/file-text.png'),
-  //                 height: 70,
-  //                 width: 70,
-  //               ),
-  //               const SizedBox(height: 16),
-  //               Text(
-  //                 'Uploaded Successfully',
-  //                 style: GoogleFonts.poppins(
-  //                   fontSize: 15,
-  //                   color: Colors.black,
-  //                   fontWeight: FontWeight.w500,
-  //                 ),
-  //               ),
-  //               const SizedBox(height: 16),
-  //               SizedBox(
-  //                 width: 130,
-  //                 height: 50,
-  //                 child: ElevatedButton(
-  //                   onPressed: () {
-  //                     Navigator.pop(context);
-  //                   },
-  //                   style: ElevatedButton.styleFrom(
-  //                     minimumSize: const Size(130, 50),
-  //                     // backgroundColor: kYellow,
-  //                     backgroundColor: Colors.blue,
-  //                     shape: RoundedRectangleBorder(
-  //                       borderRadius: BorderRadius.circular(30),
-  //                     ),
-  //                   ),
-  //                   child: Row(
-  //                     mainAxisAlignment: MainAxisAlignment.center,
-  //                     children: [
-  //                       Text(
-  //                         "Done ",
-  //                         style: GoogleFonts.poppins(
-  //                           fontSize: 16,
-  //                           color: Colors.black,
-  //                           fontWeight: FontWeight.w500,
-  //                         ),
-  //                       ),
-  //                       const SizedBox(width: 5),
-  //                       const Image(
-  //                         image: AssetImage('assets/images/ok_vector.png'),
-  //                         width: 24,
-  //                         height: 24,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(40.0),
-  //         ),
-  //       ),
-  //     );
-  //   }
-
-  //   // After the upload is complete, perform image-to-text translation
-  //   // String extractedText = await performImageToTextTranslation(imageFile);
-
-  //   // Navigate to the ImageTranslationPage and pass the extracted text and imageFile as arguments
-  //   // Navigator.push(
-  //   //   context,
-  //   //   MaterialPageRoute(
-  //   //     builder: (context) => ImageTranslationPage(
-  //   //       extractedText: extractedText,
-  //   //       imageFile: imageFile,
-  //   //     ),
-  //   //   ),
-  //   // );
-  // }
   Future<void> requestNotificationPermission() async {
     final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -769,13 +615,20 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   onFieldSubmitted: (value) {
-                                    Navigator.push(
+                                 /*   Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             MedicalStoreListScreen(
                                                 searchQuery: value, onMedicineSelected: (selectedMedicine) {  },),
                                       ),
+                                    );*/
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              VendorListScreen(
+                                                  searchQuery: value)),
                                     );
                                   },
                                 ),
@@ -794,7 +647,7 @@ class _HomeState extends State<Home> {
                             },
                           ),
                         ),
-                        Padding(
+                        /*  Padding(
                           padding: const EdgeInsets.only(left: 4),
                           child: IconButton(
                             iconSize: 30,
@@ -803,7 +656,7 @@ class _HomeState extends State<Home> {
                               isInstalled();
                             },
                           ),
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

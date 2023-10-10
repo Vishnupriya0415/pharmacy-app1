@@ -99,11 +99,14 @@ class CartPage extends StatelessWidget {
                         ],
                       ),
                       Column(
-                        children: medicines.map((medicine) {
-                          int medIndex = medicines.indexOf(medicine);
+                        children: medicines.asMap().entries.map((entry) {
+                          final int medIndex = entry.key;
+                          final Medicine medicine = entry.value;
+
                           return GestureDetector(
                             onTap: () {
-                              _changeQuantity(context, medicalShop, medicine);
+                              _changeQuantity(
+                                  context, medicalShop, medicine, medIndex);
                             },
                             child: ListTile(
                               title: Row(
@@ -303,7 +306,7 @@ void _decrementQuantity(BuildContext context, String pharmacyName, int medIndex)
 
 
   void _changeQuantity(BuildContext context, MedicalShop medicalShop,
-      Medicine existingMedicine) {
+      Medicine existingMedicine, int medIndex) {
     // Implement logic to change the quantity of the existing item in the cart.
     // You can open a dialog or a screen for changing the quantity.
     // Here, you can show a dialog to input the new quantity for the existing medicine.
@@ -374,20 +377,25 @@ void _decrementQuantity(BuildContext context, String pharmacyName, int medIndex)
       orElse: () => throw Exception('Pharmacy not found'),
     );
 
+    // Define medIndex here before the if-else block
+    int medIndex;
+
     final existingMedicine = medicalShop.medicines.firstWhere(
       (medicine) => medicine.name == selectedMedicine.name,
       orElse: () => Medicine(
-          name: 'Placeholder',
-          price: 0.0,
-          quantity: 1,
-          pharmacyName:
-              pharmacyName), // Return placeholder Medicine if the medicine does not exist in the cart.
+        name: 'Placeholder',
+        price: 0.0,
+        quantity: 1,
+        pharmacyName: pharmacyName,
+      ),
     );
 
     if (existingMedicine.name != 'Placeholder') {
+      // Assign the medIndex value here
+      medIndex = medicalShop.medicines.indexOf(existingMedicine);
       _showSnackbar(context, 'Medicine already in cart');
       _showAlertDialog(
-          context, pharmacyName, selectedMedicine, existingMedicine);
+          context, pharmacyName, selectedMedicine, existingMedicine, medIndex);
     } else {
       // If the medicine and medical shop combination does not exist, add it to the cart.
       medicalShop.medicines.add(selectedMedicine);
@@ -395,8 +403,9 @@ void _decrementQuantity(BuildContext context, String pharmacyName, int medIndex)
     }
   }
 
+
   void _showAlertDialog(BuildContext context, String pharmacyName,
-      Medicine selectedMedicine, Medicine existingMedicine) {
+      Medicine selectedMedicine, Medicine existingMedicine, medIndex) {
     final selectedDataProvider =
         Provider.of<SelectedDataProvider>(context, listen: false);
 
@@ -425,7 +434,8 @@ void _decrementQuantity(BuildContext context, String pharmacyName, int medIndex)
               child: const Text('Change Quantity'),
               onPressed: () {
                 Navigator.of(context).pop();
-                _changeQuantity(context, medicalShop, existingMedicine);
+                _changeQuantity(
+                    context, medicalShop, existingMedicine, medIndex);
               },
             ),
             TextButton(

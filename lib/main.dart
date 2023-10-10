@@ -10,6 +10,7 @@ import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/Order_placement.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/order_data.dart';
+import 'package:gangaaramtech/pages/cart/CartProvider.dart';
 //import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/selected_data_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,10 +34,11 @@ void main() async {
         ChangeNotifierProvider(create: (_) => OrderPlacementProvider()),
         ChangeNotifierProvider(create: (_) => OrderDataProvider()),
         ChangeNotifierProvider(
-      create: (context) => SelectedDataProvider(),
-
-     
-    ),
+          create: (context) => SelectedDataProvider(),
+        ),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        //ChangeNotifierProvider(create: (_) => ItemsInCartProvider())
+        
         // Add other providers here
       ],
       child: const MyApp(),

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/Vendor/OrderManagement.dart';
+//import 'package:gangaaramtech/Vendor/OrderManagement.dart';
 import 'package:gangaaramtech/Vendor/Order_provider.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
 import 'package:http/http.dart' as http;

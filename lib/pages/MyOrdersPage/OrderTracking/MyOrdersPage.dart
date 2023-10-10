@@ -1,14 +1,15 @@
-// ignore_for_file: file_names, prefer_const_constructors_in_immutables, recursive_getters, unused_import
+// ignore_for_file: file_names, prefer_const_constructors_in_immutables, recursive_getters, unused_import, unused_local_variable
 
 import 'package:flutter/material.dart';
 //import 'package:gangaaramtech/pages/MyOrdersPage/CurrentOrders.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CurrentOrders.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CurrentOrdersScreen.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'RecentOrders.dart';
 import 'Items_in_cart.dart';
-class MyOrdersPage extends StatelessWidget {
 
+class MyOrdersPage extends StatelessWidget {
   MyOrdersPage({Key? key}) : super(key: key);
 
   @override
@@ -73,9 +74,9 @@ class MyOrdersPage extends StatelessWidget {
           OrderId: 'ord1923'),
     ];
     //SelectedData selectedData = SelectedData(
-    //medicineName: 'cetrizine', 
+    //medicineName: 'cetrizine',
     //pharmacyData: {
-    //'name': 'medplus', 
+    //'name': 'medplus',
     //},
     //);
     return Scaffold(
@@ -119,12 +120,18 @@ class MyOrdersPage extends StatelessWidget {
           },
           body: TabBarView(
             children: [
-              SingleChildScrollView(
+              /* SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: MyCurrentScreen(
                     myListOfOrders: currentOrders,
                   ),
+                ),
+              ),*/
+              SingleChildScrollView(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
+                  child: const CurrentOrdersScreen(),
                 ),
               ),
               SingleChildScrollView(
@@ -136,9 +143,7 @@ class MyOrdersPage extends StatelessWidget {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
-                  child: const CartPage(
-
-                  ),
+                  child: const CartPage(),
                 ),
               ),
             ],
