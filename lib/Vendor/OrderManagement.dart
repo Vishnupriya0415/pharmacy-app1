@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +15,23 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
   // Define a list to store orders
   List<DocumentSnapshot> orders = [];
 
+  late Timer _timer; // Declare a Timer variable.
+
   @override
   void initState() {
     super.initState();
     // Fetch the list of orders from Firestore when the screen loads
     fetchOrders();
+    _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
+      fetchOrders();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Cancel the timer when the screen is disposed to prevent memory leaks.
+    _timer.cancel();
+    super.dispose();
   }
 
   void fetchOrders() async {
@@ -31,7 +43,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
         .doc(vendorId)
         .collection('orders');
 
-    final snapshot = await ordersCollection.get();
+    final snapshot =
+        await ordersCollection.where('status', isEqualTo: 'pending').get();
 
     setState(() {
       orders = snapshot.docs;
@@ -46,7 +59,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
     return ist;
   }
 
-  Future<void> updateOrderStatus(String orderId, String status) async {
+  Future<void> updateOrderStatus(
+      String orderId, String status, String? cancellationReason) async {
     // Update the status of the order in Firestore
     final User? user = FirebaseAuth.instance.currentUser;
     final vendorId = user?.uid; // Use the user's UID as the vendor ID
@@ -62,10 +76,15 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
         'status': status,
         'acceptedTime': acceptedTime,
       });
+    } else if (status == 'Cancelled') {
+      // If the status is 'Cancelled', update the order status and store the reason
+      await orderRef.update({
+        'status': status,
+        'cancellationReason': cancellationReason,
+      });
     }
-    await orderRef.update({'status': status});
 
-    // Remove the cancelled order from the list
+    // Remove the canceled order from the list
     setState(() {
       orders.removeWhere((order) => order.id == orderId);
     });
@@ -130,8 +149,42 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                // Update the status of the order to 'Cancelled'
-                                updateOrderStatus(orderId, 'Cancelled');
+                                // Prompt the user to enter a cancellation reason.
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    String reason =
+                                        ''; // Initialize the cancellation reason
+                                    return AlertDialog(
+                                      title: Text('Enter Cancellation Reason'),
+                                      content: TextField(
+                                        onChanged: (value) {
+                                          reason =
+                                              value; // Update the reason as the user types
+                                        },
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Update the status of the order to 'Cancelled' and store the reason.
+                                            updateOrderStatus(
+                                                orderId, 'Cancelled', reason);
+                                            Navigator.of(context)
+                                                .pop(); // Close the dialog
+                                          },
+                                          child: Text('Confirm'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               },
                               child: const Text('Cancel'),
                             ),
@@ -139,7 +192,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 // Update the status of the order to 'Accepted'
-                                updateOrderStatus(orderId, 'Accepted');
+                                updateOrderStatus(orderId, 'Accepted', null);
                               },
                               child: const Text('Accept'),
                             ),
