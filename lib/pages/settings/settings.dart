@@ -1,6 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace
 
 import 'package:flutter/material.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CanceledOrdersScreen.dart';
 //import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
@@ -113,12 +114,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   children: [
                     ListTile(
                       title: const Column(
-                        // Use a Column to display the title text below the icon
                         mainAxisAlignment: MainAxisAlignment
-                            .center, // Center the text vertically
+                            .center, 
                         children: [
                           Center(
-                            // Center the icon
                             child: Icon(Icons.person),
                           ),
                           SizedBox(
@@ -147,72 +146,82 @@ class _SettingsPageState extends State<SettingsPage> {
                                     userData: userData,
                                   )),
                         );
-                        // Add your edit profile functionality here
                       },
                     ),
                   ],
                 ),
               ),
             ),
-
-            // My Orders Option
             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
+              elevation: 0, 
               child: Container(
                 padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
                 child: ListTile(
                   leading: const Icon(Icons.shopping_cart),
                   title: const Text('My Orders'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {
                      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MyOrdersPage(), // Replace with your MyOrdersPage widget
-          ),
-        );
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MyOrdersPage(),
+                      ),
+                    );
                   },
                 ),
               ),
             ),
-
-            // Payment Methods Option
             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
+              elevation: 0,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
+                child: ListTile(
+                  leading: const Icon(Icons.shopping_cart_outlined),
+                  title: const Text('Cancelled Orders'),
+                  trailing: const Text(
+                    '>',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const CancelOrdersScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            Card(
+              elevation: 0, 
               child: Container(
                 padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
                 child: ListTile(
                   leading: const Icon(Icons.payment),
                   title: const Text('Payment'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
+                    
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
                   onTap: () {
-                    // Add your functionality here
+                    
                   },
                 ),
               ),
             ),
-
-            // Settings Option
             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
+              elevation: 0, 
               child: Container(
-                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2), // Add padding
+                padding: const EdgeInsets.fromLTRB(35, 5, 40, 2), 
                 child: ListTile(
                   leading: const Icon(Icons.settings),
                   title: const Text('Settings'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -227,15 +236,13 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             Card(
-              // Add Card to wrap the Container
-              elevation: 0, // Remove the shadow
+              elevation: 0, 
               child: Container(
                 padding: const EdgeInsets.fromLTRB(35, 5, 40, 2), // Add padding
                 child: ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: const Text('About'),
                   trailing: const Text(
-                    // Display greater than symbol as trailing widget
                     '>',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -249,9 +256,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
 
-            // Sign Out Option
             Card(
-              // Add Card to wrap the Container
               elevation: 0, // Remove the shadow
               child: Container(
                 padding: const EdgeInsets.fromLTRB(35, 5, 40, 2),
@@ -261,13 +266,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   title: const Text('Sign Out'),
                   onTap: () {
                     _showSignOutAlertDialog(context);
-                    // Add your sign-out functionality here
                   },
                 ),
               ),
             ),
-
-             
           ],
         ),
       ),
@@ -284,16 +286,12 @@ class _SettingsPageState extends State<SettingsPage> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context); 
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
-                // Perform the sign-out action here...
-                // For example, you can call a sign-out function from your authentication service.
-                // After successful sign-out, navigate to the main page.
-                // Here, we are using pushReplacement to replace the current route with the main page.
                 _performSignOut(context);
               },
               child: const Text('Sign Out'),

@@ -49,6 +49,7 @@ void setPharmacyName(String name) {
     notifyListeners(); // Notify listeners to update the UI
   }
 
+
   void addMedicineName(String medicineName) {
     selectedMedicineNames.add(medicineName);
     notifyListeners();

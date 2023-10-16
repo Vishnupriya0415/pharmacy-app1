@@ -1,23 +1,24 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/UserOrderDetailsScreen.dart';
+import 'package:gangaaramtech/pages/cart/CartItemsPage.dart';
 
-class CurrentOrdersScreen extends StatefulWidget {
-  const CurrentOrdersScreen({Key? key});
+class RecentOrdersScreen extends StatefulWidget {
+  const RecentOrdersScreen({super.key});
 
   @override
-  _CurrentOrdersScreenState createState() => _CurrentOrdersScreenState();
+  _RecentOrdersScreenState createState() => _RecentOrdersScreenState();
 }
 
-class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
+class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
   Stream<QuerySnapshot>? ordersStream;
 
   @override
   void initState() {
     super.initState();
-    // Initialize the stream to fetch user orders when the widget is created
     ordersStream = fetchUserOrders();
   }
 
@@ -58,16 +59,13 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
           final filteredOrders = snapshot.data!.docs.where((document) {
             final orderData = document.data() as Map<String, dynamic>;
             final status = orderData['status'];
-            // Filter orders with specific statuses
-            return status == 'Processing' ||
-                status == 'pending' ||
-                status == 'Accepted' ||
-                status == 'Out for Delivery';
+
+            return status == 'Delivered';
           }).toList();
 
           if (filteredOrders.isEmpty) {
             return const Center(
-              child: Text('No orders found with selected statuses.'),
+              child: Text('No recent orders which are delivered.'),
             );
           }
 
@@ -75,6 +73,9 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
             children: filteredOrders.map((DocumentSnapshot document) {
               Map<String, dynamic> orderData =
                   document.data() as Map<String, dynamic>;
+              final medicinesList =
+                  (orderData['medicineNames'] as List<dynamic>).cast<String>();
+              final pharmacyName = orderData['pharmacyName'];
 
               return Padding(
                 padding: const EdgeInsets.all(15.0),
@@ -102,7 +103,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                           Row(
                             children: [
                               Text(
-                                  " No of medicines: ${orderData['medicineNames'].length}"),
+                                  "No of medicines: ${orderData['medicineNames'].length}"),
                               const Spacer(),
                               Text('Status: ${orderData['status']}'),
                             ],
@@ -120,22 +121,6 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  String statusString = orderData['status'];
-                                  Status status = stringToStatus(statusString);
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderTracker1(status: status),
-                                    ),
-                                  );
-                                },
-                                child: const Text('Track Order'),
-                              ),
-                              const Spacer(),
-                              ElevatedButton(
-                                onPressed: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -146,7 +131,24 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     ),
                                   );
                                 },
-                                child: const Text('View order details'),
+                                child: const Text('View Order Details'),
+                              ),
+                              const Spacer(),
+                              ElevatedButton(
+                                onPressed: () {
+                                  print(orderData['vendorUid']);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CartItemsPage(
+                                        cartMedicineList: medicinesList,
+                                        pharmacyName: pharmacyName,
+                                        vendorUid: orderData['vendorUid'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text('Reorder'),
                               ),
                             ],
                           ),

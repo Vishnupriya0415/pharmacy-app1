@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 //import 'package:gangaaramtech/pages/MyOrdersPage/CurrentOrders.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CurrentOrders.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CurrentOrdersScreen.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/RecentOrdersScreen.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'RecentOrders.dart';
@@ -137,7 +138,8 @@ class MyOrdersPage extends StatelessWidget {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
-                  child: MyListSecond(myListOfOrders: recentOrders),
+                  //  child: MyListSecond(myListOfOrders: recentOrders),
+                  child: RecentOrdersScreen(key: key),
                 ),
               ),
               SingleChildScrollView(

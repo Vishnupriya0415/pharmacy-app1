@@ -12,7 +12,7 @@ class CartItemsPage extends StatefulWidget {
   const CartItemsPage({
     Key? key,
     required this.pharmacyName,
-    required this.cartMedicineList,
+    required this.cartMedicineList, required vendorUid,
   }) : super(key: key);
 
   @override

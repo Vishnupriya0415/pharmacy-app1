@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 
 class CartPage extends StatefulWidget {
   final String pharmacyName;
+  final String vendorId;
 
   const CartPage({
     Key? key,
     required this.pharmacyName,
     required List<String> medicineList,
+    required this.vendorId,
   }) : super(key: key);
 
   @override
@@ -31,18 +33,18 @@ class _CartPageState extends State<CartPage> {
             children: [
               Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(" Medines list from ${widget.pharmacyName}")),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: cartMedicineList.length,
-                  itemBuilder: (context, index) {
-                    final medicineName = cartMedicineList[index];
-                    return ListTile(
-                      title: Text(' $medicineName'),
-                    );
-                  },
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Text(" Medines list from ${widget.pharmacyName}"),
+                    ],
+                  )),
+              for (final medicineName in cartMedicineList)
+                ListTile(
+                  title: Text(' $medicineName'),
                 ),
-              ),
               Row(
                 children: [
                   const SizedBox(
@@ -74,6 +76,7 @@ class _CartPageState extends State<CartPage> {
                           builder: (context) => CartItemsPage(
                             pharmacyName: widget.pharmacyName,
                             cartMedicineList: cartMedicineList,
+                            vendorUid: widget.vendorId,
                           ),
                         ),
                       );

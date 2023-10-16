@@ -319,79 +319,48 @@ class _PlacingOrderState extends State<PlacingOrder> {
             ),
           ),
           const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              // Get the selected vendor UID from your provider or any other source
-              String? selectedVendorUid = cartProvider.selectedVendorUid;
+          SizedBox(
+            width: double.maxFinite,
+            child: ElevatedButton(
+              onPressed: () {
+                // Get the selected vendor UID from your provider or any other source
+                String? selectedVendorUid = cartProvider.selectedVendorUid;
 
-              List<String> medicineNames = [];
-              List<double> medicineCosts = [];
+                List<String> medicineNames = [];
+                List<double> medicineCosts = [];
 
-              for (var item in cartItems) {
-                medicineNames.add(item.medicineName);
-                medicineCosts.add(item.quantity * item.cost);
-              }
+                for (var item in cartItems) {
+                  medicineNames.add(item.medicineName);
+                  medicineCosts.add(item.quantity * item.cost);
+                }
 
-              placeOrder(
-                  my_order.MyOrder(
-                      // Replace with your order data
-                      orderId: generateOrderID(),
-                      orderedTime: DateTime.now(),
-                      pharmacyName: pharmacyName,
-                      paymentMethod: selectedPaymentMethod,
-                      deliveryCharges: deliveryCharge,
-                      taxes: taxes,
-                      total: totalCost,
-                      userUid: userData['uid'],
-                      medicinesNames: medicineNames,
-                      cost: medicineCosts,
-                      status: 'pending'),
-                  selectedVendorUid!);
+                placeOrder(
+                    my_order.MyOrder(
+                        orderId: generateOrderID(),
+                        orderedTime: DateTime.now(),
+                        pharmacyName: pharmacyName,
+                        paymentMethod: selectedPaymentMethod,
+                        deliveryCharges: deliveryCharge,
+                        taxes: taxes,
+                        total: totalCost,
+                        userUid: userData['uid'],
+                        medicinesNames: medicineNames,
+                        cost: medicineCosts,
+                        status: 'pending'),
+                    selectedVendorUid!);
 
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CurrentOrdersScreen()),
-              );
-              // Place the order logic here
-            },
-            child: const Text('Place Order'),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const CurrentOrdersScreen()),
+                );
+                // Place the order logic here
+              },
+              child: const Text('Place Order'),
+            ),
           ),
 
-          /* ElevatedButton(
-            onPressed: () {
-              List<String> medicineNames = [];
-              List<double> medicineCosts = [];
-
-              for (var item in cartItems) {
-                medicineNames.add(item.medicineName);
-                medicineCosts.add(item.quantity * item.cost);
-              }
-
-              placeOrder(my_order.MyOrder(
-                  // Replace with your order data
-                  orderId: generateOrderID(),
-                  orderedTime: DateTime.now(),
-                  pharmacyName: pharmacyName,
-                  paymentMethod: selectedPaymentMethod,
-                  deliveryCharges: deliveryCharge,
-                  taxes: taxes,
-                  total: totalCost,
-                  userUid: userData['uid'],
-                  // userMtoken: userData['mtoken'],
-                  medicinesNames: medicineNames,
-                  cost: medicineCosts,
-                  status: 'pending'));
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const CurrentOrdersScreen()),
-              );
-              // Place the order logic here
-            },
-            child: const Text('Place Order'),
-          ),*/
+          
         ],
       ),
     );

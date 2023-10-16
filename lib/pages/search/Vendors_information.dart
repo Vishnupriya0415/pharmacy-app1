@@ -100,6 +100,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                       builder: (context) => CartPage(
                         pharmacyName: pharmacyName,
                         medicineList: medicineList,
+                        vendorId: vendorUid,
                       ),
                     ),
                   );

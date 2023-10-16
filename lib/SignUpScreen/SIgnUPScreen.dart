@@ -7,7 +7,6 @@ import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:gangaaramtech/utils/constants/font_constants.dart';
 import 'package:gangaaramtech/utils/constants/image_constants.dart';
 import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
-import 'package:gangaaramtech/utils/widgets/custom_outlined_button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -119,10 +118,46 @@ class _SignUScreenState extends State<SignUpScreen> {
                 ),
                 buttonTextStyle: FontConstants.button,
               ),
+              
+              CustomElevatedButton(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const VSignIn(),
+                    ),
+                  );
+                },
+                leftIcon: Container(
+                    margin: const EdgeInsets.only(right: 19),
+                    child: const Icon(Icons.medical_services)),
+                text: "Sign in as vendor".toUpperCase(),
+                margin: const EdgeInsets.only(
+                  top: 31,
+                ),
+                buttonStyle: ElevatedButton.styleFrom(
+                  backgroundColor: ColorConstants.indigo,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      25,
+                    ),
+                  ),
+                  shadowColor: ColorConstants.indigo.withOpacity(0.1),
+                  elevation: 12,
+                ).copyWith(
+                  fixedSize: MaterialStateProperty.all<Size>(
+                    const Size(
+                      double.maxFinite,
+                      50,
+                    ),
+                  ),
+                ),
+                buttonTextStyle: FontConstants.button,
+              ),
               const SizedBox(
                 height: 20,
               ),
-              CustomOutlinedButton(
+              /* CustomOutlinedButton(
                 onTap: () {
                  Navigator.push(
                               context,
@@ -154,7 +189,7 @@ class _SignUScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 buttonTextStyle: FontConstants.button,
-              ),
+              ),*/
 
             ],
           )

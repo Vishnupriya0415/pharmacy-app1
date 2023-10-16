@@ -4,14 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/UserOrderDetailsScreen.dart';
 
-class CurrentOrdersScreen extends StatefulWidget {
-  const CurrentOrdersScreen({Key? key});
+class CancelOrdersScreen extends StatefulWidget {
+  const CancelOrdersScreen({Key? key});
 
   @override
-  _CurrentOrdersScreenState createState() => _CurrentOrdersScreenState();
+  _CancelOrdersScreenState createState() => _CancelOrdersScreenState();
 }
 
-class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
+class _CancelOrdersScreenState extends State<CancelOrdersScreen> {
   Stream<QuerySnapshot>? ordersStream;
 
   @override
@@ -58,16 +58,13 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
           final filteredOrders = snapshot.data!.docs.where((document) {
             final orderData = document.data() as Map<String, dynamic>;
             final status = orderData['status'];
-            // Filter orders with specific statuses
-            return status == 'Processing' ||
-                status == 'pending' ||
-                status == 'Accepted' ||
-                status == 'Out for Delivery';
+            // Filter orders with the "Delivered" status
+            return status == 'Cancelled';
           }).toList();
 
           if (filteredOrders.isEmpty) {
             return const Center(
-              child: Text('No orders found with selected statuses.'),
+              child: Text('No orders has been cancelled'),
             );
           }
 
