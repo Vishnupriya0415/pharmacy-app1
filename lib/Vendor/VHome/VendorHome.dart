@@ -33,6 +33,7 @@ class _VendorHomeState extends State<VendorHome> {
     setState(() {
       VendorData = data;
     });
+    //  print('Vendor Name: ${VendorData['Name']}');
   }
 
   @override
@@ -101,7 +102,6 @@ class _VendorHomeState extends State<VendorHome> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-          
             Container(
               margin: const EdgeInsets.only(
                   left: 10, top: 10, right: 10, bottom: 10),
@@ -115,14 +115,16 @@ class _VendorHomeState extends State<VendorHome> {
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10)),
               ),
-              child: const Text(
-                " Hello",
-                style: TextStyle(
-                    //color: Colors.white,
-                    fontSize: 25),
+              child: Center(
+                child: Text(
+                  " Hello   ${VendorData['Name']}",
+                  style: const TextStyle(
+                      //color: Colors.white,
+                      fontSize: 25),
+                  maxLines: 2,
+                ),
               ),
             ),
-          
             GestureDetector(
               onTap: () {
                 Navigator.push(

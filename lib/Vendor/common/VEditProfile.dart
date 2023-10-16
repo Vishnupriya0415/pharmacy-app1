@@ -76,6 +76,8 @@ class _EditProgilePageState extends State<VEditProgilePage> {
         if (snapshot.exists) {
           setState(() {
             vendorData = snapshot.data() ?? {};
+            nameNotifier.value =
+                vendorData['Name'] ?? ''; // Update the nameNotifier here
           });
         }
       }
@@ -278,7 +280,7 @@ class _EditProgilePageState extends State<VEditProgilePage> {
       final String pinCode= widget.vendorData['address']['postalCode']??'';
        final String city= widget.vendorData['address']['city']??'';
 final String addressText = '$dNo, $street,$city, $state, $pinCode';
-        return SafeArea(child: Scaffold(
+        return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -465,7 +467,7 @@ final String addressText = '$dNo, $street,$city, $state, $pinCode';
         ),
       ),
 
-    ));
+    );
   }
 }
 class EditableNameField extends StatefulWidget {

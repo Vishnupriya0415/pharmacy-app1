@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gangaaramtech/Vendor/Orders/OrderDetails.dart';
 
 class DeliveredOrdersScreen extends StatefulWidget {
   const DeliveredOrdersScreen({Key? key}) : super(key: key);
@@ -64,7 +65,9 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                 final data = order.data() as Map<String, dynamic>;
                 final orderId = order.id;
                 final orderStatus = data['status'];
-                final medicineNames = List<String>.from(data['medicineNames']);
+                final addressData = data['addressData'] as Map<String, dynamic>;
+
+                //    final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
 
                 return Card(
@@ -79,9 +82,17 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                     ),
                     subtitle: Column(
                       children: [
-                        Text('Status: $orderStatus'),
-                        const Text("Delivery address:"),
-                        const Align(
+                        Row(
+                          children: [
+                            Text('Ordered by ${addressData['fullName']}'),
+                            const Spacer(),
+                            Text('Phone ${addressData['mobileNumber']}')
+                          ],
+                        ),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Status: $orderStatus')),
+                        /* const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Medicine Names",
@@ -96,6 +107,19 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                               return Text(medicineName);
                             }).toList(),
                           ),
+                        ),*/
+                        ElevatedButton(
+                          onPressed: () {
+                            // Navigate to the OrderDetailsScreen and pass the orderId as a route argument
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    OrderDetailsScreen(orderId: orderId),
+                              ),
+                            );
+                          },
+                          child: const Text("View Order Details"),
                         ),
                       ],
                     ),

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/CanceledOrdersScreen.dart';
-//import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/common/onboardingscreen.dart';
 import 'package:gangaaramtech/pages/profile/edit_profile.dart';
@@ -235,6 +234,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
             ),
+            
+           
             Card(
               elevation: 0, 
               child: Container(

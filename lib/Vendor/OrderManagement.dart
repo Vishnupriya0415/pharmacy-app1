@@ -114,29 +114,48 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                 final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
-
+                final addressData = data['addressData'] as Map<String, dynamic>;
+               
                 return Card(
-                  margin: const EdgeInsets.all(8.0),
+                  elevation: 5,
+                  margin: const EdgeInsets.all(20.0),
                   child: ListTile(
                     title: Row(
                       children: [
                         Text('Order ID: $orderId'),
-                        const Spacer(),
-                        Text(" Total cost : ₹$total"),
+                        
                       ],
                     ),
                     subtitle: Column(
                       children: [
-                        Text('Status: $orderStatus'),
-                        const Text("Delivery address:"),
-                        const Align(
+                        Row(
+                          children: [
+                            Text('Status: $orderStatus'),
+                            const Spacer(),
+                            Text(" Total cost : ₹$total"),
+                          ],
+                        ),
+                        Text(
+                            'Address: ${addressData['doorNo']}, ${addressData['street']},  ${addressData['landmark']},${addressData['city']}, ${addressData['state']}, ${addressData['postalCode']}'),
+                        /* const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Medicine Names",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),
+                        ),*/
                         Align(
+                          alignment: Alignment.centerLeft,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Number of Medicines: ${medicineNames.length}'),
+                            ],
+                          ),
+                        ),
+
+                        /* Align(
                           alignment: Alignment.centerLeft,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +163,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                               return Text(medicineName);
                             }).toList(),
                           ),
-                        ),
+                        ),*/
+                      
                         Row(
                           children: [
                             ElevatedButton(
@@ -156,7 +176,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                                     String reason =
                                         ''; // Initialize the cancellation reason
                                     return AlertDialog(
-                                      title: Text('Enter Cancellation Reason'),
+                                      title: const Text(
+                                          'Enter Cancellation Reason'),
                                       content: TextField(
                                         onChanged: (value) {
                                           reason =
@@ -169,24 +190,26 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                                             Navigator.of(context)
                                                 .pop(); // Close the dialog
                                           },
-                                          child: Text('Cancel'),
+                                          child: const Text('Cancel'),
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            // Update the status of the order to 'Cancelled' and store the reason.
                                             updateOrderStatus(
                                                 orderId, 'Cancelled', reason);
                                             Navigator.of(context)
                                                 .pop(); // Close the dialog
                                           },
-                                          child: Text('Confirm'),
+                                          child: const Text('Confirm'),
                                         ),
                                       ],
                                     );
                                   },
                                 );
                               },
-                              child: const Text('Cancel'),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Cancel'),
+                              ),
                             ),
                             const Spacer(),
                             ElevatedButton(
@@ -194,7 +217,10 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                                 // Update the status of the order to 'Accepted'
                                 updateOrderStatus(orderId, 'Accepted', null);
                               },
-                              child: const Text('Accept'),
+                              child: const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Accept'),
+                              ),
                             ),
                           ],
                         ),

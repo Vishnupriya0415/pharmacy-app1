@@ -175,13 +175,15 @@ appBar: AppBar(
                         ],
                       ),
                       onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => VEditProgilePage(vendorData: VendorData,),
-    ),
-  );
-},
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => VEditProgilePage(
+                              vendorData: VendorData,
+                            ),
+                          ),
+                        );
+                      },
 
                     ),
                   ],
@@ -207,6 +209,7 @@ appBar: AppBar(
                 ),
               ),
             ),
+            
             Card(
               // Add Card to wrap the Container
               elevation: 0, // Remove the shadow

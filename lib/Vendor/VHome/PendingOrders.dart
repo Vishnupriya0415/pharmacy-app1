@@ -126,22 +126,48 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                 final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
-
+                final addressData = data['addressData'] as Map<String, dynamic>;
+                
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Row(
+                    title: Column(
                       children: [
-                        Text('Order ID: $orderId'),
-                        const Spacer(),
-                        Text(" Total cost: ₹$total"),
+                        Row(
+                          children: [
+                            Text('Order ID: $orderId'),
+                            const Spacer(),
+                            Text(" Total cost: ₹$total"),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text('Ordered by ${addressData['fullName']}'),
+                            const Spacer(),
+                            Text('Phone ${addressData['mobileNumber']}')
+                          ],
+                        ),
                       ],
                     ),
+
                     subtitle: Column(
                       children: [
-                        Text('Status: $orderStatus'),
-                        const Text("Delivery address:"),
-                        const Align(
+                        Row(
+                          children: [
+                            Text(
+                              'Status: $orderStatus',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            const Spacer(),
+                            Text(
+                              'Total Medicines: ${medicineNames.length}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ],
+                        ),
+                        // const Text("Delivery address:"),
+
+                        /* const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Medicine Names",
@@ -156,7 +182,7 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                               return Text(medicineName);
                             }).toList(),
                           ),
-                        ),
+                        ),*/
                         Row(
                           children: [
                             // Inside your ListView.builder in PendingDeliveriesScreen

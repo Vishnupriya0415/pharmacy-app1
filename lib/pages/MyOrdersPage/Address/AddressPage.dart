@@ -233,6 +233,7 @@ class _AddressListState extends State<AddressList> {
   }
 }
 
+
 Future<void> removeAddress(String addressId) async {
   try {
     User? user = FirebaseAuth.instance.currentUser;
@@ -256,6 +257,82 @@ Future<void> removeAddress(String addressId) async {
     // You can show an error message to the user if needed.
   }
 }
+/*Stream<List<DocumentSnapshot>> fetchAddresses() {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
+    String userUID = user.uid;
+
+    // Fetch the user's address from the 'users' collection
+    CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    Query userQuery = usersCollection.where('uid', isEqualTo: userUID);
+
+    // Fetch addresses from the 'addresses' collection
+    CollectionReference addressesCollection = FirebaseFirestore.instance.collection('addresses');
+    Query addressesQuery = addressesCollection.where('userId', isEqualTo: userUID);
+
+    return userQuery.get().then((userQuerySnapshot) {
+      DocumentSnapshot userDocument;
+      if (userQuerySnapshot.docs.isNotEmpty) {
+        userDocument = userQuerySnapshot.docs.first;
+      } else {
+        userDocument = userQuerySnapshot.docs.first;
+      }
+
+      return addressesQuery.get().then((addressesQuerySnapshot) {
+        // Combine user's address with addresses from 'addresses' collection
+        List<DocumentSnapshot> addressesData = addressesQuerySnapshot.docs;
+        // Add the user's address to the list if it's not empty
+        if (userDocument.exists) {
+          addressesData.insert(0, userDocument);
+        }
+        return addressesData;
+      });
+    }).asStream();
+  } else {
+    // Return an empty stream if no user is authenticated
+    return Stream.value([]);
+  }
+}*/
+
+/*Stream<List<DocumentSnapshot>> fetchAddresses() {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user != null) {
+    String userUID = user.uid;
+
+    // Fetch the user's address from the 'users' collection
+    CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    Query userQuery = usersCollection.where('uid', isEqualTo: userUID);
+
+    // Fetch addresses from the 'addresses' collection
+    CollectionReference addressesCollection = FirebaseFirestore.instance.collection('addresses');
+    Query addressesQuery = addressesCollection.where('userId', isEqualTo: userUID);
+
+    return userQuery.get().then((userQuerySnapshot) {
+      DocumentSnapshot userDocument;
+      if (userQuerySnapshot.docs.isNotEmpty) {
+        userDocument = userQuerySnapshot.docs.first;
+      } else {
+        userDocument = userQuerySnapshot.docs.first;
+      }
+
+      return addressesQuery.get().then((addressesQuerySnapshot) {
+        // Combine user's address with addresses from 'addresses' collection
+        List<DocumentSnapshot> addressesData = addressesQuerySnapshot.docs;
+        // Add the user's address to the list if it's not empty
+        if (userDocument.exists) {
+          addressesData.insert(0, userDocument);
+        }
+        return addressesData;
+      });
+    }).asStream();
+  } else {
+    // Return an empty stream if no user is authenticated
+    return Stream.value([]);
+  }
+}*/
+
 
 Stream<QuerySnapshot> fetchAddresses() {
   User? user = FirebaseAuth.instance.currentUser;
