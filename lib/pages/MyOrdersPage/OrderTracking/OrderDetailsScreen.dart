@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class OrderDetailsScreen extends StatelessWidget {
+class UserOrderDetailsScreen extends StatelessWidget {
   final String orderId;
 
-  OrderDetailsScreen({required this.orderId});
+  UserOrderDetailsScreen({required this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class OrderDetailsScreen extends StatelessWidget {
 
       return FutureBuilder<DocumentSnapshot>(
         future: FirebaseFirestore.instance
-            .collection('vendors')
+            .collection('users')
             .doc(vendorId)
             .collection('orders')
             .doc(orderId)
@@ -54,13 +54,24 @@ class OrderDetailsScreen extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                              'Customer Name: ${orderData['address']['fullName']}'),
+                              'Ordered by  ${orderData['address']['fullName']}'),
                           const Spacer(),
                           Text(
                               'Phone Number: ${orderData['address']['mobileNumber']}'),
                         ],
                       ),
-                      Text('Address: $addressText'),
+                      Text("Pharmacy Name ${orderData['pharmacyName']}"),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      const Text(
+                        'Address: ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(' $addressText'),
+                      const SizedBox(
+                        height: 5,
+                      ),
                       const Row(
                         children: [
                           SizedBox(
@@ -135,7 +146,7 @@ class OrderDetailsScreen extends StatelessWidget {
                           Text('₹${orderData['total']}'),
                         ],
                       ),
-                     
+
                       // Add more details as needed
                     ],
                   ),

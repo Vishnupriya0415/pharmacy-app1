@@ -3,6 +3,7 @@
 class MyOrder {
   final List<String> medicinesNames;
   final List<double> cost;
+  final List<int>quantity;
   final String orderId;
   final double deliveryCharges;
   final double taxes;
@@ -13,8 +14,12 @@ class MyOrder {
   final DateTime orderedTime;
   final String paymentMethod;
 
+  Map<String, dynamic> address;
+  
   MyOrder(
       {required this.medicinesNames,
+      required this.quantity,
+      required this.address,
       required this.paymentMethod,
       required this.cost,
       required this.deliveryCharges,
@@ -34,9 +39,11 @@ class MyOrder {
       'medicineNames': medicinesNames,
       'orderId': orderId,
       'deliveryCharges': deliveryCharges,
+      'quantity': quantity,
       'taxes': taxes,
       'total': total,
       'userUid': userUid,
+      'address': address,
   //    'userMtoken': userMtoken,
       'pharmacyName': pharmacyName,
       'cost': cost,

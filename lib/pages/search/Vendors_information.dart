@@ -127,7 +127,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                             children: [
                               Text(' $username'),
                               const Spacer(),
-                              Text(' $email'),
+                            //  Text(' $email'),
                             ],
                           ),
                           Row(

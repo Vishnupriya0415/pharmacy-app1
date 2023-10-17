@@ -25,9 +25,7 @@ class _CartItemsPageState extends State<CartItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Cart for ${widget.pharmacyName}'),
-      ),
+      
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           int totalQuantity = 0; // Initialize total quantity
@@ -41,6 +39,9 @@ class _CartItemsPageState extends State<CartItemsPage> {
                   // Display the row at the top
                   return Column(
                     children: [
+                      const SizedBox(
+                        height: 20,
+                      ),
                       Text(
                         'Cart for ${widget.pharmacyName}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -122,6 +123,9 @@ class _CartItemsPageState extends State<CartItemsPage> {
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
+                          const SizedBox(
+                            width: 10,
+                          )
                         ],
                       ),
                       const SizedBox(height: 16), // Add some spacing

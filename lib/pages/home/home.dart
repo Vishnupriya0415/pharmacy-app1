@@ -5,10 +5,12 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
 import 'package:gangaaramtech/pages/search/Vendors_information.dart';
+import 'package:gangaaramtech/pages/search/vendors_information1.dart';
 //import 'package:gangaaramtech/pages/OrderDetails/orderdetails.dart';
 import 'package:http/http.dart' as http;
 //import 'package:gangaaramtech/pages/search/search_page.dart';
@@ -21,9 +23,9 @@ import 'package:gangaaramtech/utils/widgets/curved_alert_dialog_box.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:whatsapp_share/whatsapp_share.dart';
+//import 'package:image_picker/image_picker.dart';
+//import 'package:path_provider/path_provider.dart';
+//import 'package:whatsapp_share/whatsapp_share.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -32,7 +34,6 @@ class Home extends StatefulWidget {
     'assets/images/tablets/delivery_medicine2.jpg',
     'assets/images/tablets/scan1.jpeg',
     'assets/images/deliveryMedicine2.jpg'
-    // Add more image paths as needed
   ];
 
   @override
@@ -251,6 +252,45 @@ class _HomeState extends State<Home> {
     );
   }
 
+Future<void> uploadImageToFirebaseStorage(File imageFile) async {
+    // Create a unique filename for the image
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    // Get a reference to the Firebase Storage bucket
+    final Reference storageReference = FirebaseStorage.instance
+        .ref()
+        .child('prescription_images/$fileName.jpg');
+
+    // Upload the image to Firebase Storage
+    final UploadTask uploadTask = storageReference.putFile(imageFile);
+
+    // Monitor the upload task
+    uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+      setState(() {
+        uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes);
+      });
+    });
+
+    try {
+      await uploadTask;
+      // Get the download URL of the uploaded image
+      String imageUrl = await storageReference.getDownloadURL();
+      print('Image uploaded to Firebase Storage. URL: $imageUrl');
+
+      // Now you can use the 'imageUrl' to display or further process the image.
+
+      // You can also navigate to the Vendor List screen here.
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => VendorListScreen1(
+            imageUrl: imageUrl,
+          ),
+        ),
+      );
+    } catch (e) {
+      print('Error uploading image to Firebase Storage: $e');
+    }
+  }
+
   Future<void> pickDescriptionImage(BuildContext context) async {
     String? imagePath = await showDialog(
       context: context,
@@ -261,7 +301,8 @@ class _HomeState extends State<Home> {
             imageFile = File(imagePath);
             uploadProgress = 0.0; // Reset progress when a new image is selected
           });
-          _uploadImage(imageFile!);
+          //  _uploadImage(imageFile!);
+          uploadImageToFirebaseStorage(imageFile!);
           // widget.onImageSelected(imagePath);
         },
         onClosePressed: () {
@@ -404,7 +445,7 @@ class _HomeState extends State<Home> {
     });
   }
 
-  File? _image;
+  /* File? _image;
 
   Future<void> isInstalled() async {
     final val = await WhatsappShare.isInstalled(package: Package.whatsapp);
@@ -483,7 +524,7 @@ class _HomeState extends State<Home> {
       );
       debugPrint('Error picking image: $er');
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

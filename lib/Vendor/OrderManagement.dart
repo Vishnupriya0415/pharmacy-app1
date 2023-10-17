@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +13,6 @@ class VendorOrdersScreen extends StatefulWidget {
 class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
   // Define a list to store orders
   List<DocumentSnapshot> orders = [];
-
   late Timer _timer; // Declare a Timer variable.
 
   @override
@@ -59,9 +57,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
     return ist;
   }
 
-  Future<void> updateOrderStatus(
-      String orderId, String status, String? cancellationReason) async {
-    // Update the status of the order in Firestore
+  Future<void> updateOrderStatus(String orderId, String status) async {
     final User? user = FirebaseAuth.instance.currentUser;
     final vendorId = user?.uid; // Use the user's UID as the vendor ID
     final orderRef = FirebaseFirestore.instance
@@ -69,22 +65,43 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
         .doc(vendorId)
         .collection('orders')
         .doc(orderId);
+
+    final orderData = await orderRef.get();
+    final userUid = orderData.data()!['userUid']; // Accessing 'userUid' field
+
+    final userDocRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .collection('orders')
+        .doc(orderId);
+
+    // Get the current time in UTC
+    final currentTimeUtc = DateTime.now().toUtc();
+
+    // Convert UTC time to Indian Standard Time (IST)
+    final currentTimeIST =
+        currentTimeUtc.add(const Duration(hours: 5, minutes: 30));
+
+    // Define a map to hold the status time updates
+    final statusTimeUpdates = <String, dynamic>{};
+
     if (status == 'Accepted') {
-      // If the status is 'Accepted', update the order status and time
-      final acceptedTime = convertTimestampToIST(Timestamp.now());
-      await orderRef.update({
-        'status': status,
-        'acceptedTime': acceptedTime,
-      });
-    } else if (status == 'Cancelled') {
-      // If the status is 'Cancelled', update the order status and store the reason
-      await orderRef.update({
-        'status': status,
-        'cancellationReason': cancellationReason,
-      });
+      statusTimeUpdates['acceptedTime'] = currentTimeIST;
+    } else if (status == 'Processing') {
+      statusTimeUpdates['processingTime'] = currentTimeIST;
+    } else if (status == 'Out for Delivery') {
+      statusTimeUpdates['outForDeliveryTime'] = currentTimeIST;
+    } else if (status == 'Delivered') {
+      statusTimeUpdates['deliveredTime'] = currentTimeIST;
     }
 
-    // Remove the canceled order from the list
+    statusTimeUpdates['status'] = status;
+
+    // Update the order document with the status and status times
+    await orderRef.update(statusTimeUpdates);
+    await userDocRef.update(statusTimeUpdates);
+
+    // Update the local list of orders
     setState(() {
       orders.removeWhere((order) => order.id == orderId);
     });
@@ -100,6 +117,16 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
           'Orders',
           style: TextStyle(color: Colors.black),
         ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ), // Use appropriate icon for back arrow
+          onPressed: () {
+            Navigator.pop(
+                context); // Go back to the previous screen on arrow button press
+          },
+        ),
       ),
       body: orders.isEmpty
           ? const Center(
@@ -114,48 +141,29 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                 final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
-                final addressData = data['addressData'] as Map<String, dynamic>;
-               
+
                 return Card(
-                  elevation: 5,
-                  margin: const EdgeInsets.all(20.0),
+                  margin: const EdgeInsets.all(8.0),
                   child: ListTile(
                     title: Row(
                       children: [
                         Text('Order ID: $orderId'),
-                        
+                        const Spacer(),
+                        Text(" Total cost : ₹$total"),
                       ],
                     ),
                     subtitle: Column(
                       children: [
-                        Row(
-                          children: [
-                            Text('Status: $orderStatus'),
-                            const Spacer(),
-                            Text(" Total cost : ₹$total"),
-                          ],
-                        ),
-                        Text(
-                            'Address: ${addressData['doorNo']}, ${addressData['street']},  ${addressData['landmark']},${addressData['city']}, ${addressData['state']}, ${addressData['postalCode']}'),
-                        /* const Align(
+                        Text('Status: $orderStatus'),
+                        const Text("Delivery address:"),
+                        const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Medicine Names",
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                        ),*/
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  'Number of Medicines: ${medicineNames.length}'),
-                            ],
-                          ),
                         ),
-
-                        /* Align(
+                        Align(
                           alignment: Alignment.centerLeft,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,64 +171,23 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                               return Text(medicineName);
                             }).toList(),
                           ),
-                        ),*/
-                      
+                        ),
                         Row(
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                // Prompt the user to enter a cancellation reason.
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    String reason =
-                                        ''; // Initialize the cancellation reason
-                                    return AlertDialog(
-                                      title: const Text(
-                                          'Enter Cancellation Reason'),
-                                      content: TextField(
-                                        onChanged: (value) {
-                                          reason =
-                                              value; // Update the reason as the user types
-                                        },
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                          },
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            updateOrderStatus(
-                                                orderId, 'Cancelled', reason);
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                          },
-                                          child: const Text('Confirm'),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                // Update the status of the order to 'Cancelled'
+                                updateOrderStatus(orderId, 'Cancelled');
                               },
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Cancel'),
-                              ),
+                              child: const Text('Cancel'),
                             ),
                             const Spacer(),
                             ElevatedButton(
                               onPressed: () {
                                 // Update the status of the order to 'Accepted'
-                                updateOrderStatus(orderId, 'Accepted', null);
+                                updateOrderStatus(orderId, 'Accepted');
                               },
-                              child: const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text('Accept'),
-                              ),
+                              child: const Text('Accept'),
                             ),
                           ],
                         ),

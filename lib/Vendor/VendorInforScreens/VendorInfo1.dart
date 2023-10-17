@@ -188,7 +188,7 @@ void updateVendorsData() async {
                   onEditingComplete: _loseFocus,
                   focusNode: _focusNode4,
                   // ignore: unnecessary_string_escapes
-                  hintText: 'Enter your pharmacy door no / building np',
+                hintText: 'Enter your pharmacy door no / building no',
                   keyboardType: TextInputType.name,
                 ),
                  

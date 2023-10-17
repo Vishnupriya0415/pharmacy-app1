@@ -48,33 +48,38 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
         orderStatus = orderData['status'];
         medicineNames = List<String>.from(orderData['medicineNames']);
         cost = List<double>.from(orderData['cost']);
+        quantity = List<int>.from(orderData['quantity']);
         total = orderData['total'] ?? 0.0;
+        
         pharmacyName = orderData['pharmacyName'];
         quantity = List<int>.from(orderData['quantity']);
+
         if (orderData['deliveryCharge'] != null) {
           deliveryCharge = orderData['deliveryCharge'];
+        }
+        if (orderData['quantity']! - null) {
+          quantity = orderData['quantity'];
         }
 
         if (orderData['taxes'] != null) {
           taxes = orderData['taxes'];
         }
 
-        // Fetch the address data
-        final addressId = orderData['addressId'];
-        final addressSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user?.uid)
-            .collection('addresses')
-            .doc(addressId)
-            .get();
-
-        if (addressSnapshot.exists) {
-          addressData = addressSnapshot.data();
+        if (orderData['address'] != null) {
+          addressData = orderData['address'];
         }
+
+        //  addressData = orderData['address'];
+        print(
+            'Address Data: $addressData'); // Add this line to print the address data
 
         setState(() {
           orderStatus = orderData['status'];
         });
+
+        // Fetch the address data
+        print('Address Data: $addressData');
+       
       } else {
         setState(() {
           orderStatus = 'Order not found';
@@ -107,6 +112,7 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                 
                 if (addressData != null)
                   Text(
                     "Ordered by ${addressData!['fullName']}",
@@ -118,6 +124,7 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
                     "Phone ${addressData!['mobileNumber']}",
                   ),
                 const SizedBox(height: 5),
+                
                 if (addressData != null)
                   Column(
                     children: [
@@ -128,6 +135,7 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
+                      
                       Text(
                         " ${addressData!['doorNo']}, ${addressData!['street']}, ${addressData!['landmark']}, ${addressData!['city']}, ${addressData!['state']}, ${addressData!['postalCode']}",
                       ),
@@ -144,7 +152,7 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const Spacer(),
-                    Text('Status: $orderStatus'),
+                    //  Text('Status: $orderStatus'),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -164,10 +172,11 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
                   Row(
                     children: [
                       SizedBox(width: 200, child: Text(medicineNames[i])),
-                      Text(' ${quantity[i]}'),
+                      if (quantity.isNotEmpty && i < quantity.length)
+                        Text(' ${quantity[i]}'),
                       const Spacer(),
-                      Text(' ₹${cost[i]}'),
-                      // Assuming quantity is always 1
+                      if (cost.isNotEmpty && i < cost.length)
+                        Text(' ₹${cost[i]}'),
                     ],
                   ),
                 ],

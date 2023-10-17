@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/UserOrderDetailsScreen.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderDetailsScreen.dart';
 
 class CurrentOrdersScreen extends StatefulWidget {
   const CurrentOrdersScreen({Key? key});
@@ -99,6 +99,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                       ),
                       subtitle: Column(
                         children: [
+                         
                           Row(
                             children: [
                               Text(
@@ -140,9 +141,9 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          UserOrderDetailsScreen(
-                                        orderId: orderData['orderId'],
-                                      ),
+                                            UserOrderDetailsScreen(
+                                              orderId: orderData['orderId'],
+                                            )
                                     ),
                                   );
                                 },

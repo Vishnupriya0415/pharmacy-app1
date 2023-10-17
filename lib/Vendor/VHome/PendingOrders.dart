@@ -1,7 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +6,7 @@ import 'package:gangaaramtech/Vendor/Orders/OrderDetails.dart';
 import 'package:gangaaramtech/Vendor/Orders/update_order_status.dart';
 
 class PendingDeliveriesScreen extends StatefulWidget {
-  const PendingDeliveriesScreen({super.key});
+  const PendingDeliveriesScreen({Key? key});
 
   @override
   _PendingDeliveriesScreenState createState() =>
@@ -17,14 +14,12 @@ class PendingDeliveriesScreen extends StatefulWidget {
 }
 
 class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
-  // Define a list to store pending deliveries (accepted orders)
   List<DocumentSnapshot> pendingDeliveries = [];
-  late Timer _timer; // Declare a Timer variable.
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    // Fetch the list of accepted orders from Firestore when the screen loads
     fetchPendingDeliveries();
     _timer = Timer.periodic(const Duration(seconds: 30), (Timer timer) {
       fetchPendingDeliveries();
@@ -33,15 +28,13 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
 
   @override
   void dispose() {
-    // Cancel the timer when the screen is disposed to prevent memory leaks.
     _timer.cancel();
     super.dispose();
   }
 
   void fetchPendingDeliveries() async {
-    // Fetch the list of accepted orders from the "orders" subcollection of the vendor
     final User? user = FirebaseAuth.instance.currentUser;
-    final vendorId = user?.uid; // Use the user's UID as the vendor ID
+    final vendorId = user?.uid;
     final ordersCollection = FirebaseFirestore.instance
         .collection('vendors')
         .doc(vendorId)
@@ -55,53 +48,6 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
     });
   }
 
-  Future<void> updateOrderStatus(String orderId, String status) async {
-    try {
-      // Update the status of the order in Firestore
-      final User? user = FirebaseAuth.instance.currentUser;
-      final vendorId = user?.uid; // Use the user's UID as the vendor ID
-      final orderRef = FirebaseFirestore.instance
-          .collection('vendors')
-          .doc(vendorId)
-          .collection('orders')
-          .doc(orderId);
-
-      // Fetch the order document
-      final orderDoc = await orderRef.get();
-
-      if (orderDoc.exists) {
-        // Access the userUid from the order document data
-        final userUid = orderDoc.data()?['userUid'];
-
-        // Now, you can use the userUid as needed
-        print('User UID stored in the order document: $userUid');
-
-        // Update the status
-        await orderRef.update({'status': status});
-
-        // Optionally, you can show a success message or perform other actions here.
-        // For example, you could show a snackbar indicating the status update was successful.
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Order status updated to: $status'),
-          ),
-        );
-      } else {
-        // Handle the case where the order document does not exist
-        print('Order document does not exist');
-      }
-    } catch (error) {
-      // Handle any errors that occur during the update process
-      print('Error updating order status: $error');
-      // Optionally, you can also show an error message to the user.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error updating order status: $error'),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,6 +57,16 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
         title: const Text(
           'Pending Deliveries',
           style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ), // Use appropriate icon for back arrow
+          onPressed: () {
+            Navigator.pop(
+                context); // Go back to the previous screen on arrow button press
+          },
         ),
       ),
       body: pendingDeliveries.isEmpty
@@ -124,10 +80,12 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                 final data = order.data() as Map<String, dynamic>;
                 final orderId = order.id;
                 final orderStatus = data['status'];
-                final medicineNames = List<String>.from(data['medicineNames']);
+                final medicineNames =
+                    (data['medicineNames'] as List?)?.cast<String>();
                 final total = data['total'];
-                final addressData = data['addressData'] as Map<String, dynamic>;
-                
+                final addressData =
+                    data['addressData'] as Map<String, dynamic>?;
+
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
@@ -140,16 +98,17 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                             Text(" Total cost: ₹$total"),
                           ],
                         ),
-                        Row(
-                          children: [
-                            Text('Ordered by ${addressData['fullName']}'),
-                            const Spacer(),
-                            Text('Phone ${addressData['mobileNumber']}')
-                          ],
-                        ),
+                        if (addressData !=
+                            null) // Check if addressData is not null
+                          Row(
+                            children: [
+                              Text('Ordered by ${addressData['fullName']}'),
+                              const Spacer(),
+                              Text('Phone ${addressData['mobileNumber']}'),
+                            ],
+                          ),
                       ],
                     ),
-
                     subtitle: Column(
                       children: [
                         Row(
@@ -160,35 +119,15 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                             ),
                             const Spacer(),
                             Text(
-                              'Total Medicines: ${medicineNames.length}',
+                              'Total Medicines: ${medicineNames?.length ?? 0}',
                               style: const TextStyle(color: Colors.black),
                             ),
                           ],
                         ),
-                        // const Text("Delivery address:"),
-
-                        /* const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Medicine Names",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: medicineNames.map((medicineName) {
-                              return Text(medicineName);
-                            }).toList(),
-                          ),
-                        ),*/
                         Row(
                           children: [
-                            // Inside your ListView.builder in PendingDeliveriesScreen
                             ElevatedButton(
                               onPressed: () {
-                                // Navigate to the OrderDetailsScreen and pass the orderId as a route argument
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -202,8 +141,6 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                             const Spacer(),
                             ElevatedButton(
                               onPressed: () {
-                                // Call the updateOrderStatus method when the button is pressed
-                                // Replace 'NewStatus' with the desired status
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

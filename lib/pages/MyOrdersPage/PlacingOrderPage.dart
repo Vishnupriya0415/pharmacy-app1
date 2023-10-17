@@ -319,44 +319,52 @@ class _PlacingOrderState extends State<PlacingOrder> {
             ),
           ),
           const SizedBox(height: 16),
-          SizedBox(
-            width: double.maxFinite,
-            child: ElevatedButton(
-              onPressed: () {
-                // Get the selected vendor UID from your provider or any other source
-                String? selectedVendorUid = cartProvider.selectedVendorUid;
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              width: double.maxFinite,
+              child: ElevatedButton(
+                onPressed: () {
+                  // Get the selected vendor UID from your provider or any other source
+                  String? selectedVendorUid = cartProvider.selectedVendorUid;
 
-                List<String> medicineNames = [];
-                List<double> medicineCosts = [];
+                  List<String> medicineNames = [];
+                  List<int>medicineQuantities=[];
+                  List<double> medicineCosts = [];
 
-                for (var item in cartItems) {
-                  medicineNames.add(item.medicineName);
-                  medicineCosts.add(item.quantity * item.cost);
-                }
+                  for (var item in cartItems) {
+                    medicineNames.add(item.medicineName);
+                    medicineCosts.add(item.quantity * item.cost);
+                    medicineQuantities.add(item.quantity);
+                  }
 
-                placeOrder(
-                    my_order.MyOrder(
-                        orderId: generateOrderID(),
-                        orderedTime: DateTime.now(),
-                        pharmacyName: pharmacyName,
-                        paymentMethod: selectedPaymentMethod,
-                        deliveryCharges: deliveryCharge,
-                        taxes: taxes,
-                        total: totalCost,
-                        userUid: userData['uid'],
-                        medicinesNames: medicineNames,
-                        cost: medicineCosts,
-                        status: 'pending'),
-                    selectedVendorUid!);
+                  placeOrder(
+                      my_order.MyOrder(
+                          address: widget.addressData as Map<String, dynamic>,
+                          orderId: generateOrderID(),
+                          orderedTime: DateTime.now(),
+                          quantity: medicineQuantities,
+                          pharmacyName: pharmacyName,
+                          paymentMethod: selectedPaymentMethod,
+                          deliveryCharges: deliveryCharge,
+                          taxes: taxes,
+                          total: totalCost,
+                          userUid: userData['uid'],
+                          medicinesNames: medicineNames,
+                          cost: medicineCosts,
+                          status: 'pending'),
+                      selectedVendorUid!,
+                      widget.addressData);
 
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const CurrentOrdersScreen()),
-                );
-                // Place the order logic here
-              },
-              child: const Text('Place Order'),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const CurrentOrdersScreen()),
+                  );
+                  // Place the order logic here
+                },
+                child: const Text('Place Order'),
+              ),
             ),
           ),
 
@@ -381,15 +389,22 @@ class _PlacingOrderState extends State<PlacingOrder> {
   }
 
   Future<void> placeOrder(
-      my_order.MyOrder order, String selectedVendorUid) async {
+    my_order.MyOrder order,
+    String selectedVendorUid,
+    Map<String, dynamic>? addressData,
+  ) async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
         String userUID = user.uid;
-        print('the selected vendor is is');
-        print(selectedVendorUid);
 
+        if (addressData != null) {
+          // Add the address data to the order document
+          order.address = addressData;
+        }
+
+        // Add the order to the user's orders collection
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userUID)
@@ -397,9 +412,7 @@ class _PlacingOrderState extends State<PlacingOrder> {
             .doc(order.orderId) // Use the order ID as the document ID
             .set(order.toMap());
 
-        // You can also add the order to the vendor's orders subcollection
-        // If you have a vendor ID, replace 'vendorId' with the actual ID
-
+        // Add the order to the vendor's orders collection
         await FirebaseFirestore.instance
             .collection('vendors')
             .doc(selectedVendorUid)
@@ -416,4 +429,5 @@ class _PlacingOrderState extends State<PlacingOrder> {
       print("Error placing order: $error");
     }
   }
+
 }

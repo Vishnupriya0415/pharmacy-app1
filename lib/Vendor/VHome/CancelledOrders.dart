@@ -58,7 +58,7 @@ class _CancelledOrdersScreenState extends State<CancelledOrdersScreen> {
                 final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
-                final cancellationReason = data['cancellationReason'];
+                //    final cancellationReason = data['cancellationReason'];
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
@@ -73,8 +73,8 @@ class _CancelledOrdersScreenState extends State<CancelledOrdersScreen> {
                     subtitle: Column(
                       children: [
                         Text('Status: $orderStatus'),
-                        Text('Cancellation Reason: $cancellationReason'),
-                        const Text("Delivery address:"),
+                        //   Text('Cancellation Reason: $cancellationReason'),
+                        //  const Text("Delivery address:"),
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
