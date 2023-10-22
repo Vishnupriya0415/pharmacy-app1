@@ -1,9 +1,8 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: library_private_types_in_public_api, file_names, unused_local_variable
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:gangaaramtech/pages/cart/CartPage1.dart';
 import 'package:gangaaramtech/pages/cart/CartProvider.dart';
 import 'package:provider/provider.dart';
@@ -68,83 +67,68 @@ class _VendorListScreenState extends State<VendorListScreen> {
           return const Text('No user details found.');
         }
 
-        return Card(
-          child: ListView.builder(
-            itemCount: documents.length,
-            itemBuilder: (context, index) {
-              final userData = documents[index].data() as Map<String, dynamic>;
-              final username = userData['Name'] ?? 'N/A';
-              final email = userData['email'] ?? 'N/A';
-              final pharmacyName = userData['pharmacyName'] ?? 'N/A';
-              final phone = userData['phone'] ?? 'N/A';
-              final vendorUid = userData['uid'] ?? 'N/A';
+        return ListView.builder(
+          itemCount: documents.length,
+          itemBuilder: (context, index) {
+            final userData = documents[index].data() as Map<String, dynamic>;
+            final username = userData['Name'] ?? 'N/A';
+            final email = userData['email'] ?? 'N/A';
+            final pharmacyName = userData['pharmacyName'] ?? 'N/A';
+            final phone = userData['phone'] ?? 'N/A';
+            final vendorUid = userData['uid'] ?? 'N/A';
 
-              return GestureDetector(
-                onTap: () {
-                  final cartProvider =
-                      Provider.of<CartProvider>(context, listen: false);
+            return GestureDetector(
+              onTap: () {
+                final cartProvider = Provider.of<CartProvider>(context, listen: false);
+                cartProvider.setSelectedVendorUid(vendorUid);
+                cartProvider.setPharmacyName(pharmacyName);
+                // Check if the vendor is already selected and add medicine accordingly
+                if (cartProvider.selectedVendorUid == vendorUid) {
+                  // If the vendor is already selected, add the medicine to the existing list
+                  cartProvider.addToMedicineList(widget.searchQuery);
+                } else {
+                  // If a different vendor is selected, update the selected vendor and start a new list
                   cartProvider.setSelectedVendorUid(vendorUid);
-                  cartProvider.setPharmacyName(pharmacyName);
-                  // Check if the vendor is already selected and add medicine accordingly
-                  if (cartProvider.selectedVendorUid == vendorUid) {
-                    // If the vendor is already selected, add the medicine to the existing list
-                    cartProvider.addToMedicineList(widget.searchQuery);
-                  } else {
-                    // If a different vendor is selected, update the selected vendor and start a new list
-                    cartProvider.setSelectedVendorUid(vendorUid);
-                    cartProvider.setMedicineList([widget.searchQuery]);
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartPage(
-                        pharmacyName: pharmacyName,
-                        medicineList: medicineList,
-                        vendorId: vendorUid,
-                      ),
+                  cartProvider.setMedicineList([widget.searchQuery]);
+                }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CartPage(
+                      pharmacyName: pharmacyName,
+                      medicineList: medicineList,
+                      vendorId: vendorUid,
                     ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[300]!.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
+                  ),
+                );
+              },
+              child: Card(
+                elevation: 2, // Add elevation for the Card
+                margin: const EdgeInsets.all(8), // Add margin to provide spacing
+                child: ListTile(
+                  title: Text("Search: ${widget.searchQuery}"),
+                  subtitle: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text(' $username'),
+                          const Spacer(),
+                          //   Text(' $email'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text("Pharmacy: $pharmacyName"),
+                          const Spacer(),
+                          Text("Phone: $phone")
+                        ],
                       ),
                     ],
                   ),
-                  child: Card(
-                    child: ListTile(
-                      title: Text("Search: ${widget.searchQuery}"),
-                      subtitle: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(' $username'),
-                              const Spacer(),
-                            //  Text(' $email'),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text("Pharmacy: $pharmacyName"),
-                              const Spacer(),
-                              Text("Phone: $phone")
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         );
       },
     );

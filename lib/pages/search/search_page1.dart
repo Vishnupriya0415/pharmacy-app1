@@ -1,16 +1,13 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:gangaaramtech/pages/cart/CartProvider.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
-import 'package:gangaaramtech/pages/search/Vendors_information.dart';
-//import 'package:gangaaramtech/pages/search/Vendors_information.dart';
-
-//import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart'; // Import the relevant page
+import 'package:gangaaramtech/pages/cart/CartPage1.dart';
 
 class SearchPage extends StatefulWidget {
-  final void Function(dynamic selectedMedicine) onMedicineSelected; // Define the callback function
-
-  const SearchPage({Key? key, required this.onMedicineSelected}) : super(key: key);
+  const SearchPage({Key? key, required Null Function(dynamic selectedMedicine) onMedicineSelected}) : super(key: key);
 
   @override
   _SearchPageState createState() => _SearchPageState();
@@ -18,31 +15,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-
-  void _navigateToMedicalStoreList(String searchQuery) {
-    if (searchQuery.isNotEmpty) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => VendorListScreen(searchQuery: searchQuery)),
-      );
-
-
-      
-      // Navigate to the medical store list only if the search query is not empty
-      /*  Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MedicalStoreListScreen(searchQuery: searchQuery, onMedicineSelected: widget.onMedicineSelected), // Pass the callback function to the next screen
-        ),
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => VendorListScreen(searchQuery: searchQuery)),
-      );*/
-    }
-  }
 
   @override
   void dispose() {
@@ -90,9 +62,26 @@ class _SearchPageState extends State<SearchPage> {
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      onSubmitted: (value) {
+                      onSubmitted: (searchQuery) {
+                        // Get the pharmacyName and selectedVendorUid from the CartProvider
+                        final cartProvider = Provider.of<CartProvider>(context, listen: false);
+                        final pharmacyName = cartProvider.pharmacyName;
+                        final vendorId = cartProvider.selectedVendorUid ?? 'N/A';
+
+                        // Add the searched medicine to the medicine list
+                        cartProvider.addToMedicineList(searchQuery);
+
                         // Trigger navigation when the user submits the search
-                        _navigateToMedicalStoreList(value);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CartPage(
+                              pharmacyName: pharmacyName, // Use the pharmacyName from CartProvider
+                              medicineList: [searchQuery], // Add the searched medicine to the list
+                              vendorId: vendorId, // Use the selectedVendorUid from CartProvider
+                            ),
+                          ),
+                        );
                       },
                       decoration: const InputDecoration(
                         labelText: 'Search',

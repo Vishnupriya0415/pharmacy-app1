@@ -1,4 +1,4 @@
-// ignore_for_file: sized_box_for_whitespace, unused_local_variable
+// ignore_for_file: sized_box_for_whitespace, unused_local_variable, library_private_types_in_public_api, file_names, invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/Address/AddressPage.dart';
@@ -12,7 +12,8 @@ class CartItemsPage extends StatefulWidget {
   const CartItemsPage({
     Key? key,
     required this.pharmacyName,
-    required this.cartMedicineList, required vendorUid,
+    required this.cartMedicineList,
+    required vendorUid,
   }) : super(key: key);
 
   @override
@@ -25,7 +26,7 @@ class _CartItemsPageState extends State<CartItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+     
       body: Consumer<CartProvider>(
         builder: (context, cartProvider, child) {
           int totalQuantity = 0; // Initialize total quantity
@@ -39,9 +40,6 @@ class _CartItemsPageState extends State<CartItemsPage> {
                   // Display the row at the top
                   return Column(
                     children: [
-                      const SizedBox(
-                        height: 20,
-                      ),
                       Text(
                         'Cart for ${widget.pharmacyName}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
@@ -50,7 +48,7 @@ class _CartItemsPageState extends State<CartItemsPage> {
                       Row(
                         children: [
                           Container(
-                            width: 150,
+                            width: 95,
                             child: const Text(
                               "List of medicines",
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -91,13 +89,14 @@ class _CartItemsPageState extends State<CartItemsPage> {
                             onPressed: () {
                               for (String medicineName
                                   in widget.cartMedicineList) {
-                                cartProvider.addToCart(
-                                  medicineName,
-                                  cartProvider
+                                cartProvider.cartItems.add(CartItem(
+                                  medicineName: medicineName,
+                                  quantity: cartProvider
                                           .medicineQuantities[medicineName] ??
                                       0,
-                                  pricePerMedicine,
-                                );
+                                  cost: pricePerMedicine,
+                                ));
+                                cartProvider.notifyListeners();
                               }
 
                               // Store all medicines in the provider
@@ -123,9 +122,6 @@ class _CartItemsPageState extends State<CartItemsPage> {
                               style: TextStyle(fontSize: 16),
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          )
                         ],
                       ),
                       const SizedBox(height: 16), // Add some spacing

@@ -1,3 +1,5 @@
+// ignore_for_file: file_names, prefer_final_fields
+
 import 'package:flutter/material.dart';
 
 
@@ -14,10 +16,30 @@ class CartItem {
 }
 class CartProvider extends ChangeNotifier {
   String? selectedVendorUid;
-   List<CartItem> cartItems = []; // List to store cart items
+   //List<CartItem> cartItems = []; // List to store cart items
   List<String> medicineList = [];
    String pharmacyName = '';
   List<String> selectedMedicineNames = [];
+  List<CartItem> _cartItems = [];
+
+List<CartItem> get cartItems => _cartItems;
+
+void addToCart(CartItem cartItem) {
+  _cartItems.add(cartItem);
+  notifyListeners();
+}
+//void clearCart() {
+  //  _cartItems.clear();
+    //selectedMedicineNames.clear();
+    //totalCost = 0.0;
+    //notifyListeners();
+  //}
+ 
+  void clearCart() {
+    _cartItems.clear();
+    notifyListeners();
+  }
+
   
 
   void setSelectedVendorUid(String vendorUid) {
@@ -34,19 +56,12 @@ void setPharmacyName(String name) {
     notifyListeners();
   }
 
-  void addToCart(String medicineName, int quantity, double cost) {
-    cartItems.add(CartItem(
-      medicineName: medicineName,
-      quantity: quantity,
-      cost: cost,
-    ));
-    notifyListeners();
-  }
-
 
   void addToMedicineList(String medicine) {
-    medicineList.add(medicine);
-    notifyListeners(); // Notify listeners to update the UI
+   if (!medicineList.contains(medicine)) {
+      medicineList.add(medicine);
+      notifyListeners(); // Notify listeners to update the UI
+    }// Notify listeners to update the UI
   }
 
 

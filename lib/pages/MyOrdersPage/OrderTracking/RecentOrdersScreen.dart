@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api
+// ignore_for_file: avoid_print, library_private_types_in_public_api, file_names
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -95,17 +95,23 @@ class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
                         children: [
                           Text('Order ID: ${orderData['orderId']}'),
                           const Spacer(),
-                          Text(" Total : ₹${orderData['total']}")
                         ],
                       ),
                       subtitle: Column(
                         children: [
                           Row(
                             children: [
+                              Text(" Total : ₹${orderData['total']}"),
+                              const Spacer(),
+                              Text('Status: ${orderData['status']}'),
+                            ],
+                          ),
+                          Row(
+                            children: [
                               Text(
                                   "No of medicines: ${orderData['medicineNames'].length}"),
                               const Spacer(),
-                              Text('Status: ${orderData['status']}'),
+                              Text("${orderData['pharmacyName']}"),
                             ],
                           ),
                           const SizedBox(

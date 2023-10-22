@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, file_names
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,7 +7,7 @@ import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScre
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderDetailsScreen.dart';
 
 class CurrentOrdersScreen extends StatefulWidget {
-  const CurrentOrdersScreen({Key? key});
+  const CurrentOrdersScreen({super.key});
 
   @override
   _CurrentOrdersScreenState createState() => _CurrentOrdersScreenState();
@@ -55,7 +57,8 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
             );
           }
 
-          final filteredOrders = snapshot.data!.docs.where((document) {
+          final documents = snapshot.data!.docs;
+          List<DocumentSnapshot> filteredOrders = documents.where((document) {
             final orderData = document.data() as Map<String, dynamic>;
             final status = orderData['status'];
             // Filter orders with specific statuses
@@ -65,99 +68,114 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                 status == 'Out for Delivery';
           }).toList();
 
+          // Reverse the order of the filteredOrders list to display newest orders on top
+          filteredOrders = filteredOrders.reversed.toList();
+
           if (filteredOrders.isEmpty) {
             return const Center(
               child: Text('No orders found with selected statuses.'),
             );
           }
 
-          return ListView(
-            children: filteredOrders.map((DocumentSnapshot document) {
-              Map<String, dynamic> orderData =
-                  document.data() as Map<String, dynamic>;
+          return Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: filteredOrders.map((DocumentSnapshot document) {
+                    Map<String, dynamic> orderData =
+                        document.data() as Map<String, dynamic>;
 
-              return Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: Card(
-                  elevation: 5,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(
-                        color: Colors.white,
-                        width: 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: ListTile(
-                      title: Row(
-                        children: [
-                          Text('Order ID: ${orderData['orderId']}'),
-                          const Spacer(),
-                          Text(" Total : ₹${orderData['total']}")
-                        ],
-                      ),
-                      subtitle: Column(
-                        children: [
-                         
-                          Row(
-                            children: [
-                              Text(
-                                  " No of medicines: ${orderData['medicineNames'].length}"),
-                              const Spacer(),
-                              Text('Status: ${orderData['status']}'),
-                            ],
+                    return Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Card(
+                        elevation: 5,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 1.0,
+                            ),
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          const Divider(
-                            color: Colors.black,
-                          ),
-                          const SizedBox(
-                            height: 3,
-                          ),
-                          Row(
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  String statusString = orderData['status'];
-                                  Status status = stringToStatus(statusString);
+                          child: ListTile(
+                            title: Text('Order ID: ${orderData['orderId']}'),
+                            subtitle: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(" Total : ₹${orderData['total']}"),
+                                    const Spacer(),
+                                    Text('Status: ${orderData['status']}'),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                        " No of medicines: ${orderData['medicineNames'].length}"),
+                                    const Spacer(),
+                                    Text("${orderData['pharmacyName']}"),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 3,
+                                ),
+                                const Divider(
+                                  color: Colors.black,
+                                ),
+                                const SizedBox(
+                                  height: 3,
+                                ),
+                                Row(
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        String statusString =
+                                            orderData['status'];
+                                        Status status =
+                                            stringToStatus(statusString);
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderTracker1(status: status),
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderTracker1(status: status),
+                                          ),
+                                        );
+                                      },
+                                      child: const Text('Track Order'),
                                     ),
-                                  );
-                                },
-                                child: const Text('Track Order'),
-                              ),
-                              const Spacer(),
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                            UserOrderDetailsScreen(
-                                              orderId: orderData['orderId'],
-                                            )
+                                    const Spacer(),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UserOrderDetailsScreen(
+                                                    orderId:
+                                                        orderData['orderId'],
+                                                  )),
+                                        );
+                                      },
+                                      child: const Text('View order details'),
                                     ),
-                                  );
-                                },
-                                child: const Text('View order details'),
-                              ),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
+                            // Rest of your code
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }).toList(),
                 ),
-              );
-            }).toList(),
+              ),
+              const SizedBox(
+                height: 120,
+              )
+            ],
           );
         },
       ),

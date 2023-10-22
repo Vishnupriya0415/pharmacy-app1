@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print, file_names
 
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:flutter/material.dart';
@@ -137,7 +137,7 @@ class _OrderDetailsScreenState extends State<UserOrderDetailsScreen> {
                       ),
                       
                       Text(
-                        " ${addressData!['doorNo']}, ${addressData!['street']}, ${addressData!['landmark']}, ${addressData!['city']}, ${addressData!['state']}, ${addressData!['postalCode']}",
+                        " ${addressData! ['doorNo']}, ${addressData!['street']}, ${addressData!['landmark']}, ${addressData!['city']}, ${addressData!['state']}, ${addressData!['postalCode']}",
                       ),
                     ],
                   ),

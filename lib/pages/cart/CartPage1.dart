@@ -1,6 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api, file_names
+
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/cart/CartItemsPage.dart';
 import 'package:gangaaramtech/pages/cart/CartProvider.dart';
+import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 import 'package:gangaaramtech/pages/search/search_page1.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +23,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  Set<String> selectedMedicines = {}; // Store the selected medicines
+
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -28,27 +33,73 @@ class _CartPageState extends State<CartPage> {
     return Scaffold(
       body: SafeArea(
         child: Card(
-          elevation: 5,
+          elevation: 4,
           child: Column(
             children: [
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(" Medines list from ${widget.pharmacyName}"),
-                    ],
-                  )),
-              for (final medicineName in cartMedicineList)
-                ListTile(
-                  title: Text(' $medicineName'),
-                ),
+              const SizedBox(
+                height: 15,
+              ),
               Row(
                 children: [
                   const SizedBox(
                     width: 20,
+                  ),
+                  Text(" ${widget.pharmacyName}"),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      if (selectedMedicines.isNotEmpty) {
+                        // Navigate to the VendorListScreen with the selected medicine
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                VendorListScreen(searchQuery: selectedMedicines.first),
+                          ),
+                        );
+                      } else {
+                        // Handle no medicine selected error (show a message, etc.)
+                      }
+                    },
+                    child: const Text(
+                      "Change Pharmacy",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  )
+                ],
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: cartMedicineList.length,
+                  itemBuilder: (context, index) {
+                    final medicineName = cartMedicineList[index];
+                    return ListTile(
+                      title: Text(medicineName),
+                      leading: Checkbox(
+                        value: selectedMedicines.contains(medicineName),
+                        onChanged: (isChecked) {
+                          setState(() {
+                            if (isChecked != null) {
+                              if (isChecked) {
+                                selectedMedicines.add(medicineName);
+                              } else {
+                                selectedMedicines.remove(medicineName);
+                              }
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Row(
+                children: [
+                  const SizedBox(
+                    width: 3,
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -60,6 +111,7 @@ class _CartPageState extends State<CartPage> {
                             onMedicineSelected: (selectedMedicine) {
                               // Use the cartProvider to add the selected medicine to the list
                               cartProvider.addToMedicineList(selectedMedicine);
+                              Navigator.pop(context); // Close the search page
                             },
                           ),
                         ),
@@ -75,19 +127,17 @@ class _CartPageState extends State<CartPage> {
                         MaterialPageRoute(
                           builder: (context) => CartItemsPage(
                             pharmacyName: widget.pharmacyName,
-                            cartMedicineList: cartMedicineList,
+                            cartMedicineList: selectedMedicines.toList(),
                             vendorUid: widget.vendorId,
                           ),
                         ),
                       );
                     },
-                    child: const Text("Move to cart"),
+                    child: const Text("Move to Cart"),
                   ),
-                  const SizedBox(
-                    width: 20,
-                  )
                 ],
               ),
+              const SizedBox(height: 14), // Add space between rows
               const SizedBox(
                 height: 50,
               ),

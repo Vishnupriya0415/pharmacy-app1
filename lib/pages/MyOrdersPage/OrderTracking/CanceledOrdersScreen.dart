@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors, file_names
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -90,20 +92,27 @@ class _CancelOrdersScreenState extends State<CancelOrdersScreen> {
                       title: Row(
                         children: [
                           Text('Order ID: ${orderData['orderId']}'),
-                          const Spacer(),
-                          Text(" Total : ₹${orderData['total']}")
                         ],
                       ),
                       subtitle: Column(
                         children: [
                           Row(
                             children: [
-                              Text(
-                                  " No of medicines: ${orderData['medicineNames'].length}"),
+                              Text(" Total : ₹${orderData['total']}"),
                               const Spacer(),
                               Text('Status: ${orderData['status']}'),
                             ],
                           ),
+                          Row(
+                            children: [
+                              Text(
+                                  " No of medicines: ${orderData['medicineNames'].length}"),
+                              const Spacer(),
+                              Text("${orderData['pharmacyName']}"),
+                            ],
+                          ),
+                          Text(
+                              " Your order is cancelled by pharmacy because : ${orderData['cancellationReason']}"),
                           const SizedBox(
                             height: 3,
                           ),
@@ -116,18 +125,22 @@ class _CancelOrdersScreenState extends State<CancelOrdersScreen> {
                           Row(
                             children: [
                               ElevatedButton(
-                                onPressed: () {
-                                  String statusString = orderData['status'];
-                                  Status status = stringToStatus(statusString);
+                                onPressed: orderData['status'] == 'Cancelled'
+                                    ? null
+                                    : () {
+                                        String statusString =
+                                            orderData['status'];
+                                        Status status =
+                                            stringToStatus(statusString);
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderTracker1(status: status),
-                                    ),
-                                  );
-                                },
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderTracker1(status: status),
+                                          ),
+                                        );
+                                      },
                                 child: const Text('Track Order'),
                               ),
                               const Spacer(),

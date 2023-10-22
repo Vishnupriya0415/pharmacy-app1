@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, unused_import, unused_local_variable
+// ignore_for_file: library_private_types_in_public_api, unused_import, unused_local_variable, avoid_print, file_names
 
 import 'dart:math';
 
@@ -89,287 +89,295 @@ class _PlacingOrderState extends State<PlacingOrder> {
     // Calculate the total cost including delivery charges and taxes
     final totalCost = cartProvider.totalCost + deliveryCharge + taxes;
     final pharmacyName = cartProvider.pharmacyName;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: <Widget>[
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: const Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Text(
-                "Cancel",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          //Text(selectedVendorUid!),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Pharmacy Name $pharmacyName ")),
-          //  Text(pharmacyName),
-          const Row(
-            children: [
-              SizedBox(
-                width: 20,
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
+    return WillPopScope(
+      onWillPop: () async {
+        final cartProvider = Provider.of<CartProvider>(context, listen: false);
+        cartProvider.clearCart(); // Clear the cart data
+        return true; // Allow navigation back
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          actions: <Widget>[
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(15.0),
                 child: Text(
-                  'Order Details',
+                  "Cancel",
                   style: TextStyle(
-                    fontSize: 20,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-            ],
-          ),
-          const Divider(),
-          ListView.builder(
-            itemCount: cartItems.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final item = cartItems[index];
-
-              return Row(
-                children: [
-                  const SizedBox(
-                    width: 20,
+            ),
+          ],
+        ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 16),
+            //Text(selectedVendorUid!),
+            Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Pharmacy Name $pharmacyName ")),
+            //  Text(pharmacyName),
+            const Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Order Details',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(
-                    width: 200,
-                    child: Text(
-                      ' ${item.medicineName}',
+                ),
+              ],
+            ),
+            const Divider(),
+            ListView.builder(
+              itemCount: cartItems.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final item = cartItems[index];
+
+                return Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        ' ${item.medicineName}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    Text(
+                      ' ${item.quantity}',
                       style: const TextStyle(fontSize: 16),
                     ),
-                  ),
-                  Text(
-                    ' ${item.quantity}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '₹${(item.quantity * item.cost).toStringAsFixed(2)}',
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                ],
-              );
-            },
-          ),
-          const SizedBox(
-            height: 5,
-          ),
-          FDottedLine(
-            color: Colors.black,
-            width: 400,
-            strokeWidth: 1.0,
-            dottedLength: 2.0,
-            space: 2.0,
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              const SizedBox(
-                width: 20,
-              ),
-              const Text("Delivery Charges"),
-              const Spacer(),
-              Text(
-                '₹${deliveryCharge.toStringAsFixed(2)}',
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 15,
-              ),
-              const Text(" Taxes"),
-              const Spacer(),
-              Text(
-                ' ₹${taxes.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 16,
+                    const Spacer(),
+                    Text(
+                      '₹${(item.quantity * item.cost).toStringAsFixed(2)}',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(
+                      width: 20,
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            FDottedLine(
+              color: Colors.black,
+              width: 400,
+              strokeWidth: 1.0,
+              dottedLength: 2.0,
+              space: 2.0,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 20,
                 ),
-              ),
-              const SizedBox(
-                width: 15,
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              const SizedBox(
-                width: 15,
-              ),
-              const Text("Total cost "),
-              const Spacer(),
-              Text(
-                '₹${totalCost.toStringAsFixed(2)}',
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                const Text("Delivery Charges"),
+                const Spacer(),
+                Text(
+                  '₹${deliveryCharge.toStringAsFixed(2)}',
                 ),
-              ),
-            ],
-          ),
-          const Row(
-            children: [
-              SizedBox(
-                width: 20,
-              ),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Select a Payment Method :',
-                  style: TextStyle(
+                const SizedBox(
+                  width: 20,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 15,
+                ),
+                const Text(" Taxes"),
+                const Spacer(),
+                Text(
+                  ' ₹${taxes.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(
+                  width: 15,
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                const SizedBox(
+                  width: 15,
+                ),
+                const Text("Total cost "),
+                const Spacer(),
+                Text(
+                  '₹${totalCost.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: paymentMethods.map((paymentMethod) {
-                final imagePath = paymentMethod['imagePath']!;
-                final method = paymentMethod['method']!;
-
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      selectedPaymentMethod = method;
-                    });
-                  },
-                  child: Row(
-                    children: [
-                      Radio<String>(
-                        value: method,
-                        groupValue: selectedPaymentMethod,
-                        onChanged: (value) {
-                          setState(() {
-                            selectedPaymentMethod = value!;
-                          });
-                        },
-                      ),
-                      Image.asset(
-                        imagePath,
-                        width: 30, // Set an appropriate width for your image
-                        height: 30, // Set an appropriate height for your image
-                      ),
-                      const SizedBox(width: 10),
-                      Text(method),
-                    ],
-                  ),
-                );
-              }).toList(),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                " Delivery address",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const AddressScreen()));
-                    },
-                    child: const Align(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        "Change",
-                        style: TextStyle(color: Colors.blue),
-                      ),
+            const Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    'Select a Payment Method :',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                      '${widget.addressData!['fullName']}, ${widget.addressData!['mobileNumber']},${widget.addressData!['doorNo']}, ${widget.addressData!['street']}, ${widget.addressData!['landmark']}, ${widget.addressData!['city']}, ${widget.addressData!['state']}, ${widget.addressData!['postalCode']}'),
-                ],
-              ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: SizedBox(
-              width: double.maxFinite,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Get the selected vendor UID from your provider or any other source
-                  String? selectedVendorUid = cartProvider.selectedVendorUid;
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: paymentMethods.map((paymentMethod) {
+                  final imagePath = paymentMethod['imagePath']!;
+                  final method = paymentMethod['method']!;
 
-                  List<String> medicineNames = [];
-                  List<int>medicineQuantities=[];
-                  List<double> medicineCosts = [];
-
-                  for (var item in cartItems) {
-                    medicineNames.add(item.medicineName);
-                    medicineCosts.add(item.quantity * item.cost);
-                    medicineQuantities.add(item.quantity);
-                  }
-
-                  placeOrder(
-                      my_order.MyOrder(
-                          address: widget.addressData as Map<String, dynamic>,
-                          orderId: generateOrderID(),
-                          orderedTime: DateTime.now(),
-                          quantity: medicineQuantities,
-                          pharmacyName: pharmacyName,
-                          paymentMethod: selectedPaymentMethod,
-                          deliveryCharges: deliveryCharge,
-                          taxes: taxes,
-                          total: totalCost,
-                          userUid: userData['uid'],
-                          medicinesNames: medicineNames,
-                          cost: medicineCosts,
-                          status: 'pending'),
-                      selectedVendorUid!,
-                      widget.addressData);
-
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const CurrentOrdersScreen()),
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedPaymentMethod = method;
+                      });
+                    },
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                          value: method,
+                          groupValue: selectedPaymentMethod,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedPaymentMethod = value!;
+                            });
+                          },
+                        ),
+                        Image.asset(
+                          imagePath,
+                          width: 30, // Set an appropriate width for your image
+                          height:
+                              30, // Set an appropriate height for your image
+                        ),
+                        const SizedBox(width: 10),
+                        Text(method),
+                      ],
+                    ),
                   );
-                  // Place the order logic here
-                },
-                child: const Text('Place Order'),
+                }).toList(),
               ),
             ),
-          ),
+            const SizedBox(height: 16),
+            const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  " Delivery address",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                )),
+            const SizedBox(height: 16),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AddressScreen()));
+                      },
+                      child: const Align(
+                        alignment: Alignment.topRight,
+                        child: Text(
+                          "Change",
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                    Text(
+                        '${widget.addressData!['fullName']}, ${widget.addressData!['mobileNumber']},${widget.addressData!['doorNo']}, ${widget.addressData!['street']}, ${widget.addressData!['landmark']}, ${widget.addressData!['city']}, ${widget.addressData!['state']}, ${widget.addressData!['postalCode']}'),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: SizedBox(
+                width: double.maxFinite,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Get the selected vendor UID from your provider or any other source
+                    String? selectedVendorUid = cartProvider.selectedVendorUid;
 
-          
-        ],
+                    List<String> medicineNames = [];
+                    List<int> medicineQuantities = [];
+                    List<double> medicineCosts = [];
+
+                    for (var item in cartItems) {
+                      medicineNames.add(item.medicineName);
+                      medicineCosts.add(item.quantity * item.cost);
+                      medicineQuantities.add(item.quantity);
+                    }
+
+                    placeOrder(
+                        my_order.MyOrder(
+                            address: widget.addressData as Map<String, dynamic>,
+                            orderId: generateOrderID(),
+                            orderedTime: DateTime.now(),
+                            quantity: medicineQuantities,
+                            pharmacyName: pharmacyName,
+                            paymentMethod: selectedPaymentMethod,
+                            deliveryCharges: deliveryCharge,
+                            taxes: taxes,
+                            total: totalCost,
+                            userUid: userData['uid'],
+                            medicinesNames: medicineNames,
+                            cost: medicineCosts,
+                            status: 'pending'),
+                        selectedVendorUid!,
+                        widget.addressData);
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const CurrentOrdersScreen()),
+                    );
+                    // Place the order logic here
+                  },
+                  child: const Text('Place Order'),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
       ),
     );
   }
@@ -419,7 +427,7 @@ class _PlacingOrderState extends State<PlacingOrder> {
             .collection('orders')
             .doc(order.orderId) // Use the order ID as the document ID
             .set(order.toMap());
-
+            
         // If successful, you may want to update the UI or show a success message.
       } else {
         // Handle the case where the user is not authenticated.
@@ -429,5 +437,4 @@ class _PlacingOrderState extends State<PlacingOrder> {
       print("Error placing order: $error");
     }
   }
-
 }

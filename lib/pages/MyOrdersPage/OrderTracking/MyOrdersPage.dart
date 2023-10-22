@@ -145,7 +145,7 @@ class MyOrdersPage extends StatelessWidget {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
-                  child: const CartPage(),
+                  child: CartPage(),
                 ),
               ),
             ],

@@ -705,7 +705,7 @@ class _OrderTrackerState extends State<OrderTracker>
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
-                          child: Text("       ${widget.deliveryAddress}")),
+                          child: Text("  ${widget.deliveryAddress}")),
                       const SizedBox(height: 5,),
                     ],
                   ),

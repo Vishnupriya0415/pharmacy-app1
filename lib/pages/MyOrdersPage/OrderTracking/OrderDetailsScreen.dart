@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, file_names
+
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -56,11 +58,12 @@ class UserOrderDetailsScreen extends StatelessWidget {
                           Text(
                               'Ordered by  ${orderData['address']['fullName']}'),
                           const Spacer(),
-                          Text(
-                              'Phone Number: ${orderData['address']['mobileNumber']}'),
+                          Text("${orderData['paymentMethod']}")
                         ],
                       ),
-                      Text("Pharmacy Name ${orderData['pharmacyName']}"),
+                      Text(
+                          'Phone No.: ${orderData['address']['mobileNumber']}'),
+                      Text("Ordered from  ${orderData['pharmacyName']}"),
                       const SizedBox(
                         height: 5,
                       ),

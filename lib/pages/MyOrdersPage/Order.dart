@@ -1,5 +1,7 @@
 //import 'package:flutter/foundation.dart';
 
+// ignore_for_file: file_names
+
 class MyOrder {
   final List<String> medicinesNames;
   final List<double> cost;
