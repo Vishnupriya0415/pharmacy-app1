@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, file_names
+// ignore_for_file: prefer_const_constructors_in_immutables
 
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class OrderDetailsScreen extends StatelessWidget {
   final String orderId;
 
-  OrderDetailsScreen({required this.orderId});
+  OrderDetailsScreen({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {

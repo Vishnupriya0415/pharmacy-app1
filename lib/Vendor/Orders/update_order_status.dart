@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api, prefer_const_constructors_in_immutables
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
 class VendorOrderStatusScreen extends StatefulWidget {
   final String orderId;
 
-  VendorOrderStatusScreen({required this.orderId, Key? key}) : super(key: key);
+  const VendorOrderStatusScreen({required this.orderId, Key? key}) : super(key: key);
 
   @override
   _VendorOrderStatusScreenState createState() =>

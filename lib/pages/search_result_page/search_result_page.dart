@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Items_in_cart.dart';
+
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
@@ -83,13 +83,7 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
                           );
                           selectedDataProvider.addMedicalShop(selectedMedicalShop);
 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CartPage(),
-                            ),
-                          );
-                        },
+                      },
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Container(

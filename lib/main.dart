@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gangaaramtech/Vendor/Order_provider.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderProvider.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/Order_placement.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/providers/order_data.dart';
@@ -38,6 +39,7 @@ void main() async {
         ),
         ChangeNotifierProvider(create: (_) => CartProvider()),
         //ChangeNotifierProvider(create: (_) => ItemsInCartProvider())
+        ChangeNotifierProvider(create: (context) => OrderCreationState()),
         
         // Add other providers here
       ],

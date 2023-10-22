@@ -1,10 +1,9 @@
-// ignore_for_file: file_names
+// ignore_for_file: file_names, avoid_print
 
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
 import 'package:gangaaramtech/Vendor/authentication/Vauth.dart';
-//import 'package:gangaaramtech/repository/auth.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
@@ -92,6 +91,7 @@ class _OtpVerifyState extends State<VOtpVerify> {
                   onCompleted: (value) {
                     setState(() {
                       otpCode = value;
+                      print(otpCode);
                     });
                   },
                 ),
@@ -132,12 +132,15 @@ class _OtpVerifyState extends State<VOtpVerify> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                const Text(
-                  "Resend New Code",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.indigo,
+                GestureDetector(
+                  onTap: () {},
+                  child: const Text(
+                    "Resend New Code",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.indigo,
+                    ),
                   ),
                 ),
                 const SizedBox(

@@ -1,0 +1,25 @@
+// Define a Provider to store the image URL and vendor UID
+class ImageVendorProvider extends ChangeNotifier {
+  String _imageUrl = '';
+  String _vendorUid = '';
+
+  String get imageUrl => _imageUrl;
+  String get vendorUid => _vendorUid;
+
+  void setImageUrlAndVendorUid(String imageUrl, String vendorUid) {
+    _imageUrl = imageUrl;
+    _vendorUid = vendorUid;
+    notifyListeners();
+  }
+}
+
+// In the scanning/upload process, set the image URL and vendor UID:
+final imageVendorProvider = context.read<ImageVendorProvider>();
+imageVendorProvider.setImageUrlAndVendorUid(imageUrl, vendorUid);
+
+// In the prescription order placement page, retrieve and display the image and vendor details:
+final imageVendorProvider = context.watch<ImageVendorProvider>();
+final imageUrl = imageVendorProvider.imageUrl;
+final vendorUid = imageVendorProvider.vendorUid;
+
+// Display the image and vendor details in your UI using imageUrl and vendorUid

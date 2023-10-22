@@ -8,6 +8,7 @@ import 'package:gangaaramtech/Vendor/VHome/CancelledOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/DeliveredOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/PendingOrders.dart';
 import 'package:gangaaramtech/Vendor/common/Settings.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/PrescriptionOrder.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
 
 class VendorHome extends StatefulWidget {
@@ -147,6 +148,36 @@ class _VendorHomeState extends State<VendorHome> {
                       alignment: Alignment.center,
                       child: Text(
                         " View incoming orders",
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(fontSize: 25),
+                        //  style: FontConstants.lightVioletMixedWhite,
+                      )),
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PrescriptionOrdersPage(),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    color: Colors.green[200],
+                    // Set the background color here
+                  ),
+                  child: const Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        " View Prescription  orders",
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.left,
                         style: TextStyle(fontSize: 25),

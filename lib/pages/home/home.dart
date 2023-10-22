@@ -4,16 +4,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart';
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
 import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 import 'package:gangaaramtech/pages/search/vendors_information1.dart';
-//import 'package:gangaaramtech/pages/OrderDetails/orderdetails.dart';
 import 'package:http/http.dart' as http;
-//import 'package:gangaaramtech/pages/search/search_page.dart';
 import 'package:gangaaramtech/pages/search/search_page1.dart';
 //import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'package:gangaaramtech/pages/settings/settings.dart';
@@ -114,7 +111,6 @@ class _HomeState extends State<Home> {
     _getCurrentLocation();
     _startLocationUpdateTimer();
     fetchMedicalStores();
-    requestNotificationPermission();
   }
 
   @override
@@ -253,17 +249,11 @@ class _HomeState extends State<Home> {
   }
 
 Future<void> uploadImageToFirebaseStorage(File imageFile) async {
-    // Create a unique filename for the image
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    // Get a reference to the Firebase Storage bucket
     final Reference storageReference = FirebaseStorage.instance
         .ref()
         .child('prescription_images/$fileName.jpg');
-
-    // Upload the image to Firebase Storage
     final UploadTask uploadTask = storageReference.putFile(imageFile);
-
-    // Monitor the upload task
     uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
       setState(() {
         uploadProgress = (snapshot.bytesTransferred / snapshot.totalBytes);
@@ -272,13 +262,8 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
 
     try {
       await uploadTask;
-      // Get the download URL of the uploaded image
       String imageUrl = await storageReference.getDownloadURL();
       print('Image uploaded to Firebase Storage. URL: $imageUrl');
-
-      // Now you can use the 'imageUrl' to display or further process the image.
-
-      // You can also navigate to the Vendor List screen here.
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => VendorListScreen1(
@@ -415,36 +400,7 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
     }
 
   }
-  Future<void> requestNotificationPermission() async {
-    final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
-// Request notification permissions
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-// Permission is granted
-      print('Notification permissions granted.');
-    } else if (settings.authorizationStatus == AuthorizationStatus.denied) {
-// Permission is denied
-      print('Notification permissions denied.');
-    }
-
-// Configure Firebase Messaging
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-// Handle incoming notifications when the app is in the foreground
-      print('Received notification: ${message.notification?.title}');
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-// Handle notifications when the app is opened from a terminated state
-      print('Opened app from notification: ${message.notification?.title}');
-    });
-  }
-
+  
   /* File? _image;
 
   Future<void> isInstalled() async {
@@ -623,9 +579,6 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
               ),
             ],
           ),
-       
-       
-       
         ),
         body: SingleChildScrollView(
           child: Container(

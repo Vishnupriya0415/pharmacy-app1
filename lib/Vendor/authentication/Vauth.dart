@@ -233,6 +233,7 @@ class VAuth extends ChangeNotifier {
     }
   }
 
+
   // check exisiting user
   Future<bool> checkExistingUser() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;

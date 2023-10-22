@@ -8,7 +8,6 @@ import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/RecentOrdersScree
 import 'package:gangaaramtech/pages/home/home.dart';
 import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
 import 'RecentOrders.dart';
-import 'Items_in_cart.dart';
 
 class MyOrdersPage extends StatelessWidget {
   MyOrdersPage({Key? key}) : super(key: key);
@@ -145,7 +144,7 @@ class MyOrdersPage extends StatelessWidget {
               SingleChildScrollView(
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
-                  child: CartPage(),
+                  //child: (),
                 ),
               ),
             ],

@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors_in_immutables, file_names
-
 import 'package:fdottedline_nullsafety/fdottedline__nullsafety.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 class UserOrderDetailsScreen extends StatelessWidget {
   final String orderId;
 
-  UserOrderDetailsScreen({required this.orderId});
+  const UserOrderDetailsScreen({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -58,12 +56,11 @@ class UserOrderDetailsScreen extends StatelessWidget {
                           Text(
                               'Ordered by  ${orderData['address']['fullName']}'),
                           const Spacer(),
-                          Text("${orderData['paymentMethod']}")
+                          Text(
+                              'Phone Number: ${orderData['address']['mobileNumber']}'),
                         ],
                       ),
-                      Text(
-                          'Phone No.: ${orderData['address']['mobileNumber']}'),
-                      Text("Ordered from  ${orderData['pharmacyName']}"),
+                      Text("Pharmacy Name ${orderData['pharmacyName']}"),
                       const SizedBox(
                         height: 5,
                       ),

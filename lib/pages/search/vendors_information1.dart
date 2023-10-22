@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/PrescriptionOrderPlacngPage.dart';
 
 class VendorListScreen1 extends StatefulWidget {
   final String imageUrl;
@@ -68,7 +69,7 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
             final email = userData['email'] ?? 'N/A';
             final pharmacyName = userData['pharmacyName'] ?? 'N/A';
             final phone = userData['phone'] ?? 'N/A';
-            final vendorUid = userData['Uid'] ?? 'N/A';
+            final vendorUid = userData['uid'] ?? 'N/A';
 
             return GestureDetector(
               onTap: () {
@@ -91,10 +92,16 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
                   child: ListTile(
                     title: Text('Vendor: $pharmacyName'),
                     subtitle: Column(
+
                       children: [
-                        Text('Name: $username'),
                         Text('Email: $email'),
-                        Text('Phone: $phone'),
+                        Row(
+                          children: [
+                            Text('Name: $username'),
+                            const Spacer(),
+                            Text('Phone: $phone'),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -124,7 +131,13 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
           TextButton(
             child: const Text('Yes'),
             onPressed: () {
-              Navigator.of(dialogContext).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => PrescriptionOrder(
+                          vendorUid: vendorUid,
+                          imageUrl: widget.imageUrl,
+                        )),
+              );
             },
           ),
         ],
