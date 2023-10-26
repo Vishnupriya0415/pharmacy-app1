@@ -2,9 +2,10 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 import 'package:provider/provider.dart';
 
 class SelectedData {
@@ -27,11 +28,12 @@ class MedicalStoreListScreen extends StatefulWidget {
 
 class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
   List<Map<String, dynamic>> pharmacyData = [];
+   final Location location = Location();
 
   @override
   void initState() {
     super.initState();
-    fetchMedicalStores();
+    fetchUserCoordinates();
   }
 
   @override
@@ -136,48 +138,55 @@ class _MedicalStoreListScreenState extends State<MedicalStoreListScreen> {
     );
   }
 
-  Future<void> fetchMedicalStores() async {
-    const url =
-        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
-
-    final headers = {
-      "accept": "application/json",
-      "Authorization": "fsq3LPvbSdx96rSXZgsqmzDM3f/3KxqosKh/xuQZ2WT3MU8="
-    };
-
+ Future<void> fetchUserCoordinates() async {
     try {
-      final response = await http.get(Uri.parse(url), headers: headers);
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
-        final results = responseData["results"];
+      final LocationData userLocation = await location.getLocation();
 
-        final validMedicalStores = List<Map<String, dynamic>>.from(results)
-            .where((store) =>
-                store["tel"] != null &&
-                store["tel"] != "N/A" &&
-                store["location"]["formatted_address"] != null &&
-                store["location"]["formatted_address"] != "N/A")
-            .map((store) {
-          final medicines = [
-            {"name": "Paracetamol", "dosage": "1 tablet"},
-            {"name": "Ibuprofen", "dosage": "1 tablet"},
-            // Add more medicines and dosages
-          ];
+      final latitude = userLocation.latitude;
+      final longitude = userLocation.longitude;
 
-          return {
-            "name": store["name"],
-            "address": store["location"]["formatted_address"],
-            "medicines": medicines,
-          };
-        }).toList();
+      final url = "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=$latitude,$longitude&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
 
-        setState(() {
-          pharmacyData = validMedicalStores;
-        });
+      final headers = {
+        "accept": "application/json",
+        "Authorization": "fsq3LPvbSdx96rSXZgsqmzDM3f/3KxqosKh/xuQZ2WT3MU8=",
+      };
+
+      try {
+        final response = await http.get(Uri.parse(url), headers: headers);
+        if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
+          final results = responseData["results"];
+
+          final validMedicalStores = List<Map<String, dynamic>>.from(results)
+              .where((store) =>
+                  store["tel"] != null &&
+                  store["tel"] != "N/A" &&
+                  store["location"]["formatted_address"] != null &&
+                  store["location"]["formatted_address"] != "N/A")
+              .map((store) {
+            final medicines = [
+              {"name": "Paracetamol", "dosage": "1 tablet"},
+              {"name": "Ibuprofen", "dosage": "1 tablet"},
+              // Add more medicines and dosages
+            ];
+
+            return {
+              "name": store["name"],
+              "address": store["location"]["formatted_address"],
+              "medicines": medicines,
+            };
+          }).toList();
+
+          setState(() {
+            pharmacyData = validMedicalStores;
+          });
+        }
+      } catch (e) {
+        print("Error making API request: $e");
       }
     } catch (e) {
-      // ignore: avoid_print
-      print("Error: $e");
+      print("Error fetching user coordinates: $e");
     }
   }
 }

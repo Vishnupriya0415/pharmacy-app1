@@ -2,7 +2,7 @@
 // ignore_for_file: must_be_immutable, override_on_non_overriding_member, use_key_in_widget_constructors, annotate_overrides, file_names
 
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTracking.dart';
+
 import 'package:gangaaramtech/pages/OrderDetails/OrderDetails.dart';
 import 'RecentOrders.dart';
 
@@ -48,17 +48,17 @@ class MyCurrentScreen extends StatefulWidget {
 
 class _MyCurrentScreenState extends State<MyCurrentScreen> {
   @override
-  List<OrderTracker> orderTrackers = [
-    const OrderTracker(status: Status.outOfDelivery, medicineNames:  ['Cetrizeine','Paracetamol',],
-      medicineData: {1: 'Cetrizene#1',
-        2: 'Paracetemol#2', },deliveryCharges: 5, medicinePrices: [85,29],orderPackingCharges: 4,
-    deliveryAddress: '20-2-262/A, Koraguntla,Tirupati, Andra Pradesh', taxes: 10, quantity: [2,1],),
+ // List<OrderTracker> orderTrackers = [
+   // const OrderTracker(status: Status.outOfDelivery, medicineNames:  ['Cetrizeine','Paracetamol',],
+     // medicineData: {1: 'Cetrizene#1',
+       // 2: 'Paracetemol#2', },deliveryCharges: 5, medicinePrices: [85,29],orderPackingCharges: 4,
+    //deliveryAddress: '20-2-262/A, Koraguntla,Tirupati, Andra Pradesh', taxes: 10, quantity: [2,1],),
 
-    const OrderTracker(status: Status.shipped,medicineNames: ['Paracetamol'],
-    medicineData: {
-      1: 'Paracatamol'}, deliveryCharges: 5,medicinePrices: [29],orderPackingCharges: 4,
-    deliveryAddress: '20-2-262/A, Koraguntla,Tirupati, Andra Pradesh',taxes: 10, quantity: [2,],),
-  ];
+    //const OrderTracker(status: Status.shipped,medicineNames: ['Paracetamol'],
+    //medicineData: {
+      //1: 'Paracatamol'}, deliveryCharges: 5,medicinePrices: [29],orderPackingCharges: 4,
+    //deliveryAddress: '20-2-262/A, Koraguntla,Tirupati, Andra Pradesh',taxes: 10, quantity: [2,],),
+  //];
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -126,12 +126,7 @@ class _MyCurrentScreenState extends State<MyCurrentScreen> {
                           const Spacer(),
                           GestureDetector(
                             onTap: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => orderTrackers[myListOfOrderIndex], // Access the correct OrderTracker from the list
-                                ),
-                              );
+                              
                             },
                             child: Container(
                               decoration: BoxDecoration(
