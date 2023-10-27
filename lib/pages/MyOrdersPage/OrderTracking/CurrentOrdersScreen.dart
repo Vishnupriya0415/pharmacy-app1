@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
+
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderDetailsScreen.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingPage.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Orde_Placing2/PrescriptionOrderDetailsScreen.dart';
 
 class CurrentOrdersScreen extends StatefulWidget {
@@ -136,16 +137,15 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                   children: [
                                     ElevatedButton(
                                       onPressed: () {
-                                        String statusString =
-                                            orderData['status'];
-                                        Status status =
-                                            stringToStatus(statusString);
-
+                                       
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                                OrderTracker1(status: status),
+                                               OrderTrackingPage(
+          // Pass the status or any required data
+    
+        ),
                                           ),
                                         );
                                       },

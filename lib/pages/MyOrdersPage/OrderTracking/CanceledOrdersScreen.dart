@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/UserOrderDetailsScreen.dart';
 
 class CancelOrdersScreen extends StatefulWidget {
@@ -128,18 +127,7 @@ class _CancelOrdersScreenState extends State<CancelOrdersScreen> {
                                 onPressed: orderData['status'] == 'Cancelled'
                                     ? null
                                     : () {
-                                        String statusString =
-                                            orderData['status'];
-                                        Status status =
-                                            stringToStatus(statusString);
-
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                OrderTracker1(status: status),
-                                          ),
-                                        );
+                                      
                                       },
                                 child: const Text('Track Order'),
                               ),
