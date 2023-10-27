@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Orde_Placing2/PrescriptionOrderDetailsScreen.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/UserOrderDetailsScreen.dart';
 import 'package:gangaaramtech/pages/cart/CartItemsPage.dart';
 
@@ -73,8 +74,7 @@ class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
             children: filteredOrders.map((DocumentSnapshot document) {
               Map<String, dynamic> orderData =
                   document.data() as Map<String, dynamic>;
-              final medicinesList =
-                  (orderData['medicineNames'] as List<dynamic>).cast<String>();
+
               final pharmacyName = orderData['pharmacyName'];
 
               return Padding(
@@ -108,8 +108,9 @@ class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
                           ),
                           Row(
                             children: [
-                              Text(
-                                  "No of medicines: ${orderData['medicineNames'].length}"),
+                              if (!orderData['isPrescription'])
+                                Text(
+                                    "No of medicines: ${orderData['medicineNames']?.length ?? 0}"),
                               const Spacer(),
                               Text("${orderData['pharmacyName']}"),
                             ],
@@ -127,35 +128,57 @@ class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
                             children: [
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          UserOrderDetailsScreen(
-                                        orderId: orderData['orderId'],
+                                  if (orderData['isPrescription']) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PrescriptionOrderDetailsScreen(
+                                          orderId: orderData['orderId'],
+                                          // Replace with the actual field name in your data
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            UserOrderDetailsScreen(
+                                          orderId: orderData['orderId'],
+                                        ),
+                                      ),
+                                    );
+                                  }
                                 },
-                                child: const Text('View Order Details'),
+                                child: const Text('View order details'),
                               ),
                               const Spacer(),
                               ElevatedButton(
                                 onPressed: () {
-                                  print(orderData['vendorUid']);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CartItemsPage(
-                                        cartMedicineList: medicinesList,
-                                        pharmacyName: pharmacyName,
-                                        vendorUid: orderData['vendorUid'],
+                                  if (!orderData['isPrescription']) {
+                                    final medicinesList =
+                                        (orderData['medicineNames']
+                                                as List<dynamic>)
+                                            .cast<String>();
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CartItemsPage(
+                                          cartMedicineList: medicinesList,
+                                          pharmacyName: pharmacyName,
+                                          vendorUid: orderData['vendorUid'],
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    // Handle the case where it's a prescription order
+                                    // You can add code to display a message or handle this case accordingly
+                                    //Also provide functionality to reorder the prescription order
+                                  }
                                 },
                                 child: const Text('Reorder'),
-                              ),
+                              )
                             ],
                           ),
                         ],

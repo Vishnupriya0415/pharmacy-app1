@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state, avoid_print, library_private_types_in_public_api
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';

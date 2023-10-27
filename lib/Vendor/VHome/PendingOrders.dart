@@ -8,7 +8,7 @@ import 'package:gangaaramtech/Vendor/Orders/OrderDetails.dart';
 import 'package:gangaaramtech/Vendor/Orders/update_order_status.dart';
 
 class PendingDeliveriesScreen extends StatefulWidget {
-  const PendingDeliveriesScreen({Key? key});
+  const PendingDeliveriesScreen({super.key});
 
   @override
   _PendingDeliveriesScreenState createState() =>

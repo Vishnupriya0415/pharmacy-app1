@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -88,7 +90,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                               ],
                             ),
 
-                            subtitle: Container(
+                            subtitle: SizedBox(
                               width: 100, // Adjust the width as needed
                               height: 100, // Adjust the height as needed
                               child: Image.network(

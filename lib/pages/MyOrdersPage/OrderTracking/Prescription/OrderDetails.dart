@@ -1,3 +1,5 @@
+// ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
@@ -7,7 +9,7 @@ class OrderDetailsPage1 extends StatefulWidget {
   final String orderID;
   final String imageUrl;
 
-  OrderDetailsPage1({
+  const OrderDetailsPage1({super.key, 
     required this.orderID,
     required this.imageUrl,
   });

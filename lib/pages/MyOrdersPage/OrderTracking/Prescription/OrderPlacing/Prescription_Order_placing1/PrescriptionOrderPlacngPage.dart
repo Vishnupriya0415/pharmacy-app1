@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print, unused_local_variable
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/Vendor/Orders/SuccessPage.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Orde_Placing2/AddressScreen.dart';
 import 'package:gangaaramtech/pages/search/vendors_information1.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
@@ -68,13 +70,17 @@ class _PrescriptionOrderState extends State<PrescriptionOrder> {
     }
   }
 
+/*
+bool isOrderCreated = false; // Add a flag to track order creation
+
   Future<void> createOrder() async {
-    if (orderCreationInProgress) {
-      // Order creation is already in progress, do nothing
+    if (isOrderCreated) {
+      // Order has already been created, do nothing
       return;
     }
 
-    orderCreationInProgress = true;
+    isOrderCreated =
+        true; // Set the flag to indicate that the order is being created
 
     User? user = FirebaseAuth.instance.currentUser;
     String? userUID = user?.uid;
@@ -130,14 +136,14 @@ class _PrescriptionOrderState extends State<PrescriptionOrder> {
           .collection('orders')
           .doc(orderID)
           .get();
+
       if (subcollectionDoc.exists) {
         Map<String, dynamic> subcollectionData =
             subcollectionDoc.data() as Map<String, dynamic>;
-        String total = subcollectionData['total'] ?? '';
-
-        if (total.isNotEmpty) {
+        double total = subcollectionData['total'] ?? '';
+        if (total != 0.0) {
           orderData['total'] = total;
-
+          print(total);
           // Store the order in the user's "orders" subcollection
           await FirebaseFirestore.instance
               .collection('users')
@@ -145,19 +151,16 @@ class _PrescriptionOrderState extends State<PrescriptionOrder> {
               .collection('orders')
               .doc(orderID)
               .set(orderData);
-          orderCreationInProgress = false;
 
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Order has been created successfully.'),
             ),
           );
-
-          // Finally, navigate to the next screen
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const SuccessPage()),
           );
-          print("total cost is added by vendor");
+          print("Total cost is added by the vendor");
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -165,39 +168,149 @@ class _PrescriptionOrderState extends State<PrescriptionOrder> {
                   'Please wait while the vendor is processing your request.'),
             ),
           );
-          orderCreationInProgress = false;
         }
       } else {
-        // Handle the case when the subcollection document doesn't exist
-        // You can show a Snackbar or take other appropriate actions
-        orderCreationInProgress = false;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(' Wait while the vendor is processing your request.'),
+          ),
+        );
+       
       }
     } catch (e) {
-      // Handle any error that occurred during the order creation
-      // Set the flag to false to allow trying again
-      orderCreationInProgress = false;
-      // Show an error message or log the error
+      isOrderCreated = false;
+    }
+  }
+*/
+  int buttonPressCount = 0; // Initialize a counter to track button presses
+  bool isOrderCreated = false;
+  String orderID = ''; // Define orderID outside the if block
+  Map<String, dynamic> orderData = {}; // Define orderData outside the if block
+
+  Future<void> createOrder() async {
+    buttonPressCount++; // Increase the counter with each button press
+
+    User? user = FirebaseAuth.instance.currentUser;
+    String? userUID = user?.uid;
+
+    if (buttonPressCount == 1) {
+      orderID = generateOrderID();
+      print("The orderid is $orderID");
+
+      orderData = {
+        'orderid': orderID,
+        'imageURL': widget.imageUrl,
+        'vendorName': vendorName,
+        'status': 'pending',
+        "isPrescription": true,
+      };
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUID)
+          .collection('orders')
+          .doc(orderID)
+          .set(orderData);
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUID)
+          .collection('orders')
+          .doc(orderID)
+          .update(
+              {'vendorUid': widget.vendorUid, 'pharmacyName': pharmacyName});
+
+      await FirebaseFirestore.instance
+          .collection('vendors')
+          .doc(widget.vendorUid)
+          .collection('orders')
+          .doc(orderID)
+          .set(orderData);
+
+      await FirebaseFirestore.instance
+          .collection('vendors')
+          .doc(widget.vendorUid)
+          .collection('orders')
+          .doc(orderID)
+          .update({'userUid': userUID});
+
+      isOrderCreated = true;
+
+      // Show a message to the user indicating that the order has been created
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Order has been created successfully and the request is sent to vendor for further processing .'),
+        ),
+      );
+    } else {
+      // This is not the first button press, so check if the "total" value exists in the order document
+
+      DocumentSnapshot subcollectionDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUID)
+          .collection('orders')
+          .doc(orderID)
+          .get();
+
+      if (subcollectionDoc.exists) {
+        Map<String, dynamic> subcollectionData =
+            subcollectionDoc.data() as Map<String, dynamic>;
+        double total = subcollectionData['total'] ?? 0.0;
+        print("Total Value: $total");
+        if (total != 0.0) {
+          // The "total" value exists, proceed with navigation...
+          setState(() {
+            orderData['total'] = total;
+          });
+          print(total);
+
+          // Navigate to the next screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => PrescriptionAddressScreen(
+                      orderID: subcollectionData['orderid'],
+                      vendorUid: subcollectionData['vendorUid'],
+                    )),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  'Vendor has processed your request and the cost is $total.'),
+            ),
+          );
+          print("Total cost is added by the vendor");
+        } else {
+          // The "total" value does not exist, show a message to the user
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Please wait while the vendor is processing your request.'),
+            ),
+          );
+        }
+      } else {
+        // The order document doesn't exist, show a message to the user
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Order document doesn\'t exist.Try placing an order again'),
+          ),
+        );
+      }
     }
   }
 
-  // Function to generate a unique order ID
   String generateOrderID() {
-    // Get the current date and time
     DateTime now = DateTime.now();
-
-    // Generate a random number between 1000 and 9999
     int random = Random().nextInt(9000) + 1000;
-
-    // Create an order ID by combining date/time and random number
     String orderID =
         'OD${now.year}${now.month}${now.day}${now.hour}${now.minute}${now.second}$random';
-
     return orderID;
   }
 
   @override
   void dispose() {
-    _isDisposed = true; // Set a flag to indicate that the widget is disposed
+    _isDisposed = true;
     super.dispose();
   }
 

@@ -15,11 +15,12 @@ class MyOrder {
   final String status;
   final DateTime orderedTime;
   final String paymentMethod;
-
+  final bool isPrescription;
   Map<String, dynamic> address;
   
   MyOrder(
       {required this.medicinesNames,
+      required this.isPrescription,
       required this.quantity,
       required this.address,
       required this.paymentMethod,
@@ -46,6 +47,7 @@ class MyOrder {
       'total': total,
       'userUid': userUid,
       'address': address,
+      'isPrescription':isPrescription,
   //    'userMtoken': userMtoken,
       'pharmacyName': pharmacyName,
       'cost': cost,

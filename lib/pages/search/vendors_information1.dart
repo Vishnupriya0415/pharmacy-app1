@@ -3,8 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/PrescriptionOrderPlacngPage.dart';
-
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Order_placing1/PrescriptionOrderPlacngPage.dart';
 class VendorListScreen1 extends StatefulWidget {
   final String imageUrl;
   const VendorListScreen1({Key? key, required this.imageUrl}) : super(key: key);

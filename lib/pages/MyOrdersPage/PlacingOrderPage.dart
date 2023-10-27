@@ -243,6 +243,7 @@ class _PlacingOrderState extends State<PlacingOrder> {
                 SizedBox(
                   width: 20,
                 ),
+               
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -350,6 +351,7 @@ class _PlacingOrderState extends State<PlacingOrder> {
                         my_order.MyOrder(
                             address: widget.addressData as Map<String, dynamic>,
                             orderId: generateOrderID(),
+                              isPrescription: false,
                             orderedTime: DateTime.now(),
                             quantity: medicineQuantities,
                             pharmacyName: pharmacyName,

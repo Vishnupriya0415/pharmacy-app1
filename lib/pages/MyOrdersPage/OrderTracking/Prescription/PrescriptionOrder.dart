@@ -1,7 +1,9 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderDetails.dart';
+import 'package:gangaaramtech/Vendor/PrescriptionOrder/OrderDetails.dart';
 
 class PrescriptionOrdersPage extends StatefulWidget {
   const PrescriptionOrdersPage({Key? key}) : super(key: key);
@@ -39,7 +41,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                   .doc(_currentUser!
                       .uid) // Use the current user's ID for the vendor
                   .collection('orders')
-                  .where('orderState', isEqualTo: 'pending')
+                  .where('status', isEqualTo: 'pending')
                   .snapshots(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -71,7 +73,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                             // Navigate to the OrderDetailsPage when tapped
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OrderDetailsPage1(
+                                builder: (context) => OrderDetailsPage(
                                   orderID: orderID,
                                   imageUrl: imageUrl,
                                 ),
@@ -87,7 +89,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
 
                             subtitle: Row(
                               children: [
-                                Container(
+                                SizedBox(
                                   width: 100,
                                   height: 100,
                                   child: Image.network(
@@ -99,7 +101,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                                 ),
                                 Column(
                                   children: [
-                                    Text(" Status:"),
+                                    const Text(" Status:"),
                                     Text(
                                         "Pharmacy Name: ${order['pharmacyName']}"),
                                   ],

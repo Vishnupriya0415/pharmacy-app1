@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderTrackingScreen.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/OrderDetailsScreen.dart';
+import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Orde_Placing2/PrescriptionOrderDetailsScreen.dart';
 
 class CurrentOrdersScreen extends StatefulWidget {
   const CurrentOrdersScreen({super.key});
@@ -107,12 +108,17 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     Text(" Total : ₹${orderData['total']}"),
                                     const Spacer(),
                                     Text('Status: ${orderData['status']}'),
+                                    //   Text(
+                                    //     'Is Prescription: ${orderData['isPrescription'].toString()}')
+
                                   ],
                                 ),
+                               
                                 Row(
                                   children: [
-                                    Text(
-                                        " No of medicines: ${orderData['medicineNames'].length}"),
+                                    if (!orderData['isPrescription'])
+                                      Text(
+                                          "No of medicines: ${orderData['medicineNames']?.length ?? 0}"),
                                     const Spacer(),
                                     Text("${orderData['pharmacyName']}"),
                                   ],
@@ -148,18 +154,32 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     const Spacer(),
                                     ElevatedButton(
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
+                                        if (orderData['isPrescription']) {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PrescriptionOrderDetailsScreen(
+                                                orderId: orderData['orderId'],
+                                                // Replace with the actual field name in your data
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
                                               builder: (context) =>
                                                   UserOrderDetailsScreen(
-                                                    orderId:
-                                                        orderData['orderId'],
-                                                  )),
-                                        );
+                                                orderId: orderData['orderId'],
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
                                       child: const Text('View order details'),
-                                    ),
+                                    )
+
                                   ],
                                 ),
                               ],
@@ -172,9 +192,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                   }).toList(),
                 ),
               ),
-              const SizedBox(
-                height: 120,
-              )
+              
             ],
           );
         },
