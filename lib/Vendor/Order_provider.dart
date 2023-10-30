@@ -23,10 +23,7 @@ class MyOrder {
 
 
 class OrderProvider extends ChangeNotifier {
-
-
-  
-  final List<MyOrder> _orders = [];
+    final List<MyOrder> _orders = [];
   
 final StreamController<List<MyOrder>> _orderController = StreamController<List<MyOrder>>();
 

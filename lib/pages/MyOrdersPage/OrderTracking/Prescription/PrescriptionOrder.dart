@@ -37,7 +37,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
       body: _currentUser != null
           ? StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
-                  .collection('users')
+                  .collection('vendors')
                   .doc(_currentUser!
                       .uid) // Use the current user's ID for the vendor
                   .collection('orders')

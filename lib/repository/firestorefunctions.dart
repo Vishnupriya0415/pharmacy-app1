@@ -127,7 +127,8 @@ Future<String> updateVendorsData({
     required String street,
     required String city,
     required String state,
-    required String postalCode
+    required String postalCode,
+    String? profileImageUrl,
   }) async {
     String res = 'Some Error Occurred';
     try {
@@ -150,7 +151,8 @@ Future<String> updateVendorsData({
           'lastSignIn': DateTime.now().toString(),
           'mtoken': mtoken.toString(),
           'pharmacyName':pharmacyName,
-          'address': address, // Store the address map
+          'address': address,
+          'profileImageUrl':profileImageUrl
         });
         res = 'success';
       } else {

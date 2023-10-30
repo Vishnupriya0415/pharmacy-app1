@@ -90,6 +90,7 @@ class AddressList extends StatefulWidget {
 class _AddressListState extends State<AddressList> {
   String selectedAddressId = ''; // Store the ID of the selected address
 
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -192,12 +193,22 @@ class _AddressListState extends State<AddressList> {
                                           orderID: widget.orderID,
                                         )),
                               );
+                              User? user = FirebaseAuth.instance.currentUser;
+                              String userUID = user!.uid;
                               await FirebaseFirestore.instance
                                   .collection('users')
+                                  .doc(userUID)
+                                  .collection('orders')
+                                  .doc(widget.orderID)
+                                  .update({'address': addressData});
+
+                              await FirebaseFirestore.instance
+                                  .collection('vendors')
                                   .doc(widget.vendorUid)
                                   .collection('orders')
                                   .doc(widget.orderID)
                                   .update({'address': addressData});
+
                             },
                             style: ButtonStyle(
                               shape: MaterialStateProperty.all<OutlinedBorder>(

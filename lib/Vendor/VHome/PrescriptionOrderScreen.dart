@@ -36,7 +36,6 @@ class _VendorPrescriptionOrdersPageState
               style: TextStyle(fontSize: 18),
               textAlign: TextAlign.center,
             ),
-            // You can add widgets to display prescription orders here
           ],
         ),
       ),

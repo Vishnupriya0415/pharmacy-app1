@@ -1,13 +1,18 @@
-// ignore_for_file: use_build_context_synchronously, file_names
+// ignore_for_file: use_build_context_synchronously, file_names, unused_field, avoid_print
 
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
-//import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo2.dart';
 import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:gangaaramtech/utils/constants/font_constants.dart';
 import 'package:gangaaramtech/utils/widgets/app_textfield.dart';
 import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+
 List<String> states = [
   'Andhra Pradesh',
   'Arunachal Pradesh',
@@ -103,9 +108,47 @@ class _VendorInformationState extends State<VendorInformation> {
     _focusNode9.unfocus();
   }
 
+File? _profileImage;
+
+  Future<void> _pickProfilePicture() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> uploadProfileImage(File imageFile) async {
+    try {
+      // Create a Firebase Storage reference with a unique filename
+      String imageName =
+          'vendor_images/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child(imageName);
+
+      // Upload the image file to Firebase Storage
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+
+      // Get the download URL for the uploaded image
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+
+      return imageUrl;
+    } catch (error) {
+      print("Error uploading profile image: $error");
+      return null;
+    }
+  }
+
 void updateVendorsData() async {
     // final firebaseAuth = FirebaseAuth.instance;
+    if (_profileImage != null) {}
+    String? imageUrl = await uploadProfileImage(_profileImage!);
     String res = await FireStoreFunctions().updateVendorsData(
+      
       name: _nameController.text,
       email: _emailController.text,
       phone: widget.phone,
@@ -114,7 +157,9 @@ void updateVendorsData() async {
        street: _streetController.text,
        postalCode: _pinCodeController.text,
        state: selectedState,
-       city: _cityController.text
+        city: _cityController.text,
+        profileImageUrl: imageUrl
+
     );
     if (res == 'success') {
       Navigator.pushAndRemoveUntil(
@@ -154,6 +199,17 @@ void updateVendorsData() async {
                     style: FontConstants.lightVioletNormal24,
                   ),
                 ),
+              _profileImage != null
+                  ? CircleAvatar(
+                      radius: 50, // Adjust the radius as needed
+                      backgroundImage: FileImage(
+                          _profileImage!), // Display the selected image
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.camera_alt),
+                      onPressed: _pickProfilePicture,
+                    ),
+
             AppTextField(
                   title: 'First Name',
                   onChanged: (a) {
@@ -262,7 +318,7 @@ void updateVendorsData() async {
                         selectedState = value!;
                       });
                     },
-                                ),
+                  ),
                   ),
                 ),
                 CustomElevatedButton(

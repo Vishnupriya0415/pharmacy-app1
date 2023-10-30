@@ -42,14 +42,14 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
             .collection('vendors')
             .doc(userUID)
             .collection('orders')
-            .doc(orderID)
+            .doc(widget.orderID)
             .get();
 
         if (orderSnapshot.exists) {
           Map<String, dynamic> orderData =
               orderSnapshot.data() as Map<String, dynamic>;
 
-          // Check if 'total' exists in the orderData
+          
           if (orderData.containsKey('total')) {
             double fetchedTotal = orderData['total'];
             setState(() {
@@ -86,11 +86,12 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 as Map<String, dynamic>; // Explicit casting
             String userUid = data['userUid'];
             print('userUid: $userUid');
+
              DocumentReference userOrderReference = firestore
             .collection('users')
             .doc(userUid)
             .collection('orders')
-            .doc(orderID);
+            .doc(widget.orderID);
 
         await userOrderReference.update({'total': newTotal});
 

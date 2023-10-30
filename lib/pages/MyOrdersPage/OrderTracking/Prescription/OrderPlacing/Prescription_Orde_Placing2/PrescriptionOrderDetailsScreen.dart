@@ -7,7 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PrescriptionOrderDetailsScreen extends StatelessWidget {
   final String orderId;
 
-  PrescriptionOrderDetailsScreen({Key? key, required this.orderId})
+  const PrescriptionOrderDetailsScreen({Key? key, required this.orderId})
       : super(key: key);
 
   @override

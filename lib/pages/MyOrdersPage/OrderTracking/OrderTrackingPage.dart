@@ -1,19 +1,8 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
-  runApp(MedicalDeliveryApp());
-}
-
-class MedicalDeliveryApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Medical Delivery Order Tracking',
-      home: OrderTrackingPage(),
-    );
-  }
-}
 
 class MedicineOrder {
   String orderId;
@@ -52,6 +41,8 @@ class MedicineOrder {
 }
 
 class OrderTrackingPage extends StatefulWidget {
+  const OrderTrackingPage({super.key});
+
   @override
   _OrderTrackingPageState createState() => _OrderTrackingPageState();
 }
@@ -64,13 +55,13 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Medical Delivery Order Tracking'),
+        title: const Text('Medical Delivery Order Tracking'),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: ordersCollection.snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           }
           final orders = snapshot.data!.docs
               .map((doc) => MedicineOrder.fromMap(doc.data() as Map<String, dynamic>))
@@ -102,7 +93,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
           // Add logic to create a new order
          
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

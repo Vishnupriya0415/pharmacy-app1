@@ -1,8 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_web_libraries_in_flutter, annotate_overrides, override_on_non_overriding_member, prefer_const_constructors
+// ignore_for_file: library_private_types_in_public_api, avoid_web_libraries_in_flutter, annotate_overrides, override_on_non_overriding_member, prefer_const_constructors, avoid_print
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/SelectedDataProvider.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';

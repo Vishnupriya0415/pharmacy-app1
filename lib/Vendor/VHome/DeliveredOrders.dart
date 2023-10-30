@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/Vendor/Orders/OrderDetails.dart';
+import 'package:gangaaramtech/Vendor/VHome/Prescription/DetailsScreen.dart';
 
 class DeliveredOrdersScreen extends StatefulWidget {
   const DeliveredOrdersScreen({Key? key}) : super(key: key);
@@ -110,16 +111,29 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      OrderDetailsScreen(orderId: orderId),
-                                ),
-                              );
+                              if (order['isPrescription'] == true) {
+                                // Navigate to the PrescriptionScreen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetailsScreen(orderId: orderId),
+                                  ),
+                                );
+                              } else {
+                                // Navigate to the OrderDetailsScreen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        OrderDetailsScreen(orderId: orderId),
+                                  ),
+                                );
+                              }
                             },
                             child: const Text("View Order Details"),
                           ),
+
                         ],
                       ),
                     ),

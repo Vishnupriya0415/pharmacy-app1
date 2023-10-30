@@ -1,5 +1,8 @@
-// ignore_for_file: file_names, use_build_context_synchronously
+// ignore_for_file: file_names, use_build_context_synchronously, unused_field
 
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 import 'package:gangaaramtech/Vendor/VendorInforScreens/VendorInfo1.dart';
@@ -8,6 +11,7 @@ import 'package:gangaaramtech/utils/constants/color_constants.dart';
 import 'package:gangaaramtech/utils/constants/font_constants.dart';
 import 'package:gangaaramtech/utils/widgets/app_textfield.dart';
 import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
+import 'package:image_picker/image_picker.dart';
 
 
 class VendorInfoScreen extends StatefulWidget {
@@ -70,7 +74,83 @@ final FocusNode _focusNode1 = FocusNode();
     _focusNode8.unfocus();
   }
   
+  File? _profileImage;
+
+  Future<void> _pickProfilePicture() async {
+    final imagePicker = ImagePicker();
+    final pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> uploadProfileImage(File imageFile) async {
+    try {
+      // Create a Firebase Storage reference with a unique filename
+      String imageName =
+          'vendor_images/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child(imageName);
+
+      // Upload the image file to Firebase Storage
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+
+      // Get the download URL for the uploaded image
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String imageUrl = await taskSnapshot.ref.getDownloadURL();
+
+      return imageUrl;
+    } catch (error) {
+      print("Error uploading profile image: $error");
+      return null;
+    }
+  }
+
 void updateVendorsData() async {
+   String email = widget.email ?? ""; // Assign an empty string if email is null
+
+    // final firebaseAuth = FirebaseAuth.instance;
+    if (_profileImage != null) {}
+    String? imageUrl = await uploadProfileImage(_profileImage!);
+    String res = await FireStoreFunctions().updateVendorsData(
+      
+      name: _nameController.text,
+      email:email,
+      phone: _phoneNumberController.text,
+       pharmacyName: _pharmacyNameController.text, 
+       doorNo: _dNoController.text,
+       street: _streetController.text,
+       postalCode: _pinCodeController.text,
+       state: selectedState,
+        city: _cityController.text,
+        profileImageUrl: imageUrl
+
+    );
+    if (res == 'success') {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const VendorHome(),
+        ),
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            res,
+            style: FontConstants.blueNormal14,
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+/*void updateVendorsData() async {
   String email = widget.email ?? ""; // Assign an empty string if email is null
 
     // final firebaseAuth = FirebaseAuth.instance;
@@ -106,7 +186,7 @@ void updateVendorsData() async {
       );
     }
   }
-
+*/
 
 
   @override
@@ -125,6 +205,17 @@ void updateVendorsData() async {
                   style: FontConstants.lightVioletNormal24,
                   ),
                 ),
+
+                _profileImage != null
+                  ? CircleAvatar(
+                      radius: 50, // Adjust the radius as needed
+                      backgroundImage: FileImage(
+                          _profileImage!), // Display the selected image
+                    )
+                  : IconButton(
+                      icon: const Icon(Icons.camera_alt),
+                      onPressed: _pickProfilePicture,
+                    ),
                 AppTextField(
                   title: 'First Name',
                   onChanged: (a) {

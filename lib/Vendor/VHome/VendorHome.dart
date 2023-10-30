@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, non_constant_identifier_names
+// ignore_for_file: file_names, non_constant_identifier_names, avoid_unnecessary_containers
 //import 'package:application1/Vendor/VendorInfo/VendorInfo2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -103,7 +103,46 @@ class _VendorHomeState extends State<VendorHome> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(
+              height: 5,
+            ),
             Container(
+              child: Row(
+                children: [
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  ClipOval(
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: VendorData['profileImageUrl'] != null
+                          ? Image.network(
+                              VendorData['profileImageUrl'],
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              "assets/images/tablets/profileIcon.png",
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 25,
+                  ),
+                  Center(
+                    child: Text(
+                      " Hello ${VendorData['Name']}",
+                      style: const TextStyle(
+                          //color: Colors.white,
+                          fontSize: 25),
+                      maxLines: 2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            /* Container(
               margin: const EdgeInsets.only(
                   left: 10, top: 10, right: 10, bottom: 10),
               width: double.infinity,
@@ -125,7 +164,7 @@ class _VendorHomeState extends State<VendorHome> {
                   maxLines: 2,
                 ),
               ),
-            ),
+            ),  */
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -141,7 +180,7 @@ class _VendorHomeState extends State<VendorHome> {
                   width: double.infinity,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: Colors.green[200],
+                    color: Colors.orange[200],
                     // Set the background color here
                   ),
                   child: const Align(

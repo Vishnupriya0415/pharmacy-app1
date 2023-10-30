@@ -171,6 +171,18 @@ class _VendorOrderStatusScreenState extends State<VendorOrderStatusScreen> {
       await orderRef.update({
         'status': newStatus,
       });
+      final orderData = await orderRef.get();
+      final userUid = orderData.data()!['userUid']; // Accessing 'userUid' field
+
+      final userDocRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userUid)
+          .collection('orders')
+          .doc(orderId);
+      await userDocRef.update({
+        'status': newStatus,
+      });
+
 
       print('Updating order status for Order ID $orderId to: $newStatus');
     } catch (error) {

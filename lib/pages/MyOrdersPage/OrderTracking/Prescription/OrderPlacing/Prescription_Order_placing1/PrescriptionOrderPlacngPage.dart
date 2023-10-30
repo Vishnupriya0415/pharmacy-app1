@@ -198,7 +198,7 @@ bool isOrderCreated = false; // Add a flag to track order creation
       print("The orderid is $orderID");
 
       orderData = {
-        'orderid': orderID,
+        'orderId': orderID,
         'imageURL': widget.imageUrl,
         'vendorName': vendorName,
         'status': 'pending',
@@ -263,12 +263,11 @@ bool isOrderCreated = false; // Add a flag to track order creation
             orderData['total'] = total;
           });
           print(total);
-
           // Navigate to the next screen
           Navigator.of(context).push(
             MaterialPageRoute(
                 builder: (context) => PrescriptionAddressScreen(
-                      orderID: subcollectionData['orderid'],
+                      orderID: subcollectionData['orderId'],
                       vendorUid: subcollectionData['vendorUid'],
                     )),
           );

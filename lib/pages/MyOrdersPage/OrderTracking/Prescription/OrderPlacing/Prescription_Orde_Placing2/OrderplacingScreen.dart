@@ -215,7 +215,7 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
             const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Container(
+              child: SizedBox(
                 width: double.maxFinite,
                 child: ElevatedButton(
                   onPressed: () async {
@@ -228,7 +228,7 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
                           .doc(widget.orderID)
                           .update({
                         'paymentMethod': selectedPaymentMethod,
-                        'srtatus': 'Accepted'
+                        'status': 'Accepted'
                       });
                       await FirebaseFirestore.instance
                           .collection('vendors')

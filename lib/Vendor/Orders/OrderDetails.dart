@@ -46,23 +46,44 @@ class OrderDetailsScreen extends StatelessWidget {
               final deliveryCharge = orderData['deliveryCharges'];
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text('Order Details'),
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  title: const Text(
+                    "Order Details",
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ), // Use appropriate icon for back arrow
+                    onPressed: () {
+                      Navigator.pop(
+                          context); // Go back to the previous screen on arrow button press
+                    },
+                  ),
                 ),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                              'Customer Name: ${orderData['address']['fullName']}'),
-                          const Spacer(),
-                          Text(
-                              'Phone Number: ${orderData['address']['mobileNumber']}'),
-                        ],
+                     
+                      Text(
+                          'Customer Name: ${orderData['address']['fullName']}'),
+                      Text(
+                          'Phone Number: ${orderData['address']['mobileNumber']}'),
+                      const SizedBox(
+                        height: 10,
                       ),
-                      Text('Address: $addressText'),
+                      const Text(
+                        "Address",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(' $addressText'),
+                      const SizedBox(
+                        height: 10,
+                      ),
                       const Row(
                         children: [
                           SizedBox(
@@ -132,13 +153,15 @@ class OrderDetailsScreen extends StatelessWidget {
                       const SizedBox(height: 5),
                       Row(
                         children: [
-                          const Text('Total Cost:'),
+                          const Text(
+                            'Total Cost:',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           const Spacer(),
                           Text('₹${orderData['total']}'),
                         ],
                       ),
                      
-                      // Add more details as needed
                     ],
                   ),
                 ),
