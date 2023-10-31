@@ -1,14 +1,14 @@
 // ignore_for_file: file_names, non_constant_identifier_names, avoid_unnecessary_containers
-//import 'package:application1/Vendor/VendorInfo/VendorInfo2.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gangaaramtech/Vendor/OrderManagement.dart';
+import 'package:gangaaramtech/Vendor/PrescriptionOrder/PrescriptionOrder.dart';
 import 'package:gangaaramtech/Vendor/VHome/CancelledOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/DeliveredOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/PendingOrders.dart';
 import 'package:gangaaramtech/Vendor/common/Settings.dart';
-import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/PrescriptionOrder.dart';
 import 'package:gangaaramtech/repository/firestorefunctions.dart';
 
 class VendorHome extends StatefulWidget {

@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -62,8 +62,8 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                     var order = snapshot.data!.docs[index].data()
                         as Map<String, dynamic>;
                     String orderID = snapshot.data!.docs[index].id;
-                    String imageUrl =
-                        order['imageURL']; // Get the prescription image URL
+                    String imageUrl = order['imageURL'] ??
+                        ''; // Get the prescription image URL
                     // Customize the order item UI as needed
                     return Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -92,9 +92,14 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                                 SizedBox(
                                   width: 100,
                                   height: 100,
-                                  child: Image.network(
-                                    imageUrl,
-                                  ),
+                                  child: imageUrl.isNotEmpty
+                                      ? Image.network(imageUrl)
+                                      : Container(
+                                          width: 100,
+                                          height: 100,
+                                          color: Colors
+                                              .grey, // You can use any color or widget to indicate no image
+                                        ),
                                 ),
                                 const SizedBox(
                                   width: 30,

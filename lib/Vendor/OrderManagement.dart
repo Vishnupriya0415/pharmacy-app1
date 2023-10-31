@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unused_local_variable
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -114,7 +114,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
       .doc(orderId);
 
   // Get the current time in UTC
-  final currentTimeUtc = DateTime.now().toUtc();
+    final currentTimeUtc = DateTime.now();
 
   // Convert UTC time to Indian Standard Time (IST)
   final currentTimeIST =
@@ -124,15 +124,17 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
   final statusTimeUpdates = <String, dynamic>{};
 
   if (status == 'Accepted') {
-    statusTimeUpdates['acceptedTime'] = currentTimeIST;
+      statusTimeUpdates['acceptedTime'] = DateTime.now();
   } else if (status == 'Processing') {
-    statusTimeUpdates['processingTime'] = currentTimeIST;
+    statusTimeUpdates['processingTime'] = DateTime.now();
   } else if (status == 'Out for Delivery') {
-    statusTimeUpdates['outForDeliveryTime'] = currentTimeIST;
+    statusTimeUpdates['outForDeliveryTime'] = DateTime.now();
   } else if (status == 'Delivered') {
-    statusTimeUpdates['deliveredTime'] = currentTimeIST;
+    statusTimeUpdates['deliveredTime'] = DateTime.now();
   } else if (status == 'Cancelled' && cancellationReason != null) {
     statusTimeUpdates['cancellationReason'] = cancellationReason;
+      statusTimeUpdates['cancelledTime'] = DateTime.now();
+
   }
 
   statusTimeUpdates['status'] = status;

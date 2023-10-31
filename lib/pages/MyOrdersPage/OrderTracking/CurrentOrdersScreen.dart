@@ -75,7 +75,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
 
           if (filteredOrders.isEmpty) {
             return const Center(
-              child: Text('No orders found with selected statuses.'),
+              child: Text('No orders found '),
             );
           }
 
@@ -109,9 +109,6 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     Text(" Total : ₹${orderData['total']}"),
                                     const Spacer(),
                                     Text('Status: ${orderData['status']}'),
-                                    //   Text(
-                                    //     'Is Prescription: ${orderData['isPrescription'].toString()}')
-
                                   ],
                                 ),
                                
@@ -136,8 +133,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                 Row(
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () {
-                                       
+                                      onPressed: () {       
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
