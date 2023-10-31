@@ -1,102 +1,105 @@
-// ignore_for_file: library_private_types_in_public_api
-
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
+class OrderTrackingPage extends StatelessWidget {
+  final String orderId;
 
-class MedicineOrder {
-  String orderId;
-  String patientName;
-  String medicationName;
-  String status;
-  DateTime deliveryDate;
-
-  MedicineOrder({
-    required this.orderId,
-    required this.patientName,
-    required this.medicationName,
-    required this.status,
-    required this.deliveryDate,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'orderId': orderId,
-     // 'patientName': patientName,
-      'medicationName': medicationName,
-      'status': status,
-      'deliveryDate': deliveryDate,
-    };
-  }
-
-  factory MedicineOrder.fromMap(Map<String, dynamic> data) {
-    return MedicineOrder(
-      orderId: data['orderId'],
-      patientName: data['patientName'],
-      medicationName: data['medicationName'],
-      status: data['status'],
-      deliveryDate: (data['deliveryDate'] as Timestamp).toDate(),
-    );
-  }
-}
-
-class OrderTrackingPage extends StatefulWidget {
-  const OrderTrackingPage({super.key});
-
-  @override
-  _OrderTrackingPageState createState() => _OrderTrackingPageState();
-}
-
-class _OrderTrackingPageState extends State<OrderTrackingPage> {
-  final CollectionReference ordersCollection =
-      FirebaseFirestore.instance.collection('medicine_orders');
+  OrderTrackingPage({required this.orderId});
 
   @override
   Widget build(BuildContext context) {
+    User? user = FirebaseAuth.instance.currentUser;
+    String? uid = user?.uid;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medical Delivery Order Tracking'),
+        title: Text('Order Tracking'),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: ordersCollection.snapshots(),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid) // Assuming you have a unique user ID for the current user
+            .collection('orders')
+            .doc(orderId) // Assuming 'orderId' is a field in the 'orders' collection
+            .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const CircularProgressIndicator();
+            return CircularProgressIndicator(); // Loading indicator
           }
-          final orders = snapshot.data!.docs
-              .map((doc) => MedicineOrder.fromMap(doc.data() as Map<String, dynamic>))
-              .toList();
-          return ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final order = orders[index];
-              return Card(
-                child: ListTile(
-                  title: Text('Order ID: ${order.orderId}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text('Patient: ${order.patientName}'),
-                      Text('Medication: ${order.medicationName}'),
-                      Text('Status: ${order.status}'),
-                      Text('Delivery Date: ${order.deliveryDate.toString()}'),
-                    ],
-                  ),
-                ),
-              );
-            },
+
+          final orderData = snapshot.data!.data() as Map<String, dynamic>;
+
+          final status = orderData['status'];
+
+          final orderedTime = orderData['orderedTime'] as Timestamp;
+          final acceptedTime = orderData['acceptedTime'];
+          final orderStatusTime =
+              orderData['orderStatusTime'] as Map<String, dynamic>;
+
+          String orderedTimeString = ''; // Initialize an empty string
+          String processingTimeString = ''; // Initialize an empty string
+          String acceptedTimeString = ''; // Initialize an empty string
+          String outForDeliveryTimeString = ''; // Initialize an empty string
+
+          if (orderedTime != null) {
+            final orderedDateTime = orderedTime.toDate();
+            orderedTimeString =
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(orderedDateTime);
+          }
+
+          if (status == 'Processing' || status == 'Out for Delivery') {
+            final processingTime =
+                orderStatusTime['processingTime'] as Timestamp;
+            if (processingTime != null) {
+              final processingDateTime = processingTime.toDate();
+              processingTimeString =
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(processingDateTime);
+            }
+          }
+
+          if (acceptedTime != null) {
+            final acceptedDateTime = acceptedTime.toDate();
+            acceptedTimeString =
+                DateFormat('yyyy-MM-dd HH:mm:ss').format(acceptedDateTime);
+          }
+
+          if (status == 'Out for Delivery') {
+            final outForDeliveryTime =
+                orderStatusTime['outForDeliveryTime'] as Timestamp;
+            if (outForDeliveryTime != null) {
+              final outForDeliveryDateTime = outForDeliveryTime.toDate();
+              outForDeliveryTimeString =
+                  DateFormat('yyyy-MM-dd HH:mm:ss').format(outForDeliveryDateTime);
+            }
+          }
+
+          return Card(
+            child: ListTile(
+              title: Text('Order ID: $orderId'),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('Status: $status'),
+                  if (status == 'Accepted' ||
+                      status == 'Processing' ||
+                      status == 'Out for Delivery')
+                    Column(
+                      children: [
+                        Text('Ordered Time: $orderedTimeString'),
+                        Text('Accepted time: $acceptedTimeString'),
+                        Text('Processing Time: $processingTimeString'),
+                        if (status == 'Out for Delivery')
+                          Text('Out For Delivery Time: $outForDeliveryTimeString'),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Add logic to create a new order
-         
-        },
-        child: const Icon(Icons.add),
-      ),
     );
   }
-
-  
 }

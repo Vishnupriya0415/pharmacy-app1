@@ -138,9 +138,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) =>
-                                               const OrderTrackingPage(
-                                                // Pass the status or any required data
-                                                ),
+                                               OrderTrackingPage(orderId: orderData['orderId']),
                                           ),
                                         );
                                       },
