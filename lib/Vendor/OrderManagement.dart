@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, unused_local_variable
+// ignore_for_file: library_private_types_in_public_api
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +16,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
   // Define a list to store orders
   List<DocumentSnapshot> orders = [];
   late Timer _timer; // Declare a Timer variable.
-  TextEditingController cancellationReasonController = TextEditingController(); // Define it here
+  TextEditingController cancellationReasonController =
+      TextEditingController(); // Define it here
 
   @override
   void initState() {
@@ -77,7 +78,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                 Navigator.of(context).pop();
 
                 // Update the order status with the cancellation reason
-                updateOrderStatus(orderId, 'Cancelled', cancellationReason); 
+                updateOrderStatus(orderId, 'Cancelled', cancellationReason);
               },
               child: const Text("Submit"),
             ),
@@ -95,59 +96,58 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
     return ist;
   }
 
-  Future<void> updateOrderStatus(String orderId, String status, [String? cancellationReason]) async {
-  final User? user = FirebaseAuth.instance.currentUser;
-  final vendorId = user?.uid; // Use the user's UID as the vendor ID
-  final orderRef = FirebaseFirestore.instance
-      .collection('vendors')
-      .doc(vendorId)
-      .collection('orders')
-      .doc(orderId);
+  Future<void> updateOrderStatus(String orderId, String status,
+      [String? cancellationReason]) async {
+    final User? user = FirebaseAuth.instance.currentUser;
+    final vendorId = user?.uid; // Use the user's UID as the vendor ID
+    final orderRef = FirebaseFirestore.instance
+        .collection('vendors')
+        .doc(vendorId)
+        .collection('orders')
+        .doc(orderId);
 
-  final orderData = await orderRef.get();
-  final userUid = orderData.data()!['userUid']; // Accessing 'userUid' field
+    final orderData = await orderRef.get();
+    final userUid = orderData.data()!['userUid']; // Accessing 'userUid' field
 
-  final userDocRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc(userUid)
-      .collection('orders')
-      .doc(orderId);
+    final userDocRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userUid)
+        .collection('orders')
+        .doc(orderId);
 
-  // Get the current time in UTC
-    final currentTimeUtc = DateTime.now();
+    // Get the current time in UTC
+    final currentTimeUtc = DateTime.now().toUtc();
 
-  // Convert UTC time to Indian Standard Time (IST)
-  final currentTimeIST =
-      currentTimeUtc.add(const Duration(hours: 5, minutes: 30));
+    // Convert UTC time to Indian Standard Time (IST)
+    final currentTimeIST =
+        currentTimeUtc.add(const Duration(hours: 5, minutes: 30));
 
-  // Define a map to hold the status time updates
-  final statusTimeUpdates = <String, dynamic>{};
+    // Define a map to hold the status time updates
+    final statusTimeUpdates = <String, dynamic>{};
 
-  if (status == 'Accepted') {
+    if (status == 'Accepted') {
       statusTimeUpdates['acceptedTime'] = DateTime.now();
-  } else if (status == 'Processing') {
-    statusTimeUpdates['processingTime'] = DateTime.now();
-  } else if (status == 'Out for Delivery') {
-    statusTimeUpdates['outForDeliveryTime'] = DateTime.now();
-  } else if (status == 'Delivered') {
-    statusTimeUpdates['deliveredTime'] = DateTime.now();
-  } else if (status == 'Cancelled' && cancellationReason != null) {
-    statusTimeUpdates['cancellationReason'] = cancellationReason;
-      statusTimeUpdates['cancelledTime'] = DateTime.now();
+    } else if (status == 'Processing') {
+      statusTimeUpdates['processingTime'] = DateTime.now();
+    } else if (status == 'Out for Delivery') {
+      statusTimeUpdates['outForDeliveryTime'] = DateTime.now();
+    } else if (status == 'Delivered') {
+      statusTimeUpdates['deliveredTime'] = DateTime.now();
+    } else if (status == 'Cancelled' && cancellationReason != null) {
+      statusTimeUpdates['cancellationReason'] = cancellationReason;
+    }
 
+    statusTimeUpdates['status'] = status;
+
+    // Update the order document with the status and status times
+    await orderRef.update(statusTimeUpdates);
+    await userDocRef.update(statusTimeUpdates);
+
+    // Update the local list of orders
+    setState(() {
+      orders.removeWhere((order) => order.id == orderId);
+    });
   }
-
-  statusTimeUpdates['status'] = status;
-
-  // Update the order document with the status and status times
-  await orderRef.update(statusTimeUpdates);
-  await userDocRef.update(statusTimeUpdates);
-
-  // Update the local list of orders
-  setState(() {
-    orders.removeWhere((order) => order.id == orderId);
-  });
-}
 
   @override
   Widget build(BuildContext context) {
@@ -218,9 +218,9 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
-                                 _showCancellationReasonDialog(orderId);
+                                _showCancellationReasonDialog(orderId);
                                 // Update the status of the order to 'Cancelled'
-                              //  updateOrderStatus(orderId, 'Cancelled');
+                                //  updateOrderStatus(orderId, 'Cancelled');
                               },
                               child: const Text('Cancel'),
                             ),

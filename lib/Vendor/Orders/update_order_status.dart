@@ -10,7 +10,8 @@ import 'package:gangaaramtech/utils/widgets/custom_elevated_button.dart';
 class VendorOrderStatusScreen extends StatefulWidget {
   final String orderId;
 
-  const VendorOrderStatusScreen({required this.orderId, Key? key}) : super(key: key);
+  const VendorOrderStatusScreen({required this.orderId, Key? key})
+      : super(key: key);
 
   @override
   _VendorOrderStatusScreenState createState() =>
@@ -18,11 +19,11 @@ class VendorOrderStatusScreen extends StatefulWidget {
 }
 
 class _VendorOrderStatusScreenState extends State<VendorOrderStatusScreen> {
-  String _selectedStatus = 'Pending'; // Default status
+  String _selectedStatus = 'Accepted'; // Default status
 
   // Define a list of order status options
   final List<String> _orderStatusOptions = [
-    'Pending',
+    'Accepted',
     'Processing',
     'Out for Delivery',
     'Delivered',
@@ -154,37 +155,76 @@ class _VendorOrderStatusScreenState extends State<VendorOrderStatusScreen> {
     );
   }
 
-  // Function to update the order status in Firestore
-  Future<void> updateOrderStatus(String newStatus, String orderId) async {
+  Future<void> updateOrderStatus(String newStatus, String orderId,
+      {String? cancellationReason}) async {
     try {
-      final vendorId =
-          FirebaseAuth.instance.currentUser?.uid; // Get the vendor's UID
+      final vendorId = FirebaseAuth.instance.currentUser?.uid;
 
-      // Reference to the order document in Firestore under the vendor's subcollection
       final orderRef = FirebaseFirestore.instance
           .collection('vendors')
           .doc(vendorId)
           .collection('orders')
           .doc(orderId);
 
-      // Update the status field in Firestore
-      await orderRef.update({
+      final currentTimeIST =
+          DateTime.now().toUtc().add(const Duration(hours: 5, minutes: 30));
+      final updateData = <String, dynamic>{
         'status': newStatus,
-      });
+      };
+
+      if (newStatus == 'Accepted') {
+        updateData['orderStatusTime'] = {
+          'acceptedTime': FieldValue.serverTimestamp(),
+          'processingTime': null,
+          'outForDeliveryTime': null,
+          'deliveredTime': null,
+        };
+      } else if (newStatus == 'Processing') {
+        updateData['orderStatusTime'] = {
+          'processingTime': FieldValue.serverTimestamp(),
+          'outForDeliveryTime': null,
+          'deliveredTime': null,
+        };
+      } else if (newStatus == 'Out for Delivery') {
+        updateData['orderStatusTime'] = {
+          'outForDeliveryTime': FieldValue.serverTimestamp(),
+          'deliveredTime': null,
+        };
+      } else if (newStatus == 'Delivered') {
+        updateData['orderStatusTime'] = {
+          'deliveredTime': FieldValue.serverTimestamp(),
+        };
+      } else if (newStatus == 'Cancelled' && cancellationReason != null) {
+        updateData['cancellationReason'] = cancellationReason;
+      }
+
+      await orderRef.set(
+        updateData,
+        SetOptions(
+          merge: true,
+        ),
+      ); // Use set with merge to add new fields without overwriting existing ones.
+
+      print('Updating order status for Order ID $orderId to: $newStatus');
+
+      // Update the order status in the user's collection
       final orderData = await orderRef.get();
-      final userUid = orderData.data()!['userUid']; // Accessing 'userUid' field
+      final userUid = orderData.data()!['userUid'];
 
       final userDocRef = FirebaseFirestore.instance
           .collection('users')
           .doc(userUid)
           .collection('orders')
           .doc(orderId);
-      await userDocRef.update({
-        'status': newStatus,
-      });
 
-
-      print('Updating order status for Order ID $orderId to: $newStatus');
+      await userDocRef.set(
+        updateData,
+        SetOptions(
+          merge: true,
+        ),
+      );
+      print(
+          'Updating order status for Order ID $orderId in the user\'s collection');
     } catch (error) {
       print('Error updating order status: $error');
     }

@@ -75,7 +75,7 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
 
           if (filteredOrders.isEmpty) {
             return const Center(
-              child: Text('No orders found '),
+              child: Text('No orders found with selected statuses.'),
             );
           }
 
@@ -109,18 +109,24 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                     Text(" Total : ₹${orderData['total']}"),
                                     const Spacer(),
                                     Text('Status: ${orderData['status']}'),
+                                    //   Text(
+                                    //     'Is Prescription: ${orderData['isPrescription'].toString()}')
+
                                   ],
                                 ),
                                
                                 Row(
-                                  children: [
-                                    if (!orderData['isPrescription'])
-                                      Text(
-                                          "No of medicines: ${orderData['medicineNames']?.length ?? 0}"),
-                                    const Spacer(),
-                                    Text("${orderData['pharmacyName']}"),
-                                  ],
-                                ),
+  children: [
+    if (orderData['isPrescription'] != null && !orderData['isPrescription'])
+      Text("No of medicines: ${orderData['medicineNames']?.length ?? 0}")
+    else
+      Text("Is Prescription: ${orderData['isPrescription'].toString()}"),
+    const Spacer(),
+    Text("${orderData['pharmacyName'] ?? ''}"), // Handle potential null value
+  ],
+),
+
+
                                 const SizedBox(
                                   height: 3,
                                 ),
@@ -133,15 +139,17 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                 Row(
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () {       
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                               OrderTrackingPage(orderId: orderData['orderId']),
-                                          ),
-                                        );
-                                      },
+                                       onPressed: () {
+    // Pass the order ID from the orderData to the UserOrderTrackingScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => OrderTrackingPage(orderId: orderData['orderId']),
+      ),
+    );
+  },
+
+
                                       child: const Text('Track Order'),
                                     ),
                                     const Spacer(),
