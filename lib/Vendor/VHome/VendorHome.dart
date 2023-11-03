@@ -3,8 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gangaaramtech/Vendor/OrderManagement.dart';
-import 'package:gangaaramtech/Vendor/PrescriptionOrder/PrescriptionOrder.dart';
+//import 'package:gangaaramtech/Vendor/OrderManagement.dart';
+import 'package:gangaaramtech/Vendor/Orders/Incoming_Orders.dart';
+//import 'package:gangaaramtech/Vendor/PrescriptionOrder/PrescriptionOrder.dart';
 import 'package:gangaaramtech/Vendor/VHome/CancelledOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/DeliveredOrders.dart';
 import 'package:gangaaramtech/Vendor/VHome/PendingOrders.dart';
@@ -170,32 +171,36 @@ class _VendorHomeState extends State<VendorHome> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const VendorOrdersScreen(),
+                    builder: (context) => IncomingOrdersPage(),
                   ),
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  width: double.infinity,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: Colors.orange[200],
-                    // Set the background color here
-                  ),
-                  child: const Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        " View incoming orders",
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(fontSize: 25),
-                        //  style: FontConstants.lightVioletMixedWhite,
-                      )),
+              child: Container(
+                margin: const EdgeInsets.only(
+                    left: 10, top: 10, right: 10, bottom: 10),
+                width: double.infinity,
+                height: 100,
+                decoration: BoxDecoration(
+                  color: Colors.orange[200],
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                  // Set the background color here
                 ),
+                child: const Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      " View incoming orders",
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(fontSize: 25),
+                      //  style: FontConstants.lightVioletMixedWhite,
+                    )),
               ),
             ),
-            GestureDetector(
+            /* GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
@@ -224,7 +229,7 @@ class _VendorHomeState extends State<VendorHome> {
                       )),
                 ),
               ),
-            ),
+            ),*/
             /* Padding(
               padding: const EdgeInsets.all(8.0),
               child: GestureDetector(
@@ -272,6 +277,11 @@ class _VendorHomeState extends State<VendorHome> {
                   decoration: BoxDecoration(
                     // Set the background color here
                     color: Colors.purple[200],
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10)),
                   ),
                   child: const Align(
                       alignment: Alignment.center,

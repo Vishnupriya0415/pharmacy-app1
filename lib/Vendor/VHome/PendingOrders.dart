@@ -90,7 +90,13 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                     data['addressData'] as Map<String, dynamic>?;
 
                 return Card(
-                  margin: const EdgeInsets.all(8.0),
+                  elevation: 3,
+                  color: Colors.grey[150],
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(15.0), // Set the border radius
+                  ),
+                  margin: const EdgeInsets.all(10.0),
                   child: ListTile(
                     title: Column(
                       children: [
@@ -101,6 +107,11 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                             Text(" Total cost: ₹$total"),
                           ],
                         ),
+                       
+                      ],
+                    ),
+                    subtitle: Column(
+                      children: [
                         if (addressData !=
                             null) // Check if addressData is not null
                           Row(
@@ -110,10 +121,6 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                               Text('Phone ${addressData['mobileNumber']}'),
                             ],
                           ),
-                      ],
-                    ),
-                    subtitle: Column(
-                      children: [
                         Row(
                           children: [
                             Text(
@@ -121,11 +128,28 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                               style: const TextStyle(color: Colors.black),
                             ),
                             const Spacer(),
-                            Text(
-                              'Total Medicines: ${medicineNames?.length ?? 0}',
-                              style: const TextStyle(color: Colors.black),
-                            ),
+                            if (order['isPrescription'] == true)
+                              const Text(
+                                'Prescription order',
+                                style: TextStyle(color: Colors.black),
+                              )
+                            else
+                              Text(
+                                'Total Medicines: ${medicineNames?.length ?? 0}',
+                                style: const TextStyle(color: Colors.black),
+                              )
                           ],
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
+                        const Divider(
+                          color:
+                              Colors.grey, // Set the color of the divider line
+                          thickness: 1, // Set the thickness of the divider line
+                        ),
+                        const SizedBox(
+                          height: 3,
                         ),
                         Row(
                           children: [
@@ -151,6 +175,17 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                                   );
                                 }
                               },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue, // Text color
+                                padding: const EdgeInsets.all(
+                                    10.0), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                                elevation: 5, // Button shadow
+                              ),
                               child: const Text("View Order Details"),
                             ),
 
@@ -166,6 +201,17 @@ class _PendingDeliveriesScreenState extends State<PendingDeliveriesScreen> {
                                   ),
                                 );
                               },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue, // Text color
+                                padding: const EdgeInsets.all(
+                                    10.0), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                                elevation: 5, // Button shadow
+                              ),
                               child: const Text('Update Status'),
                             ),
                           ],

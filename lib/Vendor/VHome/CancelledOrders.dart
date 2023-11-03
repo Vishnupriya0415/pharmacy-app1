@@ -57,42 +57,102 @@ class _CancelledOrdersScreenState extends State<CancelledOrdersScreen> {
                 final order = cancelledOrders[index];
                 final data = order.data() as Map<String, dynamic>;
                 final orderId = order.id;
-                final orderStatus = data['status'];
+                //  final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
+                final quantities = List<int>.from(data['quantity']);
                 final total = data['total'];
-                //    final cancellationReason = data['cancellationReason'];
+               
+                final cancellationReason = data['cancellationReason'];
 
                 return Card(
+                  elevation: 3,
+                  color: Colors.grey[150],
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(15.0), // Set the border radius
+                  ),
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Row(
+                    title: Column(
                       children: [
-                        Text('Order ID: $orderId'),
-                        const Spacer(),
-                        Text(" Total cost: ₹$total"),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          children: [
+                            Text('Order ID: $orderId'),
+                            const Spacer(),
+                            Text(" Total cost: ₹$total"),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 3,
+                        ),
                       ],
                     ),
                     subtitle: Column(
                       children: [
-                        Text('Status: $orderStatus'),
-                        //   Text('Cancellation Reason: $cancellationReason'),
-                        //  const Text("Delivery address:"),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Medicine Names",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                        //   Text('Status: $orderStatus'),
                         Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: medicineNames.map((medicineName) {
-                              return Text(medicineName);
-                            }).toList(),
-                          ),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Cancellation Reason: $cancellationReason',
+                              style: const TextStyle(color: Colors.black),
+                            )),
+                        //  const Text("Delivery address:"),
+                        const Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Medicine Names",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            ),
+                            Spacer(),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                "Qty",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            ),
+                          ],
                         ),
+                        Row(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: medicineNames.map((medicineName) {
+                                  return Text(medicineName);
+                                }).toList(),
+                              ),
+                            ),
+                            const Spacer(),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: quantities.map((quantity) {
+                                  return Text(quantity
+                                      .toString()); // Convert the integer to a string
+                                }).toList(),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 6,
+                            )
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        )
                       ],
                     ),
                   ),

@@ -1,9 +1,10 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, unused_local_variable
 
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:gangaaramtech/utils/widgets/Alert_dialog_box.dart';
 
 class VendorOrdersScreen extends StatefulWidget {
   const VendorOrdersScreen({super.key});
@@ -45,15 +46,17 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
         .doc(vendorId)
         .collection('orders');
 
-    final snapshot =
-        await ordersCollection.where('status', isEqualTo: 'pending').get();
+    final snapshot = await ordersCollection
+        .where('status', isEqualTo: 'pending')
+        .where('isPrescription', isEqualTo: false)
+        .get();
 
     setState(() {
       orders = snapshot.docs;
     });
   }
 
-  Future<void> _showCancellationReasonDialog(String orderId) async {
+  /* Future<void> _showCancellationReasonDialog(String orderId) async {
     return showDialog(
       context: context,
       builder: (context) {
@@ -87,6 +90,33 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
       },
     );
   }
+*/
+  _showCancellationReasonDialog(String orderId) {
+    final TextEditingController cancellationReasonController =
+        TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CurvedAlertDialogBox(
+          title: "Reason for cancelling the order",
+          hintText: 'Enter the cancellation Reason',
+          textController: cancellationReasonController,
+          onClosePressed: () {
+            Navigator.of(context).pop();
+          },
+          keyboardType: TextInputType.name,
+          onSubmitPressed: () {
+            String cancellationReason = cancellationReasonController.text;
+            // Close the dialog
+            Navigator.of(context).pop();
+            // Update the order status with the cancellation reason
+            updateOrderStatus(orderId, 'Cancelled', cancellationReason);
+          },
+        );
+      },
+    );
+  }
+
 
   DateTime convertTimestampToIST(Timestamp timestamp) {
     final DateTime dateTime = timestamp.toDate();
@@ -135,6 +165,7 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
       statusTimeUpdates['deliveredTime'] = DateTime.now();
     } else if (status == 'Cancelled' && cancellationReason != null) {
       statusTimeUpdates['cancellationReason'] = cancellationReason;
+      statusTimeUpdates['cancelledTime'] = DateTime.now();
     }
 
     statusTimeUpdates['status'] = status;
@@ -152,24 +183,6 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Orders',
-          style: TextStyle(color: Colors.black),
-        ),
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ), // Use appropriate icon for back arrow
-          onPressed: () {
-            Navigator.pop(
-                context); // Go back to the previous screen on arrow button press
-          },
-        ),
-      ),
       body: orders.isEmpty
           ? const Center(
               child: Text('You have no incoming orders'),
@@ -183,9 +196,14 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                 final orderStatus = data['status'];
                 final medicineNames = List<String>.from(data['medicineNames']);
                 final total = data['total'];
+                final addressData =
+                    data['addressData'] as Map<String, dynamic>?;
+                final name = order['address']?['fullName'] ?? '';
+                final mobileNumber = order['address']?['mobileNumber'] ?? '';
 
                 return Card(
-                  margin: const EdgeInsets.all(8.0),
+                  margin: const EdgeInsets.all(15.0),
+                  elevation: 5,
                   child: ListTile(
                     title: Row(
                       children: [
@@ -194,15 +212,38 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                         Text(" Total cost : ₹$total"),
                       ],
                     ),
+                    
                     subtitle: Column(
                       children: [
-                        Text('Status: $orderStatus'),
-                        const Text("Delivery address:"),
+                        // Text('Status: $orderStatus'),
+
+                        //const Spacer(),
+                        /*Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Status: $orderStatus',
+                            style: const TextStyle(color: Colors.black),
+                          ),
+                        ),*/
+
+                        Row(
+                          children: [
+                            Text(
+                              'Customer name: $name',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                            const Spacer(),
+                            Text('Phone $mobileNumber',
+                                style: const TextStyle(color: Colors.black)),
+                          ],
+                        ),
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
                             "Medicine Names",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black),
                           ),
                         ),
                         Align(
@@ -210,7 +251,8 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: medicineNames.map((medicineName) {
-                              return Text(medicineName);
+                              return Text(medicineName,
+                                  style: const TextStyle(color: Colors.black));
                             }).toList(),
                           ),
                         ),
@@ -222,6 +264,17 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                                 // Update the status of the order to 'Cancelled'
                                 //  updateOrderStatus(orderId, 'Cancelled');
                               },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue, // Text color
+                                padding: const EdgeInsets.all(
+                                    10.0), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                                elevation: 5, // Button shadow
+                              ),
                               child: const Text('Cancel'),
                             ),
                             const Spacer(),
@@ -230,6 +283,17 @@ class _VendorOrdersScreenState extends State<VendorOrdersScreen> {
                                 // Update the status of the order to 'Accepted'
                                 updateOrderStatus(orderId, 'Accepted');
                               },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.blue, // Text color
+                                padding: const EdgeInsets.all(
+                                    10.0), // Button padding
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                ),
+                                elevation: 5, // Button shadow
+                              ),
                               child: const Text('Accept'),
                             ),
                           ],

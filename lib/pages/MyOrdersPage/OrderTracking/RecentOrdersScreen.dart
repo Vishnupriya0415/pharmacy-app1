@@ -81,6 +81,12 @@ class _RecentOrdersScreenState extends State<RecentOrdersScreen> {
                 padding: const EdgeInsets.all(15.0),
                 child: Card(
                   elevation: 5,
+                  color: Colors.grey[150],
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(15.0), // Set the border radius
+                  ),
+                  //  elevatiofn: 5,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,

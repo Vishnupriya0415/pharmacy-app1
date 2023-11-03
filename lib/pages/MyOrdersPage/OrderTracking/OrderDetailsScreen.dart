@@ -47,7 +47,26 @@ class UserOrderDetailsScreen extends StatelessWidget {
               final deliveryCharge = orderData['deliveryCharges'];
               return Scaffold(
                 appBar: AppBar(
-                  title: const Text('Order Details'),
+                  title: const Text(
+                    '0rder details',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black, // Set the color of the text to blue
+                    ),
+                  ),
+                  backgroundColor: Colors.white,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.black,
+                    ), // Use appropriate icon for back arrow
+                    onPressed: () {
+                      Navigator.pop(
+                          context); // Go back to the previous screen on arrow button press
+                    },
+                  ),
                 ),
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.all(16.0),

@@ -76,9 +76,21 @@ class OrderDetailsScreen extends StatelessWidget {
                       const SizedBox(
                         height: 10,
                       ),
-                      const Text(
-                        "Address",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                     const  Row(
+                        children: [
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Icon(Icons.home, color: Colors.black),
+                          // Add a home icon here
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            " Delivery Address",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                       Text(' $addressText'),
                       const SizedBox(

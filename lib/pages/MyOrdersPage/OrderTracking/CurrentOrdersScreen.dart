@@ -88,9 +88,14 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                         document.data() as Map<String, dynamic>;
 
                     return Padding(
-                      padding: const EdgeInsets.all(15.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Card(
                         elevation: 5,
+                        color: Colors.grey[150],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              15.0), // Set the border radius
+                        ),
                         child: Container(
                           decoration: BoxDecoration(
                             color: Colors.white,
@@ -116,15 +121,18 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                 ),
                                
                                 Row(
-  children: [
-    if (orderData['isPrescription'] != null && !orderData['isPrescription'])
-      Text("No of medicines: ${orderData['medicineNames']?.length ?? 0}")
-    else
-      Text("Is Prescription: ${orderData['isPrescription'].toString()}"),
-    const Spacer(),
-    Text("${orderData['pharmacyName'] ?? ''}"), // Handle potential null value
-  ],
-),
+                                  children: [
+                                    if (orderData['isPrescription'] != null &&
+                                        !orderData['isPrescription'])
+                                      Text(
+                                          "No of medicines: ${orderData['medicineNames']?.length ?? 0}")
+                                    else
+                                      const Text("Prescription order"),
+                                    const Spacer(),
+                                    Text(
+                                        "${orderData['pharmacyName'] ?? ''}"), // Handle potential null value
+                                  ],
+                                ),
 
 
                                 const SizedBox(
@@ -140,16 +148,29 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                   children: [
                                     ElevatedButton(
                                        onPressed: () {
-    // Pass the order ID from the orderData to the UserOrderTrackingScreen
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OrderTrackingPage(orderId: orderData['orderId']),
-      ),
-    );
-  },
-
-
+                                        // Pass the order ID from the orderData to the UserOrderTrackingScreen
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                OrderTrackingPage(
+                                                    orderId:
+                                                        orderData['orderId']),
+                                          ),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor:
+                                            Colors.blue, // Text color
+                                        padding: const EdgeInsets.all(
+                                            10.0), // Button padding
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10), // Rounded corners
+                                        ),
+                                        elevation: 5, // Button shadow
+                                      ),
                                       child: const Text('Track Order'),
                                     ),
                                     const Spacer(),
@@ -178,6 +199,18 @@ class _CurrentOrdersScreenState extends State<CurrentOrdersScreen> {
                                           );
                                         }
                                       },
+                                      style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor:
+                                            Colors.blue, // Text color
+                                        padding: const EdgeInsets.all(
+                                            10.0), // Button padding
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10), // Rounded corners
+                                        ),
+                                        elevation: 5, // Button shadow
+                                      ),
                                       child: const Text('View order details'),
                                     )
 

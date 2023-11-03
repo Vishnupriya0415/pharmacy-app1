@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, avoid_print
+// ignore_for_file: unnecessary_null_comparison, library_private_types_in_public_api, avoid_print, unnecessary_brace_in_string_interps
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -76,11 +76,19 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
 
                 if (order != null) {
                   // Check if order is not null
-                  final orderStatus = order['status'];
-                  final addressData = order['addressData'];
+                  // final orderStatus = order['status'];
+                
                   final total = order['total'];
-
+                  final name = order['address']['fullName'];
+                  final mobileNumber = order['address']['mobileNumber'];
+                  
                   return Card(
+                    elevation: 3,
+                    color: Colors.grey[150],
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(15.0), // Set the border radius
+                    ),
                     margin: const EdgeInsets.all(8.0),
                     child: ListTile(
                       title: Row(
@@ -92,23 +100,39 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                       ),
                       subtitle: Column(
                         children: [
-                          if (addressData != null)
-                            Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                        'Ordered by ${addressData['fullName']}'),
-                                    const Spacer(),
-                                    Text('Phone ${addressData['mobileNumber']}')
-                                  ],
-                                ),
-                              ],
-                            ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Status: $orderStatus'),
+                          //  if (addressData != null)
+                          Row(
+                            children: [
+                              Text(
+                                'Customer name:$name',
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                              const Spacer(),
+                              Text(
+                                'Phone:${mobileNumber}',
+                                style: const TextStyle(color: Colors.black),
+                              )
+                            ],
                           ),
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          const Divider(
+                            color: Colors
+                                .grey, // Set the color of the divider line
+                            thickness:
+                                1, // Set the thickness of the divider line
+                          ),
+                          const SizedBox(
+                            height: 3,
+                          ),
+                          /* Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'Status: $orderStatus',
+                              style: const TextStyle(color: Colors.black),
+                            ),
+                          ),*/
                           ElevatedButton(
                             onPressed: () {
                               if (order['isPrescription'] == true) {
@@ -131,6 +155,17 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                                 );
                               }
                             },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue, // Text color
+                              padding:
+                                  const EdgeInsets.all(10.0), // Button padding
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    10), // Rounded corners
+                              ),
+                              elevation: 5, // Button shadow
+                            ),
                             child: const Text("View Order Details"),
                           ),
 

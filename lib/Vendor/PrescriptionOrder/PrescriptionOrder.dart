@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, unnecessary_null_comparison
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,8 +38,7 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
           ? StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('vendors')
-                  .doc(_currentUser!
-                      .uid) // Use the current user's ID for the vendor
+                  .doc(_currentUser!.uid)
                   .collection('orders')
                   .where('status', isEqualTo: 'pending')
                   .snapshots(),
@@ -61,64 +60,75 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                   itemBuilder: (context, index) {
                     var order = snapshot.data!.docs[index].data()
                         as Map<String, dynamic>;
-                    String orderID = snapshot.data!.docs[index].id;
-                    String imageUrl = order['imageURL'] ??
-                        ''; // Get the prescription image URL
-                    // Customize the order item UI as needed
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Card(
-                        child: GestureDetector(
-                          onTap: () {
-                            // Navigate to the OrderDetailsPage when tapped
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => OrderDetailsPage(
-                                  orderID: orderID,
-                                  imageUrl: imageUrl,
+                    bool isPrescription = order['isPrescription'] ?? false;
+
+                    if (isPrescription) {
+                      // Display only when isPrescription is true
+                      String orderID = snapshot.data!.docs[index].id;
+                      String imageUrl = order['imageURL'] ?? '';
+                      String name = order['address']['fullName'];
+                      String mobileNumber = order['address']['mobileNumber'];
+
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 3,
+                          color: Colors.grey[150],
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                15.0), // Set the border radius
+                          ),
+                          margin: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => OrderDetailsPage(
+                                    orderID: orderID,
+                                    imageUrl: imageUrl,
+                                  ),
                                 ),
+                              );
+                            },
+                            child: ListTile(
+                              title: Column(
+                                children: [
+                                  Text("Order ID: $orderID"),
+                                ],
                               ),
-                            );
-                          },
-                          child: ListTile(
-                            title: Column(
-                              children: [
-                                Text("Order ID: $orderID"),
-                              ],
-                            ),
+                              subtitle: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 100,
+                                    height: 100,
+                                    child: imageUrl.isNotEmpty
+                                        ? Image.network(imageUrl)
+                                        : Container(
+                                            width: 100,
+                                            height: 100,
+                                            color: Colors.grey,
+                                          ),
+                                  ),
+                                  const SizedBox(
+                                    width: 30,
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text('Ordered by $name'),
+                                      Text('Phone : $mobileNumber'),
 
-                            subtitle: Row(
-                              children: [
-                                SizedBox(
-                                  width: 100,
-                                  height: 100,
-                                  child: imageUrl.isNotEmpty
-                                      ? Image.network(imageUrl)
-                                      : Container(
-                                          width: 100,
-                                          height: 100,
-                                          color: Colors
-                                              .grey, // You can use any color or widget to indicate no image
-                                        ),
-                                ),
-                                const SizedBox(
-                                  width: 30,
-                                ),
-                                Column(
-                                  children: [
-                                    const Text(" Status:"),
-                                    Text(
-                                        "Pharmacy Name: ${order['pharmacyName']}"),
-                                  ],
-                                ),
-                              ],
-                            ),
 
-                            // Display the prescription image
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      return Container(); // Skip the order if isPrescription is false
+                    }
                   },
                 );
               },

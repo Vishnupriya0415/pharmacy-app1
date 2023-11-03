@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import 'package:intl/intl.dart';
 class OrderTrackingPage extends StatelessWidget {
   final String orderId;
 
-  OrderTrackingPage({required this.orderId});
+  const OrderTrackingPage({super.key, required this.orderId});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class OrderTrackingPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Order Tracking'),
+        title: const Text('Order Tracking'),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
@@ -26,7 +28,7 @@ class OrderTrackingPage extends StatelessWidget {
             .snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return CircularProgressIndicator(); // Loading indicator
+            return const CircularProgressIndicator(); // Loading indicator
           }
 
           final orderData = snapshot.data!.data() as Map<String, dynamic>;
@@ -89,7 +91,8 @@ class OrderTrackingPage extends StatelessWidget {
                       children: [
                         Text('Ordered Time: $orderedTimeString'),
                         Text('Accepted time: $acceptedTimeString'),
-                        Text('Processing Time: $processingTimeString'),
+                        if (status == 'Processing')
+                          Text('Processing Time: $processingTimeString'),
                         if (status == 'Out for Delivery')
                           Text('Out For Delivery Time: $outForDeliveryTimeString'),
                       ],

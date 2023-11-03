@@ -63,7 +63,7 @@ class DetailsScreen extends StatelessWidget {
             final landmark = data['address']['landmark'];
             final street = data['address']['street'];
             final addressText =
-                '$name,$mobileNumber,$doorNo,$street,$landmark,$city, $state,$postalCode';
+                '$doorNo,$street,$landmark,$city, $state,$postalCode';
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
@@ -71,7 +71,7 @@ class DetailsScreen extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text('order ID " $orderId'),
+                        Text('Order ID " $orderId'),
                         const Spacer(),
                         Text('Total: ₹${total.toStringAsFixed(2)}'),
                         const SizedBox(
@@ -79,6 +79,12 @@ class DetailsScreen extends StatelessWidget {
                         )
                       ],
                     ),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(" Customer Name: $name")),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(" Phone : $mobileNumber")),
                     const SizedBox(
                       height: 20,
                     ),
@@ -93,12 +99,22 @@ class DetailsScreen extends StatelessWidget {
                     const SizedBox(
                       height: 10,
                     ),
-                    const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
+                    const Row(
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Icon(Icons.home, color: Colors.black),
+                        // Add a home icon here
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
                           " Delvery address:",
                           style: TextStyle(fontWeight: FontWeight.bold),
-                        )),
+                        ),
+                      ],
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
