@@ -95,7 +95,7 @@ class _DeliveredOrdersScreenState extends State<DeliveredOrdersScreen> {
                         children: [
                           Text('Order ID: $orderId'),
                           const Spacer(),
-                          Text(" Total cost: ₹$total"),
+                          Text(" Total: ₹$total"),
                         ],
                       ),
                       subtitle: Column(

@@ -146,40 +146,6 @@ class _AddressListState extends State<AddressList> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 20),
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // print(addressId);
-                              Map<String, dynamic> addressData =
-                                  document.data() as Map<String, dynamic>;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddressPage(
-                                    isEditing: true,
-                                    addressData: addressData,
-                                    selectedAddressId: addressId,
-                                  ),
-                                ),
-                              );
-                            },
-                            style: ButtonStyle(
-                              shape: MaterialStateProperty.all<OutlinedBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
-                            ),
-                            child: const Text(
-                              "Edit address",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -217,7 +183,8 @@ class _AddressListState extends State<AddressList> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
+                                  Colors
+                                      .green), // Customize the background color
                             ),
                             child: const Text(
                               "Use this address for delivery",
@@ -225,7 +192,42 @@ class _AddressListState extends State<AddressList> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
+                        //  const SizedBox(height: 10),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Map<String, dynamic> addressData =
+                                  document.data() as Map<String, dynamic>;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddressPage(
+                                    isEditing: true,
+                                    addressData: addressData,
+                                    selectedAddressId: addressId,
+                                  ),
+                                ),
+                              );
+                            },
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<OutlinedBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors
+                                      .orange), // Customize the background color
+                            ),
+                            child: const Text(
+                              "Edit address",
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                       
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
@@ -239,7 +241,7 @@ class _AddressListState extends State<AddressList> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
+                                  Colors.red), // Customize the background color
                             ),
                             child: const Text(
                               "Remove this address",

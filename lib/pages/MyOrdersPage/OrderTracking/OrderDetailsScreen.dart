@@ -79,7 +79,7 @@ class UserOrderDetailsScreen extends StatelessWidget {
                               'Ordered by  ${orderData['address']['fullName']}'),
                           const Spacer(),
                           Text(
-                              'Phone Number: ${orderData['address']['mobileNumber']}'),
+                              'Phone No: ${orderData['address']['mobileNumber']}'),
                         ],
                       ),
                       Text("Pharmacy Name ${orderData['pharmacyName']}"),

@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,74 +59,95 @@ class _PrescriptionOrdersPageState extends State<PrescriptionOrdersPage> {
                     var order = snapshot.data!.docs[index].data()
                         as Map<String, dynamic>;
                     bool isPrescription = order['isPrescription'] ?? false;
+                    String userUid = order['userUid'];
+                    DocumentReference userDocRef = FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userUid);
 
-                    if (isPrescription) {
-                      // Display only when isPrescription is true
-                      String orderID = snapshot.data!.docs[index].id;
-                      String imageUrl = order['imageURL'] ?? '';
-                      String name = order['address']['fullName'];
-                      String mobileNumber = order['address']['mobileNumber'];
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: userDocRef.get(),
+                      builder: (context, userDocSnapshot) {
+                        if (userDocSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (userDocSnapshot.hasError) {
+                          return Text(
+                              'Error accessing user document: ${userDocSnapshot.error}');
+                        }
 
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 3,
-                          color: Colors.grey[150],
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                15.0), // Set the border radius
-                          ),
-                          margin: const EdgeInsets.all(8.0),
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => OrderDetailsPage(
-                                    orderID: orderID,
-                                    imageUrl: imageUrl,
+                        if (userDocSnapshot.hasData &&
+                            userDocSnapshot.data != null) {
+                          Map<String, dynamic> userData = userDocSnapshot.data!
+                              .data() as Map<String, dynamic>;
+                          String username = userData['Name'];
+                          String phone = userData['phone'];
+
+                          if (isPrescription) {
+                            String orderID = snapshot.data!.docs[index].id;
+                            String imageUrl = order['imageURL'] ?? '';
+
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Card(
+                                elevation: 3,
+                                color: Colors.grey[150],
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                margin: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => OrderDetailsPage(
+                                          orderID: orderID,
+                                          imageUrl: imageUrl,
+                                          phone: phone,
+                                          name: username,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ListTile(
+                                    title: Column(
+                                      children: [
+                                        Text("Order ID: $orderID"),
+                                      ],
+                                    ),
+                                    subtitle: Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 100,
+                                          height: 100,
+                                          child: imageUrl.isNotEmpty
+                                              ? Image.network(imageUrl)
+                                              : Container(
+                                                  width: 100,
+                                                  height: 100,
+                                                  color: Colors.grey,
+                                                ),
+                                        ),
+                                        const SizedBox(
+                                          width: 30,
+                                        ),
+                                        Column(
+                                          children: [
+                                            Text('Ordered by $username'),
+                                            Text('Phone : $phone'),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              );
-                            },
-                            child: ListTile(
-                              title: Column(
-                                children: [
-                                  Text("Order ID: $orderID"),
-                                ],
                               ),
-                              subtitle: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 100,
-                                    height: 100,
-                                    child: imageUrl.isNotEmpty
-                                        ? Image.network(imageUrl)
-                                        : Container(
-                                            width: 100,
-                                            height: 100,
-                                            color: Colors.grey,
-                                          ),
-                                  ),
-                                  const SizedBox(
-                                    width: 30,
-                                  ),
-                                  Column(
-                                    children: [
-                                      Text('Ordered by $name'),
-                                      Text('Phone : $mobileNumber'),
+                            );
+                          }
+                        }
 
-
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Container(); // Skip the order if isPrescription is false
-                    }
+                        return Container();
+                      },
+                    );
                   },
                 );
               },

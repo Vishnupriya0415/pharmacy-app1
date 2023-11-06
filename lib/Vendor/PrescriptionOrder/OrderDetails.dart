@@ -9,10 +9,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class OrderDetailsPage extends StatefulWidget {
   final String orderID;
   final String imageUrl;
+  final String phone;
+  final String name;
 
   const OrderDetailsPage({super.key, 
     required this.orderID,
     required this.imageUrl,
+    required this.phone,
+    required this.name,
   });
 
   @override
@@ -36,7 +40,7 @@ String? Name;
   void initState() {
     super.initState();
     fetchTotalPrice();
-    fetchUserDetails();
+    // fetchUserDetails();
   }
 
   Future<void> fetchUserDetails() async {
@@ -50,37 +54,25 @@ String? Name;
         DocumentSnapshot orderSnapshot = await firestore
             .collection('vendors')
             .doc(userUID)
-            .collection('orders')
-            .doc(widget.orderID)
             .get();
 
         if (orderSnapshot.exists) {
           Map<String, dynamic> orderData =
               orderSnapshot.data() as Map<String, dynamic>;
 
-          final name = orderData['address']['fullName'];
-          final mobileNumber = orderData['address']['mobileNumber'];
-          final City = orderData['address']['city'];
-          final DoorNo = orderData['address']['doorNo'];
-          final Landmark = orderData['address']['landmark'];
-          final postalCode = orderData['address']['postalCode'];
-          final Street = orderData['address']['street'];
-          final State = orderData['address']['state'];
+          final name = orderData['Name'];
+          final mobileNumber = orderData['phone'];
+         
           setState(() {
             Name = name;
             phone = mobileNumber;
-            city = City;
-            doorNO = DoorNo;
-            landmark = Landmark;
-            pincode = postalCode;
-            street = Street;
-            state = State;
+            
           });
         }
       } catch (e) {
         // Handle the error, for example, show an error message
         print("Error fetching data: $e");
-      }
+      }  
     }  
 
 }
@@ -141,7 +133,6 @@ String? Name;
                 as Map<String, dynamic>; // Explicit casting
             String userUid = data['userUid'];
             print('userUid: $userUid');
-
              DocumentReference userOrderReference = firestore
             .collection('users')
             .doc(userUid)
@@ -225,20 +216,20 @@ String? Name;
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.only(left: 10),
-                child: Text("Customer Name: $Name"),
+                child: Text("Customer Name: ${widget.name}"),
               ),
             ),
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
                 padding: const EdgeInsets.only(left: 10),
-                child: Text("Phone: $phone"),
+                child: Text("Phone: ${widget.phone}"),
               ),
             ),
             const SizedBox(
               width: 10,
             ),
-            const Row(
+            /* const Row(
               children: [
                 SizedBox(
                   width: 5,
@@ -248,11 +239,11 @@ String? Name;
                 SizedBox(
                   width: 5,
                 ),
-                Text(" Delivery address:"),
+                // Text(" Delivery address:"),
               ],
-            ),
-            Text(
-                " $Name, $phone , $doorNO, $landmark, $street, $state, $pincode "),
+            ),*/
+            // Text(
+            //  " $Name, $phone , $doorNO, $landmark, $street, $state, $pincode "),
             const SizedBox(
               height: 10,
             ),

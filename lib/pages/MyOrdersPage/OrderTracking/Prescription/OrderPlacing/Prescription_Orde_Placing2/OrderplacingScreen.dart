@@ -9,8 +9,18 @@ import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/Orde
 class OrderPlacingScreen extends StatefulWidget {
   final String vendorUid;
   final String orderID;
+  final double? cost;
+  final String? imageUrl;
+  final Map<String, dynamic>? addressData; // New parameter for address data
+
+  
   const OrderPlacingScreen(
-      {super.key, required this.vendorUid, required this.orderID});
+      {super.key,
+      required this.vendorUid,
+      required this.orderID,
+      this.cost,
+      this.imageUrl,
+      this.addressData});
 
   @override
   State<OrderPlacingScreen> createState() => _OrderPlacingScreenState();
@@ -103,7 +113,22 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("order placing screen"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          "Order placing ",
+          style: TextStyle(color: Colors.black),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.black,
+          ), // Use appropriate icon for back arrow
+          onPressed: () {
+            Navigator.pop(
+                context); // Go back to the previous screen on arrow button press
+          },
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -113,66 +138,73 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
               height: 20,
             ),
             if (imageURL.isNotEmpty) Image.network(imageURL),
+            const SizedBox(height: 16),
             if (total != 0.0)
               Row(
                 children: [
                   const SizedBox(
                     width: 10,
                   ),
-                  const Text('Total cost '),
+                  
+                  const Text(
+                    'Total cost ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
-                  Text('$total'),
+                  Text('₹$total'),
                   const SizedBox(
                     width: 10,
                   ),
                 ],
               ),
+            const SizedBox(height: 16),
             const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   " Delivery address",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 )),
-            const SizedBox(height: 16),
+            //  const SizedBox(height: 16),
             Card(
-                child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => PrescriptionAddressScreen(
-                                  orderID: widget.orderID,
-                                  vendorUid: widget.vendorUid,
-                                )),
-                      );
-                    },
-                    child: const Align(
-                      alignment: Alignment.topRight,
-                      child: Text(
-                        "Change",
-                        style: TextStyle(color: Colors.blue),
-                      ),
+                child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => PrescriptionAddressScreen(
+                                orderID: widget.orderID,
+                                vendorUid: widget.vendorUid,
+                              )),
+                    );
+                  },
+                  child: const Align(
+                    alignment: Alignment.topRight,
+                    child: Text(
+                      "Change",
+                      style: TextStyle(color: Colors.blue),
                     ),
                   ),
-                  Text(
-                      '$Name, $mobileNumber,$doorNo, $landmark, $street, $city, $state,$pinCode'),
-                ],
-              ),
+                ),
+                Text(
+                    '$Name, $mobileNumber,$doorNo, $landmark, $street, $city, $state,$pinCode'),
+              ],
             )),
             const SizedBox(
               height: 20,
             ),
-            const Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Select a Payment Method :',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
+            const Row(
+              children: [
+                SizedBox(
+                  width: 8,
                 ),
-              ),
+                Text(
+                  'Select a Payment Method :',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -187,26 +219,56 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
                         selectedPaymentMethod = method;
                       });
                     },
-                    child: Row(
-                      children: [
-                        Radio<String>(
-                          value: method,
-                          groupValue: selectedPaymentMethod,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedPaymentMethod = value!;
-                            });
-                          },
-                        ),
-                        Image.asset(
-                          imagePath,
-                          width: 30, // Set an appropriate width for your image
-                          height:
-                              30, // Set an appropriate height for your image
-                        ),
-                        const SizedBox(width: 10),
-                        Text(method),
-                      ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        color: selectedPaymentMethod == method
+                            ? Colors
+                                .blue // Highlight the selected payment method
+                            : Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8.0, horizontal: 16.0),
+                      margin: const EdgeInsets.only(bottom: 8.0),
+                      child: Row(
+                        children: [
+                          Radio<String>(
+                            value: method,
+                            groupValue: selectedPaymentMethod,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedPaymentMethod = value!;
+                              });
+                            },
+                            activeColor: Colors.blue,
+                          ),
+                          Image.asset(
+                            imagePath,
+                            width:
+                                30, // Set an appropriate width for your image
+                            height:
+                                30, // Set an appropriate height for your image
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            method,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: selectedPaymentMethod == method
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }).toList(),
@@ -255,6 +317,11 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
                       print("Error updating order: $error");
                     }
                   },
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue, // Button text color
+                    padding: const EdgeInsets.all(5),
+                  ),
                   child: const Text("Place order"),
                 ),
               ),

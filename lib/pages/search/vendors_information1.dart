@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Order_placing1/PrescriptionOrderPlacngPage.dart';
+import 'package:gangaaramtech/utils/widgets/Alert_dialog.dart';
 class VendorListScreen1 extends StatefulWidget {
   final String imageUrl;
   const VendorListScreen1({Key? key, required this.imageUrl}) : super(key: key);
@@ -93,7 +94,9 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
                     subtitle: Column(
 
                       children: [
-                        Text('Email: $email'),
+                        Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Email: $email')),
                         Row(
                           children: [
                             Text('Name: $username'),
@@ -116,31 +119,27 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
   void _showConfirmationDialog(String pharmacyName, String vendorUid) {
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        title: Text('Send Image to $pharmacyName?'),
-        content: const Text(
-            'Are you sure you want to send the image to this pharmacy?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('No'),
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Yes'),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                    builder: (context) => PrescriptionOrder(
-                          vendorUid: vendorUid,
-                          imageUrl: widget.imageUrl,
-                        )),
-              );
-            },
-          ),
-        ],
+      builder: (BuildContext dialogContext) => CurvedAlertDialogBox1(
+        title: 'Send Image to $pharmacyName?',
+        onClosePressed: () {
+          Navigator.of(dialogContext).pop();
+        },
+
+        onSubmitPressed: () {
+          Navigator.of(dialogContext).pop();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => PrescriptionOrder(
+                vendorUid: vendorUid,
+                imageUrl: widget.imageUrl,
+              ),
+            ),
+          );
+        },
+        additionalText:
+            'Are you sure you would like to send image to $pharmacyName?',
       ),
     );
   }
+
 }

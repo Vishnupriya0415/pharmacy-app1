@@ -35,6 +35,9 @@ class _PrescriptionOrderState extends State<PrescriptionOrder> {
   String pinCode = '';
   String pharmacyName = '';
   bool orderCreationInProgress = false;
+  bool displayChangePharmacyText =
+      true; // Added a flag to control the "Change pharmacy" text
+
 
   @override
   void initState() {
@@ -194,7 +197,7 @@ bool isOrderCreated = false; // Add a flag to track order creation
     String? userUID = user?.uid;
 
     if (buttonPressCount == 1) {
-      orderID = generateOrderID();
+      orderID = generateOrderID(); 
       print("The orderid is $orderID");
 
       orderData = {
@@ -318,11 +321,29 @@ bool isOrderCreated = false; // Add a flag to track order creation
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Prescription Order"),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "Prescription Order",
+            style: TextStyle(color: Colors.black),
+          ),
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ), // Use appropriate icon for back arrow
+            onPressed: () {
+              Navigator.pop(
+                  context); // Go back to the previous screen on arrow button press
+            },
+          ),
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
+              const SizedBox(
+                height: 10,
+              ),
               SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: 400,
@@ -346,23 +367,26 @@ bool isOrderCreated = false; // Add a flag to track order creation
                 child: Card(
                   child: Column(
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => VendorListScreen1(
-                                imageUrl: widget.imageUrl,
+                      if (buttonPressCount <=
+                          1) // Check if buttonPressCount is less than or equal to 1
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => VendorListScreen1(
+                                  imageUrl: widget.imageUrl,
+                                ),
                               ),
-                            ),
-                          );
-                        },
-                        child: const Align(
+                            );
+                          },
+                          child: const Align(
                             alignment: Alignment.centerRight,
                             child: Text(
                               "Change pharmacy",
                               style: TextStyle(color: Colors.blue),
-                            )),
-                      ),
+                            ),
+                          ),
+                        ),
                       Align(
                           alignment: Alignment.centerLeft,
                           child: Text("Pharmacy: $pharmacyName")),
@@ -377,10 +401,28 @@ bool isOrderCreated = false; // Add a flag to track order creation
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: SizedBox(
-                    width: double.maxFinite,
-                    child: ElevatedButton(
-                        onPressed: createOrder, child: const Text("Next"))),
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    onPressed: createOrder,
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue, // Text color
+                      padding: const EdgeInsets.all(8), // Button padding
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(8.0), // Button border radius
+                      ),
+                    ),
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(
+                        fontSize: 18, // Text size
+                      ),
+                    ),
+                  ),
+                ),
               )
+
             ],
           ),
         ),
