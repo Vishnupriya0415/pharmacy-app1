@@ -33,6 +33,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
         ),
         backgroundColor: Colors.white,
         elevation: 0,
+          centerTitle: true
       ),
       body: FutureBuilder<User?>(
         future: _auth.authStateChanges().first,
@@ -77,71 +78,83 @@ class _VendorListScreenState extends State<VendorListScreen> {
               final email = userData['email'] ?? 'N/A';
               final pharmacyName = userData['pharmacyName'] ?? 'N/A';
               final phone = userData['phone'] ?? 'N/A';
+              final doorNo = userData['address']['doorNo'] ?? 'N/A';
+              final street = userData['address']['street'] ?? 'N/A';
+              final city = userData['address']['city'] ?? 'N/A';
+              final state = userData['address']['state'] ?? 'N/A';
+              final postalCode = userData['address']['postalCode'] ?? 'N/A';
               final vendorUid = userData['uid'] ?? 'N/A';
+              final address = '$doorNo, $street, $city, $state, $postalCode';
 
-              return GestureDetector(
-                onTap: () {
-                  final cartProvider =
-                      Provider.of<CartProvider>(context, listen: false);
-                  cartProvider.setSelectedVendorUid(vendorUid);
-                  cartProvider.setPharmacyName(pharmacyName);
-                  // Check if the vendor is already selected and add medicine accordingly
-                  if (cartProvider.selectedVendorUid == vendorUid) {
-                    // If the vendor is already selected, add the medicine to the existing list
-                    cartProvider.addToMedicineList(widget.searchQuery);
-                  } else {
-                    // If a different vendor is selected, update the selected vendor and start a new list
-                    cartProvider.setSelectedVendorUid(vendorUid);
-                    cartProvider.setMedicineList([widget.searchQuery]);
-                  }
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CartPage(
-                        pharmacyName: pharmacyName,
-                        medicineList: medicineList,
-                        vendorId: vendorUid,
-                      ),
-                    ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey[300]!.withOpacity(0.3),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Card(
-                    child: ListTile(
-                      title: Text("Search: ${widget.searchQuery}"),
-                      subtitle: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(' $username'),
-                              const Spacer(),
-                            //  Text(' $email'),
-                            ],
+              return Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      final cartProvider =
+                          Provider.of<CartProvider>(context, listen: false);
+                      cartProvider.setSelectedVendorUid(vendorUid);
+                      cartProvider.setPharmacyName(pharmacyName);
+                      // Check if the vendor is already selected and add medicine accordingly
+                      if (cartProvider.selectedVendorUid == vendorUid) {
+                        // If the vendor is already selected, add the medicine to the existing list
+                        cartProvider.addToMedicineList(widget.searchQuery);
+                      } else {
+                        // If a different vendor is selected, update the selected vendor and start a new list
+                        cartProvider.setSelectedVendorUid(vendorUid);
+                        cartProvider.setMedicineList([widget.searchQuery]);
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartPage(
+                            pharmacyName: pharmacyName,
+                            medicineList: medicineList,
+                            vendorId: vendorUid,
                           ),
-                          Row(
-                            children: [
-                              Text("Pharmacy: $pharmacyName"),
-                              const Spacer(),
-                              Text("Phone: $phone")
-                            ],
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.0),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey[300]!.withOpacity(0.3),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
+                      child: Card(
+                        child: ListTile(
+                          title: Text("Search: ${widget.searchQuery}"),
+                          subtitle: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Text(' $username'),
+                                  const Spacer(),
+                                  //  Text(' $email'),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text("Pharmacy: $pharmacyName"),
+                                  const Spacer(),
+                                  Text("Phone: $phone"),
+                                ],
+                              ),
+                              Text("Address: $address"),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Divider(), // Add a divider
+                ],
               );
             },
           ),

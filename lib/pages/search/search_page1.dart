@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 import 'package:provider/provider.dart';
 import 'package:gangaaramtech/pages/cart/CartProvider.dart';
 import 'package:gangaaramtech/pages/home/home.dart';
@@ -63,23 +64,11 @@ class _SearchPageState extends State<SearchPage> {
                     child: TextField(
                       controller: _searchController,
                       onSubmitted: (searchQuery) {
-                        // Get the pharmacyName and selectedVendorUid from the CartProvider
-                        final cartProvider = Provider.of<CartProvider>(context, listen: false);
-                        final pharmacyName = cartProvider.pharmacyName;
-                        final vendorId = cartProvider.selectedVendorUid ?? 'N/A';
-
-                        // Add the searched medicine to the medicine list
-                        cartProvider.addToMedicineList(searchQuery);
-
-                        // Trigger navigation when the user submits the search
+                        // Navigate to the "vendor list screen page" with the selected medicine
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CartPage(
-                              pharmacyName: pharmacyName, // Use the pharmacyName from CartProvider
-                              medicineList: [searchQuery], // Add the searched medicine to the list
-                              vendorId: vendorId, // Use the selectedVendorUid from CartProvider
-                            ),
+                            builder: (context) => VendorListScreen(searchQuery: searchQuery),
                           ),
                         );
                       },
@@ -123,3 +112,5 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 }
+
+

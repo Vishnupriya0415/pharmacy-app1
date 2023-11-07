@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,72 +33,60 @@ class OrderTrackingPage extends StatelessWidget {
 
           final status = orderData['status'];
 
-          final orderedTime = orderData['orderedTime'] as Timestamp;
-          final acceptedTime = orderData['acceptedTime'];
-          final orderStatusTime =
-              orderData['orderStatusTime'] as Map<String, dynamic>;
+          final orderedTime = orderData['orderedTime'] as Timestamp?;
+          final acceptedTime = orderData['acceptedTime'] as Timestamp?;
+          final orderStatusTime = orderData['orderStatusTime'] as Map<String, dynamic>?;
 
-          String orderedTimeString = ''; // Initialize an empty string
-          String processingTimeString = ''; // Initialize an empty string
-          String acceptedTimeString = ''; // Initialize an empty string
-          String outForDeliveryTimeString = ''; // Initialize an empty string
+          String orderedTimeString = '';
+          String processingTimeString = '';
+          String acceptedTimeString = '';
+          String outForDeliveryTimeString = '';
 
-          if (orderedTime != null) {
-            final orderedDateTime = orderedTime.toDate();
-            orderedTimeString =
-                DateFormat('yyyy-MM-dd HH:mm:ss').format(orderedDateTime);
+          if (status=='Pending'||orderedTime != null) {
+            final orderedDateTime = orderedTime?.toDate();
+            orderedTimeString = DateFormat('yyyy-MM-dd HH:mm:ss').format(orderedDateTime!);
           }
 
-          if (status == 'Processing' || status == 'Out for Delivery') {
-            final processingTime =
-                orderStatusTime['processingTime'] as Timestamp;
-            if (processingTime != null) {
+          if (status == 'Accepted' || status == 'Processing' || status == 'Out for Delivery') {
+            if (acceptedTime != null) {
+              final acceptedDateTime = acceptedTime.toDate();
+              acceptedTimeString = DateFormat('yyyy-MM-dd HH:mm:ss').format(acceptedDateTime);
+            }
+          }
+
+          if (orderStatusTime != null) {
+            final processingTime = orderStatusTime['processingTime'] as Timestamp?;
+            if (processingTime != null && (status == 'Processing' || status == 'Out for Delivery')) {
               final processingDateTime = processingTime.toDate();
-              processingTimeString =
-                  DateFormat('yyyy-MM-dd HH:mm:ss').format(processingDateTime);
+              processingTimeString = DateFormat('yyyy-MM-dd HH:mm:ss').format(processingDateTime);
+            }
+
+            if (status == 'Out for Delivery') {
+              final outForDeliveryTime = orderStatusTime['outForDeliveryTime'] as Timestamp?;
+              if (outForDeliveryTime != null) {
+                final outForDeliveryDateTime = outForDeliveryTime.toDate();
+                outForDeliveryTimeString = DateFormat('yyyy-MM-dd HH:mm:ss').format(outForDeliveryDateTime);
+              }
             }
           }
 
-          if (acceptedTime != null) {
-            final acceptedDateTime = acceptedTime.toDate();
-            acceptedTimeString =
-                DateFormat('yyyy-MM-dd HH:mm:ss').format(acceptedDateTime);
-          }
+         return Card(
+  child: ListTile(
+    title: Text('Order ID: $orderId'),
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Status: $status'),
+        if (status != 'Pending') Text('Ordered Time: $orderedTimeString'),
+        if (status == 'Accepted' || status == 'Processing' || status == 'Out for Delivery') Text('Accepted time: $acceptedTimeString'),
+        if (status == 'Processing' || status == 'Out for Delivery') Text('Processing Time: $processingTimeString'),
+        if (status == 'Out for Delivery') Text('Out For Delivery Time: $outForDeliveryTimeString'),
+      ],
+    ),
+  ),
+);
 
-          if (status == 'Out for Delivery') {
-            final outForDeliveryTime =
-                orderStatusTime['outForDeliveryTime'] as Timestamp;
-            if (outForDeliveryTime != null) {
-              final outForDeliveryDateTime = outForDeliveryTime.toDate();
-              outForDeliveryTimeString =
-                  DateFormat('yyyy-MM-dd HH:mm:ss').format(outForDeliveryDateTime);
-            }
-          }
 
-          return Card(
-            child: ListTile(
-              title: Text('Order ID: $orderId'),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text('Status: $status'),
-                  if (status == 'Accepted' ||
-                      status == 'Processing' ||
-                      status == 'Out for Delivery')
-                    Column(
-                      children: [
-                        Text('Ordered Time: $orderedTimeString'),
-                        Text('Accepted time: $acceptedTimeString'),
-                        if (status == 'Processing')
-                          Text('Processing Time: $processingTimeString'),
-                        if (status == 'Out for Delivery')
-                          Text('Out For Delivery Time: $outForDeliveryTimeString'),
-                      ],
-                    ),
-                ],
-              ),
-            ),
-          );
         },
       ),
     );

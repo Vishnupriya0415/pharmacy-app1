@@ -58,7 +58,12 @@ class _CartPageState extends State<CartPage> {
                           ),
                         );
                       } else {
-                        // Handle no medicine selected error (show a message, etc.)
+                           ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content:
+                                Text("Please select medicines to proceed."),
+                          ),
+                        );
                       }
                     },
                     child: const Text(
@@ -117,11 +122,32 @@ class _CartPageState extends State<CartPage> {
                         ),
                       );
                     },
-                    child: const Text("Add Another Medicine"),
+                     style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor:
+                                            Colors.blue, // Text color
+                                        padding: const EdgeInsets.all(
+                                            10.0), // Button padding
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10), // Rounded corners
+                                        ),
+                                        elevation: 5, // Button shadow
+                                      ),
+                    child: const Text("+ Medicine"),
                   ),
                   const Spacer(),
+
                   ElevatedButton(
                     onPressed: () {
+                          if (selectedMedicines.isEmpty) {
+          // Display a SnackBar message if no medicines are selected
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Please select medicines to proceed."),
+            ),
+          );
+        } else{
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -132,7 +158,20 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                       );
+                    }
                     },
+                     style: ElevatedButton.styleFrom(
+                                        foregroundColor: Colors.white,
+                                        backgroundColor:
+                                            Colors.blue, // Text color
+                                        padding: const EdgeInsets.all(
+                                            10.0), // Button padding
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              10), // Rounded corners
+                                        ),
+                                        elevation: 5, // Button shadow
+                                      ),
                     child: const Text("Move to Cart"),
                   ),
                 ],

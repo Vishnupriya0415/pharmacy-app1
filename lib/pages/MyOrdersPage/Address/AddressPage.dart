@@ -147,11 +147,7 @@ class _AddressListState extends State<AddressList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddressPage(
-                                    isEditing: true,
-                                    addressData: addressData,
-                                    selectedAddressId: addressId,
-                                  ),
+                                  builder: (context) => PlacingOrder(addressData: addressData,)
                                 ),
                               );
                             },
@@ -162,10 +158,10 @@ class _AddressListState extends State<AddressList> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
+                                  Colors.green),
                             ),
                             child: const Text(
-                              "Edit address",
+                              "Use This address for delivery",
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -180,7 +176,11 @@ class _AddressListState extends State<AddressList> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => PlacingOrder(addressData: addressData,))
+                                  builder: (context) => AddressPage(
+                                    isEditing: true,
+                                    addressData: addressData,
+                                    selectedAddressId: addressId,
+                                  ),)
                               );
                             },
                             style: ButtonStyle(
@@ -190,10 +190,10 @@ class _AddressListState extends State<AddressList> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
+                                  Colors.orange),
                             ),
                             child: const Text(
-                              "Use this address for delivery",
+                              "Edit Address",
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -212,7 +212,7 @@ class _AddressListState extends State<AddressList> {
                                 ),
                               ),
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.white),
+                                  Colors.red),
                             ),
                             child: const Text(
                               "Remove this address",

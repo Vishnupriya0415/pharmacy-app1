@@ -171,8 +171,15 @@ class _VendorOrderStatusScreenState extends State<VendorOrderStatusScreen> {
       final updateData = <String, dynamic>{
         'status': newStatus,
       };
-
-      if (newStatus == 'Accepted') {
+       if (newStatus == 'Pending') {
+        updateData['orderedTime'] = FieldValue.serverTimestamp();
+        updateData['orderStatusTime'] = {
+          'acceptedTime': null,
+          'processingTime': null,
+          'outForDeliveryTime': null,
+          'deliveredTime': null,
+        };
+      } else if (newStatus == 'Accepted') {
         updateData['orderStatusTime'] = {
           'acceptedTime': FieldValue.serverTimestamp(),
           'processingTime': null,

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/Prescription/OrderPlacing/Prescription_Order_placing1/PrescriptionOrderPlacngPage.dart';
-import 'package:gangaaramtech/utils/widgets/Alert_dialog.dart';
 class VendorListScreen1 extends StatefulWidget {
   final String imageUrl;
   const VendorListScreen1({Key? key, required this.imageUrl}) : super(key: key);
@@ -69,7 +68,13 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
             final email = userData['email'] ?? 'N/A';
             final pharmacyName = userData['pharmacyName'] ?? 'N/A';
             final phone = userData['phone'] ?? 'N/A';
+            final doorNo = userData['address']['doorNo'] ?? 'N/A';
+            final street = userData['address']['street'] ?? 'N/A';
+            final city = userData['address']['city'] ?? 'N/A';
+            final state = userData['address']['state'] ?? 'N/A';
+            final postalCode = userData['address']['postalCode'] ?? 'N/A';
             final vendorUid = userData['uid'] ?? 'N/A';
+            final address = '$doorNo, $street, $city, $state, $postalCode';
 
             return GestureDetector(
               onTap: () {
@@ -94,9 +99,7 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
                     subtitle: Column(
 
                       children: [
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text('Email: $email')),
+                        Text('Email: $email'),
                         Row(
                           children: [
                             Text('Name: $username'),
@@ -104,6 +107,7 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
                             Text('Phone: $phone'),
                           ],
                         ),
+                        Text('Address: $address'),
                       ],
                     ),
                   ),
@@ -119,54 +123,31 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
   void _showConfirmationDialog(String pharmacyName, String vendorUid) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return CurvedAlertDialogBox1(
-          title: 'Send image to $pharmacyName',
-          additionalText:
-              'Are you sure you would like to send image to $pharmacyName?',
-          onYesPressed: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => PrescriptionOrder(
-                  vendorUid: vendorUid,
-                  imageUrl: widget.imageUrl,
-                ),
-              ),
-            );
-            // Handle 'Yes' button press
-          },
-          onNoPressed: () {
-            Navigator.of(context).pop();
-            // Handle 'No' button press
-          },
-        );
-      },
-    );
-
-    /*showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) => CurvedAlertDialogBox1(
-        title: 'Send Image to $pharmacyName?',
-        onClosePressed: () {
-          Navigator.of(dialogContext).pop();
-        },
-
-        onSubmitPressed: () {
-          Navigator.of(dialogContext).pop();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => PrescriptionOrder(
-                vendorUid: vendorUid,
-                imageUrl: widget.imageUrl,
-              ),
-            ),
-          );
-        },
-        additionalText:
-            'Are you sure you would like to send image to $pharmacyName?',
+      builder: (BuildContext dialogContext) => AlertDialog(
+        title: Text('Send Image to $pharmacyName?'),
+        content: const Text(
+            'Are you sure you want to send the image to this pharmacy?'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('No'),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('Yes'),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => PrescriptionOrder(
+                          vendorUid: vendorUid,
+                          imageUrl: widget.imageUrl,
+                        )),
+              );
+            },
+          ),
+        ],
       ),
-    );*/
+    );
   }
-
 }
