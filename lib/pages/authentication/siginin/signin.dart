@@ -61,7 +61,7 @@ class _SignInState extends State<SignIn> {
                   top: 30,
                 ),
                 child: Text(
-                  "Welcome to Medical App",
+                  "Welcome to MedRover ",
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.left,
                   style: FontConstants.lightVioletNormal24,

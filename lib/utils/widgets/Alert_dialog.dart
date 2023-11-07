@@ -4,14 +4,16 @@ class CurvedAlertDialogBox1 extends StatelessWidget {
   final String title;
   final String additionalText;
   final VoidCallback? onClosePressed;
-  final VoidCallback? onSubmitPressed;
+  final VoidCallback? onYesPressed;
+  final VoidCallback? onNoPressed;
 
   const CurvedAlertDialogBox1({
-    key,
+    Key? key,
     required this.title,
     required this.additionalText,
     this.onClosePressed,
-    this.onSubmitPressed,
+    this.onYesPressed,
+    this.onNoPressed,
   }) : super(key: key);
 
   @override
@@ -39,10 +41,15 @@ class CurvedAlertDialogBox1 extends StatelessWidget {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.cancel,
-                    size: 30,
-                    color: Colors.black,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Icon(
+                      Icons.cancel,
+                      size: 30,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ),
@@ -56,23 +63,36 @@ class CurvedAlertDialogBox1 extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 8), // Add some spacing
-            Text(
-              additionalText,
-              style: const TextStyle(
-                fontSize: 17,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                additionalText,
+                style: const TextStyle(
+                  fontSize: 17,
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  if (onSubmitPressed != null) {
-                    onSubmitPressed!();
-                  }
-                },
-                child: const Text('Yes'),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    if (onNoPressed != null) {
+                      onNoPressed!();
+                    }
+                  },
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (onYesPressed != null) {
+                      onYesPressed!();
+                    }
+                  },
+                  child: const Text('Yes'),
+                ),
+              ],
             ),
           ],
         ),

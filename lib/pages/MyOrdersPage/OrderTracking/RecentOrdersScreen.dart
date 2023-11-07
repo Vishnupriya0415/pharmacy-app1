@@ -213,6 +213,17 @@ String generateOrderID() {
                                     );
                                   }
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blue, // Text color
+                                  padding: const EdgeInsets.all(
+                                      10.0), // Button padding
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Rounded corners
+                                  ),
+                                  elevation: 5, // Button shadow
+                                ),
                                 child: const Text('View order details'),
                               ),
                               const Spacer(),
@@ -258,6 +269,17 @@ String generateOrderID() {
                                     );
                                   }
                                 },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  backgroundColor: Colors.blue, // Text color
+                                  padding: const EdgeInsets.all(
+                                      10.0), // Button padding
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        10), // Rounded corners
+                                  ),
+                                  elevation: 5, // Button shadow
+                                ),
                                 child: const Text('Reorder'),
                               )
 

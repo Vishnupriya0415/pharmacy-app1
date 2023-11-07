@@ -54,6 +54,11 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
     }
   }
 
+@override
+  void dispose() {
+    super.dispose();
+    fetchImageURL();
+  }
   final List<Map<String, String>> paymentMethods = [
     {
       'imagePath': 'assets/images/tablets/creditcard_icon.png',
@@ -131,202 +136,205 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            //     const Text(" Order Placing Screen"),
-            const SizedBox(
-              height: 20,
-            ),
-            if (imageURL.isNotEmpty) Image.network(imageURL),
-            const SizedBox(height: 16),
-            if (total != 0.0)
-              Row(
-                children: [
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  
-                  const Text(
-                    'Total cost ',
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              //     const Text(" Order Placing Screen"),
+              const SizedBox(
+                height: 20,
+              ),
+              if (imageURL.isNotEmpty) Image.network(imageURL),
+              const SizedBox(height: 16),
+              if (total != 0.0)
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    
+                    const Text(
+                      'Total cost ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    Text('₹$total'),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 16),
+              const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    " Delivery address",
                     style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+              //  const SizedBox(height: 16),
+              Card(
+                  child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => PrescriptionAddressScreen(
+                                  orderID: widget.orderID,
+                                  vendorUid: widget.vendorUid,
+                                )),
+                      );
+                    },
+                    child: const Align(
+                      alignment: Alignment.topRight,
+                      child: Text(
+                        "Change",
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
                   ),
-                  const Spacer(),
-                  Text('₹$total'),
-                  const SizedBox(
-                    width: 10,
+                  Text(
+                      '$Name, $mobileNumber,$doorNo, $landmark, $street, $city, $state,$pinCode'),
+                ],
+              )),
+              const SizedBox(
+                height: 20,
+              ),
+              const Row(
+                children: [
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text(
+                    'Select a Payment Method :',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
-            const SizedBox(height: 16),
-            const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  " Delivery address",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-            //  const SizedBox(height: 16),
-            Card(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => PrescriptionAddressScreen(
-                                orderID: widget.orderID,
-                                vendorUid: widget.vendorUid,
-                              )),
-                    );
-                  },
-                  child: const Align(
-                    alignment: Alignment.topRight,
-                    child: Text(
-                      "Change",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                  ),
-                ),
-                Text(
-                    '$Name, $mobileNumber,$doorNo, $landmark, $street, $city, $state,$pinCode'),
-              ],
-            )),
-            const SizedBox(
-              height: 20,
-            ),
-            const Row(
-              children: [
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  'Select a Payment Method :',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: paymentMethods.map((paymentMethod) {
-                  final imagePath = paymentMethod['imagePath']!;
-                  final method = paymentMethod['method']!;
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedPaymentMethod = method;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8.0),
-                        color: selectedPaymentMethod == method
-                            ? Colors
-                                .blue // Highlight the selected payment method
-                            : Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 16.0),
-                      margin: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        children: [
-                          Radio<String>(
-                            value: method,
-                            groupValue: selectedPaymentMethod,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedPaymentMethod = value!;
-                              });
-                            },
-                            activeColor: Colors.blue,
-                          ),
-                          Image.asset(
-                            imagePath,
-                            width:
-                                30, // Set an appropriate width for your image
-                            height:
-                                30, // Set an appropriate height for your image
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            method,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: selectedPaymentMethod == method
-                                  ? Colors.white
-                                  : Colors.black,
+                  children: paymentMethods.map((paymentMethod) {
+                    final imagePath = paymentMethod['imagePath']!;
+                    final method = paymentMethod['method']!;
+        
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedPaymentMethod = method;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8.0),
+                          color: selectedPaymentMethod == method
+                              ? Colors
+                                  .blue // Highlight the selected payment method
+                              : Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: Offset(0, 2),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: double.maxFinite,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    // Perform the update operation
-                    try {
-                      await FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(userUID)
-                          .collection('orders')
-                          .doc(widget.orderID)
-                          .update({
-                        'paymentMethod': selectedPaymentMethod,
-                        'status': 'Accepted'
-                      });
-                      await FirebaseFirestore.instance
-                          .collection('vendors')
-                          .doc(widget.vendorUid)
-                          .collection('orders')
-                          .doc(widget.orderID)
-                          .update({
-                        'paymentMethod': selectedPaymentMethod,
-                        'status': 'Accepted'
-                      });
-
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => const SuccessPage()),
-                      );
-                      // Show a Snackbar on success
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Order placed successfully.'),
+                          ],
                         ),
-                      );
-                    } catch (error) {
-                      // Handle any errors that may occur during the update.
-                      print("Error updating order: $error");
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue, // Button text color
-                    padding: const EdgeInsets.all(5),
-                  ),
-                  child: const Text("Place order"),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 16.0),
+                        margin: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            Radio<String>(
+                              value: method,
+                              groupValue: selectedPaymentMethod,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedPaymentMethod = value!;
+                                });
+                              },
+                              activeColor: Colors.blue,
+                            ),
+                            Image.asset(
+                              imagePath,
+                              width:
+                                  30, // Set an appropriate width for your image
+                              height:
+                                  30, // Set an appropriate height for your image
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              method,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: selectedPaymentMethod == method
+                                    ? Colors.white
+                                    : Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
               ),
-            )
-          ],
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+                  width: double.maxFinite,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Perform the update operation
+                      try {
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(userUID)
+                            .collection('orders')
+                            .doc(widget.orderID)
+                            .update({
+                          'paymentMethod': selectedPaymentMethod,
+                          'status': 'Accepted'
+                        });
+                        await FirebaseFirestore.instance
+                            .collection('vendors')
+                            .doc(widget.vendorUid)
+                            .collection('orders')
+                            .doc(widget.orderID)
+                            .update({
+                          'paymentMethod': selectedPaymentMethod,
+                          'status': 'Accepted'
+                        });
+        
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => const SuccessPage()),
+                        );
+                        // Show a Snackbar on success
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Order placed successfully.'),
+                          ),
+                        );
+                      } catch (error) {
+                        // Handle any errors that may occur during the update.
+                        print("Error updating order: $error");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue, // Button text color
+                      padding: const EdgeInsets.all(5),
+                    ),
+                    child: const Text("Place order"),
+                  ),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

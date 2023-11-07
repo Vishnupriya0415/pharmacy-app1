@@ -119,6 +119,33 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
   void _showConfirmationDialog(String pharmacyName, String vendorUid) {
     showDialog(
       context: context,
+      builder: (BuildContext context) {
+        return CurvedAlertDialogBox1(
+          title: 'Send image to $pharmacyName',
+          additionalText:
+              'Are you sure you would like to send image to $pharmacyName?',
+          onYesPressed: () {
+            Navigator.of(context).pop();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => PrescriptionOrder(
+                  vendorUid: vendorUid,
+                  imageUrl: widget.imageUrl,
+                ),
+              ),
+            );
+            // Handle 'Yes' button press
+          },
+          onNoPressed: () {
+            Navigator.of(context).pop();
+            // Handle 'No' button press
+          },
+        );
+      },
+    );
+
+    /*showDialog(
+      context: context,
       builder: (BuildContext dialogContext) => CurvedAlertDialogBox1(
         title: 'Send Image to $pharmacyName?',
         onClosePressed: () {
@@ -139,7 +166,7 @@ class _VendorListScreen1State extends State<VendorListScreen1> {
         additionalText:
             'Are you sure you would like to send image to $pharmacyName?',
       ),
-    );
+    );*/
   }
 
 }
