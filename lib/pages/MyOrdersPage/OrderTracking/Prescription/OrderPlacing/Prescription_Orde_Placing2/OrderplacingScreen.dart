@@ -297,7 +297,8 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
                             .doc(widget.orderID)
                             .update({
                           'paymentMethod': selectedPaymentMethod,
-                          'status': 'Accepted'
+                          'status': 'Accepted',
+                          'orderedTime': DateTime.now(),
                         });
                         await FirebaseFirestore.instance
                             .collection('vendors')
@@ -306,7 +307,8 @@ class _OrderPlacingScreenState extends State<OrderPlacingScreen> {
                             .doc(widget.orderID)
                             .update({
                           'paymentMethod': selectedPaymentMethod,
-                          'status': 'Accepted'
+                          'status': 'Accepted',
+                          'orderedTime': DateTime.now(),
                         });
         
                         Navigator.of(context).push(
