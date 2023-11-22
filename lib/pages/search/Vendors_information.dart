@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable, library_private_types_in_public_api
+// ignore_for_file: unused_local_variable, library_private_types_in_public_api, file_names
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -153,7 +153,7 @@ class _VendorListScreenState extends State<VendorListScreen> {
                       ),
                     ),
                   ),
-                  Divider(), // Add a divider
+                  const Divider(), // Add a divider
                 ],
               );
             },

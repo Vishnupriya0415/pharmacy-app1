@@ -10,6 +10,7 @@ import 'package:gangaaramtech/pages/MyOrdersPage/OrderTracking/MyOrdersPage.dart
 import 'package:gangaaramtech/pages/medicine_details_page/medicine_details_page.dart';
 import 'package:gangaaramtech/pages/search/Vendors_information.dart';
 import 'package:gangaaramtech/pages/search/vendors_information1.dart';
+import 'package:gangaaramtech/repository/firestorefunctions.dart';
 import 'package:http/http.dart' as http;
 import 'package:gangaaramtech/pages/search/search_page1.dart';
 //import 'package:gangaaramtech/pages/search_result_page/search_result_page.dart';
@@ -40,6 +41,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController searchController = TextEditingController();
   List<Map<String, dynamic>> pharmacyData = [];
+  Map<String, dynamic> userData = {};
   File? imageFile; // Define the imageFile variable here
   Position? currentPosition;
   // final PageController _pageController = PageController();
@@ -110,7 +112,8 @@ class _HomeState extends State<Home> {
     super.initState();
     _getCurrentLocation();
     _startLocationUpdateTimer();
-    fetchMedicalStores();
+    fetchUserData();
+    //fetchMedicalStores();
   }
 
   @override
@@ -118,9 +121,20 @@ class _HomeState extends State<Home> {
     super.dispose();
     locationUpdateTimer?.cancel();
     _disposed = true;
+    // fetchMedicalStores();
   }
 
+Future<void> fetchUserData() async {
+    Map<String, dynamic> data = await FireStoreFunctions().getUserData();
+    setState(() {
+      userData = data;
+    });
+    double userLatitude = userData['latitude'];
+    double userLongitude = userData['longitude'];
 
+    // Call the fetchMedicalStores function with the user's location
+    await fetchMedicalStores(userLatitude, userLongitude);
+  }
   void _startLocationUpdateTimer() {
     locationUpdateTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
       if (!_disposed) {
@@ -579,6 +593,7 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
               ),
             ],
           ),
+        
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -1035,9 +1050,12 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
     );
   }
 
-  Future<void> fetchMedicalStores() async {
-    const url =
-        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=13.6447653%2C79.4175508&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
+  Future<void> fetchMedicalStores(double latitude, double longitude) async {
+    print(
+        "Fetching medical stores for latitude: $latitude, longitude: $longitude");
+
+    final url =
+        "https://api.foursquare.com/v3/places/search?query=pharmacy&ll=$latitude%2C$longitude&radius=5000&fields=name%2Clocation%2Ctel%2Cemail%2Cwebsite%2Chours&sort=RELEVANCE&limit=30";
 
     final headers = {
       "accept": "application/json",
@@ -1066,4 +1084,5 @@ Future<void> uploadImageToFirebaseStorage(File imageFile) async {
       print("Error: $e");
     }
   }
+
 }

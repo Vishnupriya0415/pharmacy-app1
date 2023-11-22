@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, use_build_context_synchronously, unused_field
+// ignore_for_file: file_names, use_build_context_synchronously, unused_field, avoid_print
 
 import 'dart:io';
 

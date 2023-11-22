@@ -7,7 +7,7 @@ import 'package:gangaaramtech/Vendor/VHome/VendorHome.dart';
 //import 'RecentOrders.dart';
 
 class IncomingOrdersPage extends StatelessWidget {
-  IncomingOrdersPage({Key? key}) : super(key: key);
+  const IncomingOrdersPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

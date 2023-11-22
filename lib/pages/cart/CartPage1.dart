@@ -59,7 +59,7 @@ class _CartPageState extends State<CartPage> {
                         );
                       } else {
                            ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content:
                                 Text("Please select medicines to proceed."),
                           ),
@@ -143,7 +143,7 @@ class _CartPageState extends State<CartPage> {
                           if (selectedMedicines.isEmpty) {
           // Display a SnackBar message if no medicines are selected
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("Please select medicines to proceed."),
             ),
           );

@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, library_private_types_in_public_api, file_names
+// ignore_for_file: avoid_print, library_private_types_in_public_api, file_names, non_constant_identifier_names
 
 import 'dart:math';
 
