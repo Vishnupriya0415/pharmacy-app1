@@ -132,9 +132,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                 ),
                 const SizedBox(height: 15),
                 GestureDetector(
-                  onTap: () {
-                    
-                  },
+                  onTap: () {},
                   child: const Text(
                     "Resend New Code",
                     style: TextStyle(
@@ -200,6 +198,7 @@ class _OtpVerifyState extends State<OtpVerify> {
           (value) async {
             if (value == true) {
               // user exists in our app
+              Navigator.pop(context); 
               Navigator.push(
                 context,
                 MaterialPageRoute(
