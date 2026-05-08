@@ -196,6 +196,7 @@ class _OtpVerifyState extends State<OtpVerify> {
         // checking whether user exists in the db
         ap.checkExistingUser().then(
           (value) async {
+            if (!context.mounted) return;
             if (value == true) {
               // user exists in our app
               Navigator.pop(context); 

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:whatsapp_share/whatsapp_share.dart';
+import 'package:share_plus/share_plus.dart';
 
 class WhatsappImage extends StatelessWidget {
   WhatsappImage({Key? key}) : super(key: key);
@@ -14,19 +14,14 @@ class WhatsappImage extends StatelessWidget {
   File? _image;
 
   Future<void> share() async {
-    await WhatsappShare.share(
-      text: 'Example share text',
-      linkUrl: 'https://flutter.dev/',
-      phone: '911234567890',
-    );
+    await Share.share('Example share text https://flutter.dev/');
   }
 
   Future<void> shareFile1() async {
     await getImage();
-    await WhatsappShare.shareFile(
-      phone: "918438006590",
-      filePath: [(_image!.path)],
-    );
+    if (_image != null) {
+      await Share.shareXFiles([XFile(_image!.path)], text: "hello");
+    }
   }
 
   ///Pick Image From gallery using image_picker plugin
@@ -50,8 +45,7 @@ class WhatsappImage extends StatelessWidget {
   }
 
   Future<void> isInstalled() async {
-    final val = await WhatsappShare.isInstalled(package: Package.whatsapp);
-    debugPrint('Whatsapp is installed: $val');
+    debugPrint('Whatsapp check not natively supported by share_plus.');
   }
 
   @override

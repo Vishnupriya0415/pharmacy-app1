@@ -42,7 +42,7 @@ class _SignInState extends State<SignIn> {
                         width: 258,
                         decoration: BoxDecoration(
                           // color: appTheme.indigoA400.withOpacity(0.03),
-                          color: ColorConstants.indigo.withOpacity(0.03),
+                          color: ColorConstants.indigo.withValues(alpha: 0.03),
                           borderRadius: BorderRadius.circular(129),
                         ),
                       ),
@@ -102,10 +102,10 @@ class _SignInState extends State<SignIn> {
                       25,
                     ),
                   ),
-                  shadowColor: ColorConstants.indigo.withOpacity(0.1),
+                  shadowColor: ColorConstants.indigo.withValues(alpha: 0.1),
                   elevation: 12,
                 ).copyWith(
-                  fixedSize: MaterialStateProperty.all<Size>(
+                  fixedSize: WidgetStateProperty.all<Size>(
                     const Size(
                       double.maxFinite,
                       50,
@@ -134,7 +134,7 @@ class _SignInState extends State<SignIn> {
                 buttonStyle: OutlinedButton.styleFrom(
                   backgroundColor: ColorConstants.white,
                   side: BorderSide(
-                    color: const Color(0X26090F47).withOpacity(0.1),
+                    color: const Color(0X26090F47).withValues(alpha: 0.1),
                     width: 1,
                   ),
                   shape: RoundedRectangleBorder(
@@ -143,7 +143,7 @@ class _SignInState extends State<SignIn> {
                     ),
                   ),
                 ).copyWith(
-                  fixedSize: MaterialStateProperty.all<Size>(
+                  fixedSize: WidgetStateProperty.all<Size>(
                     const Size(double.maxFinite, 50),
                   ),
                 ),

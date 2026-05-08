@@ -135,10 +135,10 @@ class _UserInfromationScreenState extends State<UserInfromationScreen> {
                         25,
                       ),
                     ),
-                    shadowColor: ColorConstants.indigo.withOpacity(0.1),
+                    shadowColor: ColorConstants.indigo.withValues(alpha: 0.1),
                     elevation: 12,
                   ).copyWith(
-                    fixedSize: MaterialStateProperty.all<Size>(
+                    fixedSize: WidgetStateProperty.all<Size>(
                       const Size(
                         double.maxFinite,
                         50,
